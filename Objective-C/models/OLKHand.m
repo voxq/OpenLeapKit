@@ -53,34 +53,6 @@ static OLKHand *gPrevHand=nil;
         gPrevHand = [[OLKHand alloc] init];
 }
 
-+ (LeapHand *)furthestLeftHand:(NSArray *)hands
-{
-    LeapHand *leftMostHand=nil;
-    
-    for (LeapHand *hand in hands)
-    {
-        if (leftMostHand == nil || [leftMostHand palmPosition].x > [hand palmPosition].x)
-        {
-            leftMostHand = hand;
-        }
-    }
-    return leftMostHand;
-}
-
-+ (LeapHand *)furthestRightHand:(NSArray *)hands
-{
-    LeapHand *rightMostHand=nil;
-    
-    for (LeapHand *hand in hands)
-    {
-        if (rightMostHand == nil || [rightMostHand palmPosition].x > [hand palmPosition].x)
-        {
-            rightMostHand = hand;
-        }
-    }
-    return rightMostHand;
-}
-
 + (OLKHandedness)handedness:(LeapHand *)hand
 {
     LeapFinger *shortestFinger=nil;

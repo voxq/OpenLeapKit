@@ -52,8 +52,6 @@ typedef enum {
 
 @interface OLKHand : NSObject
 
-+ (LeapHand *)furthestLeftHand:(NSArray *)hands;
-+ (LeapHand *)furthestRightHand:(NSArray *)hands;
 + (OLKHandedness)handedness:(LeapHand *)hand;
 + (NSArray *)simpleLeftRightHandSearch:(NSArray *)hands;
 
