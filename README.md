@@ -1,7 +1,7 @@
 OpenLeapKit
 ===============
 
-A collaborative tool kit for the Leap Motion device.
+A collaborative toolkit for the Leap Motion device.
 
 Current Features:
 - draws simple hands for 2D interaction (using various optional settings).
