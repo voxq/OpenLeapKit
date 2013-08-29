@@ -46,13 +46,13 @@ static const NSSize defaultFitHandFact = {150, 150};
 
 
 @synthesize hand = _hand;
-@synthesize autoFitHand = _autoFitHand;
+@synthesize enableAutoFitHand = _enableAutoFitHand;
 @synthesize simpleFingerTipSize = _simpleFingerTipSize;
 @synthesize enableDrawHandBoundingCircle = _enableDrawHandBoundingCircle;
 @synthesize enableDrawPalm = _enableDrawPalm;
 @synthesize enableDrawFingers = _enableDrawFingers;
 @synthesize enableDrawFingerTips = _enableDrawFingerTips;
-@synthesize screenYAxisUsesZAxis = _screenYAxisUsesZAxis;
+@synthesize enableScreenYAxisUsesZAxis = _enableScreenYAxisUsesZAxis;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -62,12 +62,12 @@ static const NSSize defaultFitHandFact = {150, 150};
         _fitHandFact = defaultFitHandFact;
         _simpleFingerTipSize.width = _bounds.size.width/10;
         _simpleFingerTipSize.height = _bounds.size.height/10;
-        _autoFitHand = YES;
+        _enableAutoFitHand = YES;
         _enableDrawHandBoundingCircle = YES;
         _enableDrawFingers = YES;
         _enableDrawFingerTips = YES;
         _enableDrawPalm = YES;
-        _screenYAxisUsesZAxis = NO;
+        _enableScreenYAxisUsesZAxis = NO;
     }
     
     return self;
@@ -92,7 +92,7 @@ static const NSSize defaultFitHandFact = {150, 150};
 {
     float palmY, fingerTipY, fingerDirY;
     
-    if (_screenYAxisUsesZAxis)
+    if (_enableScreenYAxisUsesZAxis)
     {
         palmY = [[_hand leapHand] palmPosition].z;
         fingerTipY = [finger tipPosition].z;
@@ -110,7 +110,7 @@ static const NSSize defaultFitHandFact = {150, 150};
     fingerTipRect.origin.y = _centerPoint.y + (palmY - fingerTipY)*_fitHandFact.height;
     fingerTipRect.size = _simpleFingerTipSize;
     
-    if (_autoFitHand)
+    if (_enableAutoFitHand)
     {
         if (fingerTipRect.origin.x - fingerTipRect.size.width < 0)
         {
@@ -177,12 +177,23 @@ static const NSSize defaultFitHandFact = {150, 150};
 {
     [[NSColor grayColor] setStroke];
     NSBezierPath* theHandPath = [NSBezierPath bezierPath];
+
+    
+    if (_enableDrawHandBoundingCircle)
+        [theHandPath appendBezierPathWithOvalInRect:_bounds];
+
+    if (!_enableDrawPalm)
+    {
+        [theHandPath stroke];
+        return;
+    }
+
     NSPoint thumbPoint;
     thumbPoint.y = _centerPoint.y;
     
     float handDirY;
     
-    if (_screenYAxisUsesZAxis)
+    if (_enableScreenYAxisUsesZAxis)
         handDirY = [[_hand leapHand] direction].z;
     else
         handDirY = -[[_hand leapHand] direction].y;
@@ -221,10 +232,8 @@ static const NSSize defaultFitHandFact = {150, 150};
         [theHandPath lineToPoint:thumbPoint];
     }
     
-    if (_enableDrawHandBoundingCircle)
-        [theHandPath appendBezierPathWithOvalInRect:_bounds];
-    
     [theHandPath stroke];
+    
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -232,7 +241,7 @@ static const NSSize defaultFitHandFact = {150, 150};
     _centerPoint.x = (_bounds.origin.x + _bounds.size.width)/2;
     _centerPoint.y = (_bounds.origin.y + _bounds.size.height)/2;
 
-    if (_enableDrawPalm)
+    if (_enableDrawPalm || _enableDrawHandBoundingCircle)
         [self drawPalm];
     
     if (_enableDrawFingers || _enableDrawFingerTips)

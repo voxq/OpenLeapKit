@@ -105,7 +105,6 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         [_leftHand setLeapHand:bestLeftOption];
         [_leftHand setHandedness:OLKLeftHand];
         [_handsContainerView addSubview:_leftHandView];
-        //            [_fastEditTextView setNeedsDisplayInRect:[_leftHandView frame]];
     }
     
     if (_rightHand == nil && bestRightOption != nil && bestRightOption != (LeapHand*)[NSNull null])
@@ -119,7 +118,6 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         [_rightHand setHandedness:OLKRightHand];
         
         [_handsContainerView addSubview:_rightHandView];
-        //            [_fastEditTextView setNeedsDisplayInRect:[_rightHandView frame]];
     }
 }
 
@@ -129,7 +127,6 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     {
         NSLog(@"Removing Left Hand!");
         [_leftHandView removeFromSuperview];
-        //        [_fastEditTextView setNeedsDisplayInRect:[_leftHandView frame]];
         _leftHandView = nil;
         _leftHand = nil;
     }
@@ -139,7 +136,6 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         [_rightHandView removeFromSuperview];
         _rightHandView = nil;
         _rightHand = nil;
-        //        [_fastEditTextView setNeedsDisplayInRect:[_rightHandView frame]];
     }
 }
 
@@ -221,7 +217,6 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     
     [handView setFrame:oldRect];
     //    NSLog(@"hand x=%f, y=%f", [handView frame].origin.x, [handView frame].origin.y);
-    //    [_fastEditTextView setNeedsDisplayInRect:[handView frame]];
 }
 
 - (void)organizeHands

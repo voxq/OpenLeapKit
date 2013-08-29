@@ -40,6 +40,12 @@
 
 @end
 
+@protocol OLKHandsContainerViewControllerDelegate <NSObject>
+
+- (void)hand:(NSRect)frame withHandedness:(OLKHandedness)handedness;
+
+@end
+
 @interface OLKHandsContainerViewController : NSObject
 
 - (void)onFrame:(NSNotification *)notification;

@@ -25,25 +25,17 @@
  */
 
 //
-//  OLKSimpleVectHandView.h
-//  OpenLeapKit
+//  OLKDemoHandsOberlayViewController.h
+//  OLK2DViewHandDemo
 //
-//  Created by Tyler Zetterstrom on 2013-08-15.
+//  Created by Tyler Zetterstrom on 2013-08-29.
 //
 
 
-#import <Cocoa/Cocoa.h>
-#import "OLKHand.h"
+#import <Foundation/Foundation.h>
+#import "LeapObjectiveC.h"
+#import <OpenLeapKit/OLKHandsContainerViewController.h>
 
-@interface OLKSimpleVectHandView : NSView <OLKHandContainer>
-
-@property (nonatomic) OLKHand *hand;
-@property (nonatomic) NSSize simpleFingerTipSize;
-@property (nonatomic) BOOL enableAutoFitHand;
-@property (nonatomic) BOOL enableDrawHandBoundingCircle;
-@property (nonatomic) BOOL enableDrawPalm;
-@property (nonatomic) BOOL enableDrawFingers;
-@property (nonatomic) BOOL enableDrawFingerTips;
-@property (nonatomic) BOOL enableScreenYAxisUsesZAxis;
+@interface OLKDemoHandsOverlayViewController : OLKHandsContainerViewController <OLKHandsContainerViewControllerDataSource>
 
 @end
