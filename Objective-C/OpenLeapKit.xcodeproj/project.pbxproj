@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F30E2FB17CF456600F14438 /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F30E2FA17CF456600F14438 /* LeapObjectiveC.mm */; };
+		2F30E2FD17CF484300F14438 /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F30E2F817CF450D00F14438 /* libLeap.dylib */; };
+		2F30E30917CF693100F14438 /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2F30E2F817CF450D00F14438 /* libLeap.dylib */; };
 		2FEDD70C17CC970600165DD2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FEDD70B17CC970600165DD2 /* Cocoa.framework */; };
 		2FEDD71617CC970600165DD2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2FEDD71417CC970600165DD2 /* InfoPlist.strings */; };
 		2FEDD71A17CC970600165DD2 /* OpenLeapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEDD71917CC970600165DD2 /* OpenLeapKit.m */; };
@@ -21,7 +24,22 @@
 		2FEDD74317CCA3D000165DD2 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 2FEDD74217CCA3D000165DD2 /* LICENSE */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		2F30E30817CF692200F14438 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				2F30E30917CF693100F14438 /* libLeap.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		2F30E2F817CF450D00F14438 /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLeap.dylib; path = ../../../../code/libraries/LeapSDK/lib/libLeap.dylib; sourceTree = "<group>"; };
+		2F30E2FA17CF456600F14438 /* LeapObjectiveC.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = LeapObjectiveC.mm; path = ../../../../code/libraries/LeapSDK/include/LeapObjectiveC.mm; sourceTree = "<group>"; };
 		2FEDD70817CC970600165DD2 /* OpenLeapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenLeapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FEDD70B17CC970600165DD2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		2FEDD70E17CC970600165DD2 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -48,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F30E2FD17CF484300F14438 /* libLeap.dylib in Frameworks */,
 				2FEDD70C17CC970600165DD2 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,6 +77,7 @@
 		2FEDD6FE17CC970600165DD2 = {
 			isa = PBXGroup;
 			children = (
+				2F30E2FA17CF456600F14438 /* LeapObjectiveC.mm */,
 				2FEDD72817CC97B500165DD2 /* HandsContainerView */,
 				2FEDD72D17CC97B500165DD2 /* helpers */,
 				2FEDD73017CC97B500165DD2 /* models */,
@@ -78,6 +98,7 @@
 		2FEDD70A17CC970600165DD2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2F30E2F817CF450D00F14438 /* libLeap.dylib */,
 				2FEDD70B17CC970600165DD2 /* Cocoa.framework */,
 				2FEDD70D17CC970600165DD2 /* Other Frameworks */,
 			);
@@ -169,6 +190,7 @@
 				2FEDD70417CC970600165DD2 /* Frameworks */,
 				2FEDD70517CC970600165DD2 /* Headers */,
 				2FEDD70617CC970600165DD2 /* Resources */,
+				2F30E30817CF692200F14438 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -222,6 +244,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F30E2FB17CF456600F14438 /* LeapObjectiveC.mm in Sources */,
 				2FEDD71A17CC970600165DD2 /* OpenLeapKit.m in Sources */,
 				2FEDD73617CC97B500165DD2 /* OLKSimpleVectHandView.m in Sources */,
 				2FEDD73817CC97B500165DD2 /* OLKHelpers.m in Sources */,
@@ -306,6 +329,7 @@
 		2FEDD71E17CC970600165DD2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -314,6 +338,12 @@
 				GCC_PREFIX_HEADER = "OpenLeapKit/OpenLeapKit-Prefix.pch";
 				HEADER_SEARCH_PATHS = ../../../../code/libraries/LeapSDK/include;
 				INFOPLIST_FILE = "OpenLeapKit/OpenLeapKit-Info.plist";
+				INSTALL_PATH = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../code/libraries/LeapSDK/lib\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = framework;
@@ -323,6 +353,7 @@
 		2FEDD71F17CC970600165DD2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -331,6 +362,12 @@
 				GCC_PREFIX_HEADER = "OpenLeapKit/OpenLeapKit-Prefix.pch";
 				HEADER_SEARCH_PATHS = ../../../../code/libraries/LeapSDK/include;
 				INFOPLIST_FILE = "OpenLeapKit/OpenLeapKit-Info.plist";
+				INSTALL_PATH = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../code/libraries/LeapSDK/lib\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = framework;

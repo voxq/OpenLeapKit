@@ -53,6 +53,24 @@ static OLKHand *gPrevHand=nil;
         gPrevHand = [[OLKHand alloc] init];
 }
 
++ (OLKHandedness)handednessByThumbBase:(LeapHand *)hand
+{
+    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
+    LeapVector *handYBasis = [[hand palmNormal] negate];
+    LeapVector *handZBasis = [[hand direction] negate];
+    LeapVector *handOrigin =  [hand palmPosition];
+    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
+    handTransform = [handTransform rigidInverse];
+    
+    for( LeapFinger *finger in [hand fingers])
+    {
+        LeapVector *transformedPosition = [handTransform transformPoint:[finger tipPosition]];
+        LeapVector *transformedDirection = [handTransform transformDirection:[finger direction]];
+        
+        
+    }
+}
+
 + (OLKHandedness)handedness:(LeapHand *)hand
 {
     LeapFinger *shortestFinger=nil;
