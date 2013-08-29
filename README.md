@@ -9,6 +9,7 @@ Initial focus is to provide a jumpstart for developers to move forward with idea
 
 Current Features:
 - draws simple hands for 2D interaction (using various optional settings).
+- advanced detection of thumb (determine the finger with the greatest z value and above a threshold based on average of all fingers, relative to the palm, after transforming fingers to hand's reference space.)
 - detects whether a hand is right or left (simplistic technique of detecting whether the shortest finger is predominantly on the right or left).
 - translates vector information to a confined 2D (x,y) view using InteractionBox, with option to trim the InteractionBox.
 
@@ -17,6 +18,5 @@ Intended Features:
 - draw 3D hand/fingers with option to confine to 2D surface (for screen interaction)
 - Rig 3D mesh to hand/fingers
 - advanced detection of right/left hands
-- advanced detection of thumb (one idea is to determine the finger with the greatest z value relative to the palm direction vector, which would be the base of thumb if all fingers are detected. Combine this with extrapolated fingers mentioned above.)
 - diverse gestures and interactions
 - ideas?
