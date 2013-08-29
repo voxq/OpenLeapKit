@@ -46,8 +46,8 @@ static const NSSize defaultFitHandFact = {150, 150};
 
 
 @synthesize hand = _hand;
-@synthesize enableAutoFitHand = _enableAutoFitHand;
 @synthesize simpleFingerTipSize = _simpleFingerTipSize;
+@synthesize enableAutoFitHand = _enableAutoFitHand;
 @synthesize enableDrawHandBoundingCircle = _enableDrawHandBoundingCircle;
 @synthesize enableDrawPalm = _enableDrawPalm;
 @synthesize enableDrawFingers = _enableDrawFingers;

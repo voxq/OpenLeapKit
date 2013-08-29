@@ -38,4 +38,11 @@
 
 @interface OLKDemoHandsOverlayViewController : OLKHandsContainerViewController <OLKHandsContainerViewControllerDataSource>
 
+@property (nonatomic) BOOL enableAutoFitHands;
+@property (nonatomic) BOOL enableDrawHandsBoundingCircle;
+@property (nonatomic) BOOL enableDrawPalms;
+@property (nonatomic) BOOL enableDrawFingers;
+@property (nonatomic) BOOL enableDrawFingerTips;
+@property (nonatomic) BOOL enableScreenYAxisUsesZAxis;
+
 @end

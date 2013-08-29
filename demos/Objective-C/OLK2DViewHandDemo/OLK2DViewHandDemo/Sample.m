@@ -138,49 +138,49 @@
 - (IBAction)enableHandBounds:(id)sender
 {
     if ([(NSButton*)sender state] == NSOnState)
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableDrawHandBoundingCircle:YES];
+        [_handsOverlayController setEnableDrawHandsBoundingCircle:YES];
     else
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableDrawHandBoundingCircle:NO];
+        [_handsOverlayController setEnableDrawHandsBoundingCircle:NO];
 }
 
 - (IBAction)enableFingerLines:(id)sender
 {
     if ([(NSButton*)sender state] == NSOnState)
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableDrawFingers:YES];
+        [_handsOverlayController setEnableDrawFingers:YES];
     else
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableDrawFingers:NO];
+        [_handsOverlayController setEnableDrawFingers:NO];
 }
 
 - (IBAction)enableFingerTips:(id)sender
 {
     if ([(NSButton*)sender state] == NSOnState)
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableDrawFingerTips:YES];
+        [_handsOverlayController setEnableDrawFingerTips:YES];
     else
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableDrawFingerTips:NO];
+        [_handsOverlayController setEnableDrawFingerTips:NO];
 }
 
 - (IBAction)enableFingersZisY:(id)sender
 {
     if ([(NSButton*)sender state] == NSOnState)
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableScreenYAxisUsesZAxis:YES];
+        [_handsOverlayController setEnableScreenYAxisUsesZAxis:YES];
     else
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableScreenYAxisUsesZAxis:NO];
+        [_handsOverlayController setEnableScreenYAxisUsesZAxis:NO];
 }
 
 - (IBAction)enableDrawPalm:(id)sender
 {
     if ([(NSButton*)sender state] == NSOnState)
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableDrawPalm:YES];
+        [_handsOverlayController setEnableDrawPalms:YES];
     else
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableDrawPalm:NO];
+        [_handsOverlayController setEnableDrawPalms:NO];
 }
 
 - (IBAction)enableAutoHandSize:(id)sender
 {
     if ([(NSButton*)sender state] == NSOnState)
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableAutoFitHand:YES];
+        [_handsOverlayController setEnableAutoFitHands:YES];
     else
-        [(OLKSimpleVectHandView *)[_handsOverlayController leftHandView] setEnableAutoFitHand:NO];
+        [_handsOverlayController setEnableAutoFitHands:NO];
 }
 
 @end

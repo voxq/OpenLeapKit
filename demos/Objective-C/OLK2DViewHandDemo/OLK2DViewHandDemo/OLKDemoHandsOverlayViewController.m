@@ -38,19 +38,107 @@
 
 @implementation OLKDemoHandsOverlayViewController
 
+@synthesize enableAutoFitHands = _enableAutoFitHands;
+@synthesize enableDrawHandsBoundingCircle = _enableDrawHandsBoundingCircle;
+@synthesize enableDrawPalms = _enableDrawPalms;
+@synthesize enableDrawFingers = _enableDrawFingers;
+@synthesize enableDrawFingerTips = _enableDrawFingerTips;
+@synthesize enableScreenYAxisUsesZAxis = _enableScreenYAxisUsesZAxis;
+
 - (id)init
 {
     if (self = [super init])
     {
         [self setDataSource:self];
+        _enableAutoFitHands = YES;
+        _enableDrawFingers = YES;
+        _enableDrawFingerTips = YES;
+        _enableDrawHandsBoundingCircle = YES;
+        _enableDrawPalms = YES;
+        _enableScreenYAxisUsesZAxis = YES;
     }
     return self;
 }
 
 - (NSView <OLKHandContainer>*)handView:(NSRect)frame withHandedness:(OLKHandedness)handedness
 {
-    NSView <OLKHandContainer> *handView = [[OLKSimpleVectHandView alloc] initWithFrame:frame];
+    OLKSimpleVectHandView *handView = [[OLKSimpleVectHandView alloc] initWithFrame:frame];
+    
+    [handView setEnableScreenYAxisUsesZAxis:_enableScreenYAxisUsesZAxis];
+    [handView setEnableDrawPalm:_enableDrawPalms];
+    [handView setEnableDrawHandBoundingCircle:_enableDrawHandsBoundingCircle];
+    [handView setEnableDrawFingerTips:_enableDrawFingerTips];
+    [handView setEnableDrawFingers:_enableDrawFingers];
+    [handView setEnableAutoFitHand:_enableAutoFitHands];
+    
     return handView;
 }
+
+- (void) setEnableScreenYAxisUsesZAxis:(BOOL)enableScreenYAxisUsesZAxis
+{
+    _enableScreenYAxisUsesZAxis = enableScreenYAxisUsesZAxis;
+    OLKSimpleVectHandView *leftHandView = (OLKSimpleVectHandView *)[self leftHandView];
+    OLKSimpleVectHandView *rightHandView = (OLKSimpleVectHandView *)[self rightHandView];
+    if (leftHandView)
+        [leftHandView setEnableScreenYAxisUsesZAxis:enableScreenYAxisUsesZAxis];
+    if (rightHandView)
+        [rightHandView setEnableScreenYAxisUsesZAxis:enableScreenYAxisUsesZAxis];
+}
+
+- (void) setEnableAutoFitHands:(BOOL)enableAutoFitHands
+{
+    _enableAutoFitHands = enableAutoFitHands;
+    OLKSimpleVectHandView *leftHandView = (OLKSimpleVectHandView *)[self leftHandView];
+    OLKSimpleVectHandView *rightHandView = (OLKSimpleVectHandView *)[self rightHandView];
+    if (leftHandView)
+        [leftHandView setEnableAutoFitHand:enableAutoFitHands];
+    if (rightHandView)
+        [rightHandView setEnableAutoFitHand:enableAutoFitHands];
+}
+
+- (void)setEnableDrawFingers:(BOOL)enableDrawFingers
+{
+    _enableDrawFingers = enableDrawFingers;
+    OLKSimpleVectHandView *leftHandView = (OLKSimpleVectHandView *)[self leftHandView];
+    OLKSimpleVectHandView *rightHandView = (OLKSimpleVectHandView *)[self rightHandView];
+    if (leftHandView)
+        [leftHandView setEnableDrawFingers:enableDrawFingers];
+    if (rightHandView)
+        [rightHandView setEnableDrawFingers:enableDrawFingers];
+}
+
+- (void)setEnableDrawFingerTips:(BOOL)enableDrawFingerTips
+{
+    _enableDrawFingerTips = enableDrawFingerTips;
+    OLKSimpleVectHandView *leftHandView = (OLKSimpleVectHandView *)[self leftHandView];
+    OLKSimpleVectHandView *rightHandView = (OLKSimpleVectHandView *)[self rightHandView];
+    if (leftHandView)
+        [leftHandView setEnableDrawFingerTips:enableDrawFingerTips];
+    if (rightHandView)
+        [rightHandView setEnableDrawFingerTips:enableDrawFingerTips];
+}
+
+- (void)setEnableDrawHandsBoundingCircle:(BOOL)enableDrawHandsBoundingCircle
+{
+    _enableDrawHandsBoundingCircle = enableDrawHandsBoundingCircle;
+    OLKSimpleVectHandView *leftHandView = (OLKSimpleVectHandView *)[self leftHandView];
+    OLKSimpleVectHandView *rightHandView = (OLKSimpleVectHandView *)[self rightHandView];
+    if (leftHandView)
+        [leftHandView setEnableDrawHandBoundingCircle:enableDrawHandsBoundingCircle];
+    if (rightHandView)
+        [rightHandView setEnableDrawHandBoundingCircle:enableDrawHandsBoundingCircle];
+}
+
+-(void)setEnableDrawPalms:(BOOL)enableDrawPalms
+{
+    _enableDrawPalms = enableDrawPalms;
+    OLKSimpleVectHandView *leftHandView = (OLKSimpleVectHandView *)[self leftHandView];
+    OLKSimpleVectHandView *rightHandView = (OLKSimpleVectHandView *)[self rightHandView];
+    if (leftHandView)
+        [leftHandView setEnableDrawPalm:enableDrawPalms];
+    if (rightHandView)
+        [rightHandView setEnableDrawPalm:enableDrawPalms];
+}
+
 
 @end
