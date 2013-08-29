@@ -53,7 +53,7 @@ static OLKHand *gPrevHand=nil;
         gPrevHand = [[OLKHand alloc] init];
 }
 
-+ (OLKHandedness)handednessByThumbBase:(LeapHand *)hand
++ (OLKHandedness)handednessByThumbTipDistFromPalm:(LeapHand *)hand
 {
     LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
     LeapVector *handYBasis = [[hand palmNormal] negate];
@@ -61,18 +61,51 @@ static OLKHand *gPrevHand=nil;
     LeapVector *handOrigin =  [hand palmPosition];
     LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
     handTransform = [handTransform rigidInverse];
+    float avgDist = 0;
+    NSUInteger fingerCount = 0;
+    
+    NSMutableArray *transformedFingers = [[NSMutableArray alloc] init];
     
     for( LeapFinger *finger in [hand fingers])
     {
         LeapVector *transformedPosition = [handTransform transformPoint:[finger tipPosition]];
         LeapVector *transformedDirection = [handTransform transformDirection:[finger direction]];
-        
-        
+    
+        [transformedFingers addObject:transformedPosition];
+        avgDist += (transformedPosition.z - [hand palmPosition].z);
+        fingerCount ++;
     }
+    
+    avgDist /= fingerCount;
+    fingerCount = 0;
+
+    LeapVector *leftMostFingerVector=nil;
+    LeapVector *rightMostFingerVector=nil;
+    
+    for (LeapFinger *finger in [hand fingers])
+    {
+        LeapVector *transformedPos = [transformedFingers objectAtIndex:fingerCount];
+        
+        if (leftMostFingerVector == nil || transformedPos.x < leftMostFingerVector.x)
+            leftMostFingerVector = transformedPos;
+        if (rightMostFingerVector == nil || transformedPos.x > rightMostFingerVector.x)
+            rightMostFingerVector = transformedPos;
+        fingerCount ++;
+    }
+    if ((leftMostFingerVector.z - [hand palmPosition].z) < avgDist/2 && (rightMostFingerVector.z - [hand palmPosition].z) < avgDist/2)
+        return OLKHandednessUnknown;
+    
+    if (leftMostFingerVector.z > rightMostFingerVector.z)
+        return OLKRightHand;
+    else
+        return OLKLeftHand;
 }
 
 + (OLKHandedness)handedness:(LeapHand *)hand
 {
+    return [self handednessByThumbTipDistFromPalm:hand];
+    
+// Not using this as the new ThumbTip method seems to work far better. 
     LeapFinger *shortestFinger=nil;
     LeapFinger *rightMostFinger=nil, *secondRightMostFinger=nil;
     LeapFinger *leftMostFinger=nil, *secondLeftMostFinger=nil;
