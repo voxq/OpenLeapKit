@@ -55,6 +55,9 @@ static OLKHand *gPrevHand=nil;
 
 + (OLKHandedness)handednessByThumbTipDistFromPalm:(LeapHand *)hand
 {
+    if ([[hand fingers] count] == 0)
+        return OLKHandednessUnknown;
+    
     LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
     LeapVector *handYBasis = [[hand palmNormal] negate];
     LeapVector *handZBasis = [[hand direction] negate];
@@ -92,7 +95,8 @@ static OLKHand *gPrevHand=nil;
             rightMostFingerVector = transformedPos;
         fingerCount ++;
     }
-    if ((leftMostFingerVector.z - [hand palmPosition].z) < avgDist/2 && (rightMostFingerVector.z - [hand palmPosition].z) < avgDist/2)
+    
+    if ((leftMostFingerVector.z - [hand palmPosition].z) < avgDist*0.55 && (rightMostFingerVector.z - [hand palmPosition].z) < avgDist*0.55)
         return OLKHandednessUnknown;
     
     if (leftMostFingerVector.z > rightMostFingerVector.z)
