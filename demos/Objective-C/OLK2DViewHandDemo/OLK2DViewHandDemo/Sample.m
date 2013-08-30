@@ -19,6 +19,12 @@
     NSWindow *_fullOverlayWindow;
 }
 
+- (void)dealloc
+{
+    _controller = nil;
+    _handsOverlayController = nil;
+}
+
 -(void)run:(NSView *)handsView;
 {
     _handsOverlayController = [[OLKDemoHandsOverlayViewController alloc] init];

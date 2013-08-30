@@ -217,7 +217,7 @@ static OLKHand *gPrevHand=nil;
 
 - (OLKHandedness)updateHandedness
 {
-    NSLog(@"Left handedness count: %lu; Right handedness count: %lu!", (unsigned long)_numLeftHandedness, (unsigned long)_numRightHandedness);
+//    NSLog(@"Left handedness count: %lu; Right handedness count: %lu!", (unsigned long)_numLeftHandedness, (unsigned long)_numRightHandedness);
 
     OLKHandedness handedness = [OLKHand handedness:_leapHand];
     if (handedness == OLKLeftHand)
