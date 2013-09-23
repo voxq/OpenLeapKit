@@ -42,7 +42,10 @@
 
 @protocol OLKHandsContainerViewControllerDelegate <NSObject>
 
-- (void)hand:(NSRect)frame withHandedness:(OLKHandedness)handedness;
+- (void)willAddHand:(OLKHand *)hand withHandView:(NSView *)handView;
+- (void)willRemoveHand:(OLKHand *)hand withHandView:(NSView *)handView;
+- (void)handChangedHandedness:(OLKHand *)hand withHandView:(NSView *)handView;
+- (void)handWillSimulateHandedness:(OLKHand *)hand withHandView:(NSView *)handView;
 
 @end
 
@@ -52,9 +55,11 @@
 
 @property (nonatomic) NSView *handsContainerView;
 @property (nonatomic) NSObject <OLKHandsContainerViewControllerDataSource> *dataSource;
+@property (nonatomic) NSObject <OLKHandsContainerViewControllerDelegate> *delegate;
 @property (nonatomic, readonly) OLKHand *leftHand;
 @property (nonatomic, readonly) OLKHand *rightHand;
 @property (nonatomic, readonly) NSView <OLKHandContainer> *leftHandView;
 @property (nonatomic, readonly) NSView <OLKHandContainer> *rightHandView;
+@property (nonatomic) BOOL resetAutoFitOnNewHand;
 
 @end

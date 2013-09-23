@@ -35,15 +35,19 @@
 #import <Cocoa/Cocoa.h>
 #import "OLKHand.h"
 
+static const NSSize defaultFitHandFact = {150, 150};
+
 @interface OLKSimpleVectHandView : NSView <OLKHandContainer>
 
 @property (nonatomic) OLKHand *hand;
 @property (nonatomic) NSSize simpleFingerTipSize;
+@property (nonatomic) NSSize fitHandFact;
 @property (nonatomic) BOOL enableAutoFitHand;
 @property (nonatomic) BOOL enableDrawHandBoundingCircle;
 @property (nonatomic) BOOL enableDrawPalm;
 @property (nonatomic) BOOL enableDrawFingers;
 @property (nonatomic) BOOL enableDrawFingerTips;
 @property (nonatomic) BOOL enableScreenYAxisUsesZAxis;
+@property (nonatomic) NSColor *palmColor;
 
 @end

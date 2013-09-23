@@ -16,7 +16,7 @@
 + (BOOL)handUpright:(LeapHand *)hand normalTolerance:(float)normalTolerance
 {
     LeapVector *palmNormal = [hand palmNormal];
-    if (palmNormal.x > normalTolerance || palmNormal.x < normalTolerance)
+    if (palmNormal.y < normalTolerance && palmNormal.y > -normalTolerance)
         return YES;
     
     return NO;
@@ -26,7 +26,7 @@
 {
     LeapVector *palmNormal = [hand palmNormal];
     
-    if (palmNormal.y < normalTolerance)
+    if (palmNormal.y < -1 + normalTolerance)
         return TRUE;
     return NO;
 

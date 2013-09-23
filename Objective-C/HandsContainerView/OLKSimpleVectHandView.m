@@ -35,11 +35,8 @@
 #import "OLKSimpleVectHandView.h"
 #import "LeapObjectiveC.h"
 
-static const NSSize defaultFitHandFact = {150, 150};
-
 @implementation OLKSimpleVectHandView
 {
-    NSSize _fitHandFact;
     NSMutableArray *_fingerBases;
     NSPoint _centerPoint;
 }
@@ -47,12 +44,14 @@ static const NSSize defaultFitHandFact = {150, 150};
 
 @synthesize hand = _hand;
 @synthesize simpleFingerTipSize = _simpleFingerTipSize;
+@synthesize fitHandFact = _fitHandFact;
 @synthesize enableAutoFitHand = _enableAutoFitHand;
 @synthesize enableDrawHandBoundingCircle = _enableDrawHandBoundingCircle;
 @synthesize enableDrawPalm = _enableDrawPalm;
 @synthesize enableDrawFingers = _enableDrawFingers;
 @synthesize enableDrawFingerTips = _enableDrawFingerTips;
 @synthesize enableScreenYAxisUsesZAxis = _enableScreenYAxisUsesZAxis;
+@synthesize palmColor = _palmColor;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -154,8 +153,8 @@ static const NSSize defaultFitHandFact = {150, 150};
     fingerTipBase.x -= (fingerTipRect.size.width / _bounds.size.width) * (fingerTipRect.origin.x - _bounds.size.width);
     fingerTipBase.y = fingerTipRect.origin.y;
     NSPoint fingerBase;
-    fingerBase.x = fingerTipRect.origin.x - [finger direction].x * [finger length]*_fitHandFact.width;
-    fingerBase.y = fingerTipRect.origin.y + fingerDirY * [finger length]*_fitHandFact.height;
+    fingerBase.x = fingerTipBase.x - [finger direction].x * [finger length]*_fitHandFact.width;
+    fingerBase.y = fingerTipBase.y + fingerDirY * [finger length]*_fitHandFact.height;
     [theFingerPaths moveToPoint:fingerBase];
     
     [theFingerPaths lineToPoint:fingerTipBase];
@@ -171,6 +170,12 @@ static const NSSize defaultFitHandFact = {150, 150};
     }
     [[NSColor blackColor] setStroke];
     [theFingerPaths stroke];
+    if (_palmColor)
+    {
+        [_palmColor setStroke];
+        [theFingerPaths setLineWidth:3];
+        [theFingerPaths stroke];
+    }
 }
 
 - (void)drawPalm
@@ -185,6 +190,12 @@ static const NSSize defaultFitHandFact = {150, 150};
     if (!_enableDrawPalm)
     {
         [theHandPath stroke];
+        if (_palmColor)
+        {
+            [_palmColor setStroke];
+            [theHandPath setLineWidth:3];
+            [theHandPath stroke];
+        }
         return;
     }
 
@@ -216,7 +227,13 @@ static const NSSize defaultFitHandFact = {150, 150};
     [palmDirectionPath lineToPoint:palmVector];
     [palmDirectionPath setLineWidth:3];
     [palmDirectionPath stroke];
-    
+    if (_palmColor)
+    {
+        [_palmColor setStroke];
+        [palmDirectionPath setLineWidth:3];
+        [palmDirectionPath stroke];
+    }
+
     OLKHandedness handedness = [_hand simHandedness];
     if (handedness == OLKHandednessUnknown)
         handedness = [_hand handedness];
@@ -232,7 +249,14 @@ static const NSSize defaultFitHandFact = {150, 150};
         [theHandPath lineToPoint:thumbPoint];
     }
     
+    [[NSColor grayColor] setStroke];
     [theHandPath stroke];
+    if (_palmColor)
+    {
+        [_palmColor setStroke];
+        [theHandPath setLineWidth:3];
+        [theHandPath stroke];
+    }
     
 }
 

@@ -10,7 +10,7 @@
 		2F30E2FB17CF456600F14438 /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F30E2FA17CF456600F14438 /* LeapObjectiveC.mm */; };
 		2F30E2FD17CF484300F14438 /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F30E2F817CF450D00F14438 /* libLeap.dylib */; };
 		2F30E30917CF693100F14438 /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2F30E2F817CF450D00F14438 /* libLeap.dylib */; };
-		2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */; };
+		2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FB65BB617D14828002E1C05 /* OLKGestureComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB65BB417D14828002E1C05 /* OLKGestureComponents.m */; };
 		2FEDD70C17CC970600165DD2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FEDD70B17CC970600165DD2 /* Cocoa.framework */; };
 		2FEDD71617CC970600165DD2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2FEDD71417CC970600165DD2 /* InfoPlist.strings */; };
