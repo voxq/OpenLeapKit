@@ -12,6 +12,9 @@ Current Features:
 - advanced detection of thumb (determine the finger with the greatest z value and above a threshold based on average of all fingers, relative to the palm, after transforming fingers to hand's reference space.)
 - detects whether a hand is right or left (simplistic technique of detecting whether the shortest finger is predominantly on the right or left).
 - translates vector information to a confined 2D (x,y) view using InteractionBox, with option to trim the InteractionBox.
+- single hand postures with tolerance parameters: handUpright, handPalmDown
+- two hand postures with tolerance parameters: handsMidPoint, handsFacing, handsFacingSame, handsPalmDown, handsUpright, handsBeside, handsNotFurtherThan, handArraySortedFromHands
+- two hand complex postures with tolerance parameters: handsUprightAndFacing, handsClamped, handsClampedAndFacing, handsPalmDownAndBeside
 
 Intended Features:
 - extrapolated hand/fingers (ex. https://github.com/asetniop/Leap-Finger-Tracking) such that they do not disappear simply because they vanished according to Leap's algorithms. Use last actions to estimate whether finger was closing, getting close to another finger, or... and then simulate the finger. When it comes back according to Leap, animate from simulated to real.
