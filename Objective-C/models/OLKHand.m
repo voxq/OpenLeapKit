@@ -105,9 +105,51 @@ static OLKHand *gPrevHand=nil;
         return OLKLeftHand;
 }
 
++ (OLKHandedness)handednessByThumbBasePosToPalm:(LeapHand *)hand
+{
+    if ([[hand fingers] count] == 0)
+        return OLKHandednessUnknown;
+    
+    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
+    LeapVector *handYBasis = [[hand palmNormal] negate];
+    LeapVector *handZBasis = [[hand direction] negate];
+    LeapVector *handOrigin =  [hand palmPosition];
+    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
+    handTransform = [handTransform rigidInverse];
+    LeapFinger *finger;
+    BOOL foundThumb = false;
+    LeapVector *transformedPosition;
+    LeapVector *transformedDirection;
+    
+    for( finger in [hand fingers])
+    {
+        transformedPosition = [handTransform transformPoint:[finger tipPosition]];
+        transformedDirection = [handTransform transformDirection:[finger direction]];
+        float fingerBaseZ = transformedPosition.z - transformedDirection.z*[finger length];
+
+        if (fingerBaseZ > 0)
+        {
+            foundThumb = TRUE;
+            break;
+        }
+    }
+    
+    if (!foundThumb)
+        return OLKHandednessUnknown;
+    
+    float fingerBaseX = transformedPosition.x - transformedDirection.x*[finger length];
+    if (fingerBaseX == 0)
+        return OLKHandednessUnknown;
+    
+    if (fingerBaseX < 0)
+        return OLKRightHand;
+    else
+        return OLKLeftHand;
+}
+
 + (OLKHandedness)handedness:(LeapHand *)hand
 {
-    return [self handednessByThumbTipDistFromPalm:hand];
+    return [self handednessByThumbBasePosToPalm:hand];
     
 // Not using this as the new ThumbTip method seems to work far better. 
     LeapFinger *shortestFinger=nil;
