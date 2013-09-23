@@ -97,22 +97,31 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     LeapHand *rightHand = [leftRightHands objectAtIndex:1];
     LeapHand *bestLeftOption=leftHand;
     LeapHand *bestRightOption=rightHand;
-    if (bestLeftOption==(LeapHand*)[NSNull null])
-        bestLeftOption = rightHand;
-    if (bestRightOption==(LeapHand*)[NSNull null])
-        bestRightOption = leftHand;
+//    if (bestLeftOption==(LeapHand*)[NSNull null])
+//        bestLeftOption = rightHand;
+//    if (bestRightOption==(LeapHand*)[NSNull null])
+//        bestRightOption = leftHand;
     
     if (_leftHand == nil && bestLeftOption != nil && bestLeftOption != (LeapHand*)[NSNull null])
     {
+        OLKHandedness handedness;
+        if ([hands count] == 1 && [_leftHand handedness] == OLKHandednessUnknown)
+            handedness = OLKHandednessUnknown;
+        else
+            handedness = OLKLeftHand;
+        
         NSLog(@"New Left Hand!");
-        _leftHandView = [_dataSource handView:NSMakeRect([bestLeftOption palmPosition].x-gHandViewDimX/2, [bestLeftOption palmPosition].y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:OLKLeftHand];
+        _leftHandView = [_dataSource handView:NSMakeRect([bestLeftOption palmPosition].x-gHandViewDimX/2, [bestLeftOption palmPosition].y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:handedness];
         _leftHand = [[OLKHand alloc] init];
         if (!_resetAutoFitOnNewHand)
             [(OLKSimpleVectHandView *)_leftHandView setFitHandFact:_fitHandFact];
         [_leftHandView setHand:_leftHand];
         
         [_leftHand setLeapHand:bestLeftOption];
-        [_leftHand setHandedness:OLKLeftHand];
+        [_leftHand setHandedness:handedness];
+        if (handedness == OLKHandednessUnknown)
+            [_leftHand setSimHandedness:OLKLeftHand];
+        
         if (_delegate)
             [_delegate willAddHand:_leftHand withHandView:_leftHandView];
         [_handsContainerView addSubview:_leftHandView];
@@ -120,6 +129,12 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     
     if (_rightHand == nil && bestRightOption != nil && bestRightOption != (LeapHand*)[NSNull null])
     {
+        OLKHandedness handedness;
+        if ([hands count] == 1 && [_leftHand handedness] == OLKHandednessUnknown)
+            handedness = OLKHandednessUnknown;
+        else
+            handedness = OLKLeftHand;
+        
         NSLog(@"New Right Hand!");
         _rightHandView = [_dataSource handView:NSMakeRect([bestRightOption palmPosition].x-gHandViewDimX/2, [bestRightOption palmPosition].y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:OLKRightHand];
         if (!_resetAutoFitOnNewHand)
@@ -128,7 +143,9 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         [_rightHandView setHand:_rightHand];
         
         [_rightHand setLeapHand:bestRightOption];
-        [_rightHand setHandedness:OLKRightHand];
+        [_rightHand setHandedness:handedness];
+        if (handedness == OLKHandednessUnknown)
+            [_rightHand setSimHandedness:OLKRightHand];
         
         if (_delegate)
             [_delegate willAddHand:_rightHand withHandView:_rightHandView];
@@ -166,23 +183,33 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     if (_rightHand == nil && _leftHand==nil)
         return;
     
-    OLKHandedness rightHandedness=OLKRightHand;
+    OLKHandedness rightHandedness=OLKHandednessUnknown;
     if (_rightHand != nil)
     {
         if ([_rightHand numFramesExist] < gConfirmHandednessFrameThreshold)
             rightHandedness = [_rightHand updateHandedness];
     }
-    OLKHandedness leftHandedness=OLKLeftHand;
+    OLKHandedness leftHandedness=OLKHandednessUnknown;
     if (_leftHand != nil)
     {
+        OLKHandedness leftHandDetected = [_leftHand handedness];
+        
         if ([_leftHand numFramesExist] < gConfirmHandednessFrameThreshold)
+        {
             leftHandedness = [_leftHand updateHandedness];
+            if (leftHandDetected == OLKHandednessUnknown && leftHandedness == OLKLeftHand)
+            {
+                if (_delegate)
+                    [_delegate handChangedHandedness:_leftHand withHandView:_leftHandView];
+                return;
+            }
+        }
     }
     
     if (leftHandedness == OLKHandednessUnknown && rightHandedness == OLKHandednessUnknown)
         return;
     
-    if (leftHandedness == OLKLeftHand && rightHandedness == OLKRightHand)
+    if (leftHandedness == OLKLeftHand || rightHandedness == OLKRightHand)
         return;
     
     // Only continue if there is a known handedness detected which is opposite to the hand's previous 
