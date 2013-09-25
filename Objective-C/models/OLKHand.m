@@ -75,11 +75,10 @@ static OLKHand *gPrevHand=nil;
         LeapVector *transformedDirection = [handTransform transformDirection:[finger direction]];
     
         [transformedFingers addObject:transformedPosition];
-        avgDist += (transformedPosition.z - [hand palmPosition].z);
+        avgDist -= transformedPosition.z;
         fingerCount ++;
     }
     
-    avgDist /= fingerCount;
     fingerCount = 0;
 
     LeapVector *leftMostFingerVector=nil;
@@ -95,9 +94,20 @@ static OLKHand *gPrevHand=nil;
             rightMostFingerVector = transformedPos;
         fingerCount ++;
     }
-    
-    if ((leftMostFingerVector.z - [hand palmPosition].z) < avgDist*0.55 && (rightMostFingerVector.z - [hand palmPosition].z) < avgDist*0.55)
+
+    if (leftMostFingerVector.z > rightMostFingerVector.z)
+        avgDist += leftMostFingerVector.z;
+    else if (leftMostFingerVector.z < rightMostFingerVector.z)
+        avgDist += rightMostFingerVector.z;
+    else
         return OLKHandednessUnknown;
+    
+    avgDist /= fingerCount-1;
+    
+    //    NSLog(@"avg: %f, leftmost finger: %f, rightmostfinger: %f, ratio left: %f, ratio right: %f", avgDist, leftMostFingerVector.z, rightMostFingerVector.z, -leftMostFingerVector.z/avgDist, -rightMostFingerVector.z/avgDist);
+    if (-leftMostFingerVector.z > avgDist*0.55 && -rightMostFingerVector.z > avgDist*0.55)
+        return OLKHandednessUnknown;
+    
     
     if (leftMostFingerVector.z > rightMostFingerVector.z)
         return OLKRightHand;
@@ -181,7 +191,7 @@ static OLKHand *gPrevHand=nil;
             break;
         }
         
-        avgDist += (transformedPosition.z - [hand palmPosition].z);
+        avgDist -= transformedPosition.z;
         fingerCount ++;
     }
     
@@ -198,7 +208,6 @@ static OLKHand *gPrevHand=nil;
     if ([[hand fingers] count] <= 1)
         return OLKHandednessUnknown;
 
-    avgDist /= fingerCount;
     fingerCount = 0;
     
     LeapVector *leftMostFingerVector=nil;
@@ -215,7 +224,17 @@ static OLKHand *gPrevHand=nil;
         fingerCount ++;
     }
     
-    if ((leftMostFingerVector.z - [hand palmPosition].z) < avgDist*0.55 && (rightMostFingerVector.z - [hand palmPosition].z) < avgDist*0.55)
+    if (leftMostFingerVector.z > rightMostFingerVector.z)
+        avgDist += leftMostFingerVector.z;
+    else if (leftMostFingerVector.z < rightMostFingerVector.z)
+        avgDist += rightMostFingerVector.z;
+    else
+        return OLKHandednessUnknown;
+    
+    avgDist /= fingerCount-1;
+
+//    NSLog(@"avg: %f, leftmost finger: %f, rightmostfinger: %f, ratio left: %f, ratio right: %f", avgDist, leftMostFingerVector.z, rightMostFingerVector.z, -leftMostFingerVector.z/avgDist, -rightMostFingerVector.z/avgDist);
+    if (-leftMostFingerVector.z > avgDist*0.55 && -rightMostFingerVector.z > avgDist*0.55)
         return OLKHandednessUnknown;
     
     if (leftMostFingerVector.z > rightMostFingerVector.z)
