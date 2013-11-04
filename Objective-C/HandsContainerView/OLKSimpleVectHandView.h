@@ -48,6 +48,9 @@ static const NSSize defaultFitHandFact = {150, 150};
 @property (nonatomic) BOOL enableDrawFingers;
 @property (nonatomic) BOOL enableDrawFingerTips;
 @property (nonatomic) BOOL enableScreenYAxisUsesZAxis;
+@property (nonatomic) BOOL enable3DHand;
+@property (nonatomic) BOOL enableStable;
+
 @property (nonatomic) NSColor *palmColor;
 
 @end

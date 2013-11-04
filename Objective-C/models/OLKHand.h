@@ -39,6 +39,7 @@
 @protocol OLKHandContainer <NSObject>
 
 @property (nonatomic) OLKHand *hand;
+@property (nonatomic) BOOL enableStable;
 
 @end
 
@@ -52,8 +53,10 @@ typedef enum {
 
 @interface OLKHand : NSObject
 
-+ (OLKHandedness)handedness:(LeapHand *)hand;
++ (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;
 + (NSArray *)simpleLeftRightHandSearch:(NSArray *)hands;
++ (OLKHandedness)handednessByThumbBasePosToPalm:(LeapHand *)hand thumbId:(int *)pThumbId;
++ (OLKHandedness)handednessByThumbTipAndBaseCombo:(LeapHand *)hand thumbId:(int *)pThumbId;
 
 - (BOOL)isLeapHand:(LeapHand *)leapHand;
 - (void)updateLeapHand:(LeapHand *)leapHand;

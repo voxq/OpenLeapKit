@@ -37,6 +37,7 @@
 @protocol OLKHandsContainerViewControllerDataSource <NSObject>
 
 - (NSView <OLKHandContainer>*)handView:(NSRect)frame withHandedness:(OLKHandedness)handedness;
+- (NSView *)pointableView:(NSRect)frame withHandedness:(OLKHandedness)handedness;
 
 @end
 
@@ -60,6 +61,15 @@
 @property (nonatomic, readonly) OLKHand *rightHand;
 @property (nonatomic, readonly) NSView <OLKHandContainer> *leftHandView;
 @property (nonatomic, readonly) NSView <OLKHandContainer> *rightHandView;
+@property (nonatomic, readonly) NSArray *pointableViews;
 @property (nonatomic) BOOL resetAutoFitOnNewHand;
+@property (nonatomic) NSSize trimInteraction;
+@property (nonatomic) BOOL useStabilized;
+@property (nonatomic) BOOL useInteractionBox;
+@property (nonatomic) NSMutableArray *gestureContext;
+@property (nonatomic) BOOL allowAllHands;
+@property (nonatomic) BOOL showPointables;
+@property (nonatomic) NSSize pointableScale;
+@property (nonatomic) NSSize handScale;
 
 @end

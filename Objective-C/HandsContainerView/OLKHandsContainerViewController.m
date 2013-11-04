@@ -35,6 +35,8 @@
 #import "OLKHandsContainerViewController.h"
 #import "OLKHand.h"
 #import "OLKHelpers.h"
+#import "OLKGestureRecognizer.h"
+#import "OLKGestureRecognizerDispatcher.h"
 
 static const float gHandViewDimX=250;
 static const float gHandViewDimY=250;
@@ -45,8 +47,12 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 {
     LeapFrame *_leapFrame;
     LeapInteractionBox *_interactionBox;
+    LeapDevice *_leapDevice;
     LeapHand *_prevHand;
     float _longestTimeHandVis;
+    float _rangeOffset;
+    float _proximityOffset;
+    float _percentRangeOfMaxWidth;
     NSSize _fitHandFact;
 }
 
@@ -58,6 +64,12 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 @synthesize leftHandView = _leftHandView;
 @synthesize rightHandView = _rightHandView;
 @synthesize resetAutoFitOnNewHand = _resetAutoFitOnNewHand;
+@synthesize trimInteraction = _trimInteraction;
+@synthesize gestureContext = _gestureContext;
+@synthesize useInteractionBox = _useInteractionBox;
+@synthesize allowAllHands = _allowAllHands;
+@synthesize showPointables = _showPointables;
+@synthesize pointableViews = _pointableViews;
 
 - (id)init
 {
@@ -66,6 +78,16 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         _resetAutoFitOnNewHand = FALSE;
         _longestTimeHandVis = 0;
         _fitHandFact = defaultFitHandFact;
+        _trimInteraction = gTrimInteractionBox;
+        _gestureContext = [[NSMutableArray alloc] init];
+        _useStabilized = TRUE;
+        _useInteractionBox = TRUE;
+        _allowAllHands = TRUE;
+        _showPointables = TRUE;
+        _rangeOffset = -80;
+        _proximityOffset = 40;
+        _percentRangeOfMaxWidth = 0.75;
+
     }
     return self;
 }
@@ -97,10 +119,6 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     LeapHand *rightHand = [leftRightHands objectAtIndex:1];
     LeapHand *bestLeftOption=leftHand;
     LeapHand *bestRightOption=rightHand;
-//    if (bestLeftOption==(LeapHand*)[NSNull null])
-//        bestLeftOption = rightHand;
-//    if (bestRightOption==(LeapHand*)[NSNull null])
-//        bestRightOption = leftHand;
     
     if (_leftHand == nil && bestLeftOption != nil && bestLeftOption != (LeapHand*)[NSNull null])
     {
@@ -111,11 +129,17 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             handedness = OLKLeftHand;
         
         NSLog(@"New Left Hand!");
-        _leftHandView = [_dataSource handView:NSMakeRect([bestLeftOption palmPosition].x-gHandViewDimX/2, [bestLeftOption palmPosition].y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:handedness];
+        LeapVector *palmPosition;
+        if (_useStabilized)
+            palmPosition = [bestLeftOption stabilizedPalmPosition];
+        else
+            palmPosition = [bestLeftOption palmPosition];
+        _leftHandView = [_dataSource handView:NSMakeRect(palmPosition.x-gHandViewDimX/2, palmPosition.y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:handedness];
         _leftHand = [[OLKHand alloc] init];
         if (!_resetAutoFitOnNewHand)
             [(OLKSimpleVectHandView *)_leftHandView setFitHandFact:_fitHandFact];
         [_leftHandView setHand:_leftHand];
+        [_leftHandView setEnableStable:_useStabilized];
         
         [_leftHand setLeapHand:bestLeftOption];
         [_leftHand setHandedness:handedness];
@@ -136,11 +160,17 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             handedness = OLKLeftHand;
         
         NSLog(@"New Right Hand!");
-        _rightHandView = [_dataSource handView:NSMakeRect([bestRightOption palmPosition].x-gHandViewDimX/2, [bestRightOption palmPosition].y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:OLKRightHand];
+        LeapVector *palmPosition;
+        if (_useStabilized)
+            palmPosition = [bestRightOption stabilizedPalmPosition];
+        else
+            palmPosition = [bestRightOption palmPosition];
+        _rightHandView = [_dataSource handView:NSMakeRect(palmPosition.x-gHandViewDimX/2, palmPosition.y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:OLKRightHand];
         if (!_resetAutoFitOnNewHand)
             [(OLKSimpleVectHandView *)_rightHandView setFitHandFact:_fitHandFact];
         _rightHand = [[OLKHand alloc] init];
         [_rightHandView setHand:_rightHand];
+        [_rightHandView setEnableStable:_useStabilized];
         
         [_rightHand setLeapHand:bestRightOption];
         [_rightHand setHandedness:handedness];
@@ -283,12 +313,22 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     }
     NSRect oldRect = [handView frame];
     LeapHand *leapHand = [hand leapHand];
-    oldRect.origin = [OLKHelpers convertLeapPos:[leapHand stabilizedPalmPosition] toConfinedView:_handsContainerView forFrame:[leapHand frame] trim:gTrimInteractionBox];
+    LeapVector *palmPosition;
+    if (_useStabilized)
+        palmPosition = [leapHand stabilizedPalmPosition];
+    else
+        palmPosition = [leapHand palmPosition];
+    
+    if (_useInteractionBox)
+        oldRect.origin = [OLKHelpers convertInteractionBoxLeapPos:palmPosition toConfinedView:_handsContainerView forFrame:[leapHand frame] trim:_trimInteraction];
+    else
+        oldRect.origin = [OLKHelpers convertLeapPos:palmPosition toConfinedView:_handsContainerView proximityOffset:_proximityOffset rangeOffset:_rangeOffset percentRangeOfMaxWidth:_percentRangeOfMaxWidth forLeapDevice:_leapDevice];
+
     oldRect.origin.x -= gHandViewDimX/2;
     oldRect.origin.y -= gHandViewDimY/2;
     
     [handView setFrame:oldRect];
-    //    NSLog(@"hand x=%f, y=%f", [handView frame].origin.x, [handView frame].origin.y);
+//    NSLog(@"hand x=%f, y=%f", [handView frame].origin.x, [handView frame].origin.y);
 }
 
 - (void)organizeHands
@@ -323,23 +363,40 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     if ([newHands count] != 0)
         [self assignHands:newHands];
     
+}
+
+- (void)updateHandsAndPointablesViews
+{
     [self updateHandViewForHand:_leftHand];
     [self updateHandViewForHand:_rightHand];
-    
-    [self removeMissingHands];
+/*
+    for (LeapPointable *pointable in [_leapFrame pointables])
+    {
+        NSView *pointableView = [_dataSource pointableView:(NSRect)frame withHandedness:(OLKHandedness)handedness;
+
+    }
+ */
 }
 
 - (void)onFrame:(NSNotification *)notification
 {
-    LeapController *aController = (LeapController *)[notification object];
+    LeapController *leapController = (LeapController *)[notification object];
+    _leapDevice = [[leapController devices] objectAtIndex:0];
     
     // Get the most recent frame and report some basic information
-    _leapFrame = [aController frame:0];
+    _leapFrame = [leapController frame:0];
+    
+//    OLKGestureRecognizerDispatcher *dispatcher = [OLKGestureRecognizerDispatcher sharedDispatcher];
+    for (OLKGestureRecognizer *recognizer in _gestureContext)
+         [recognizer updateWithFrame:_leapFrame controller:leapController];
+//        [dispatcher dispatchGestureRecognizer:recognizer frame:_leapFrame controller:leapController];
     
     if (_interactionBox == nil)
         _interactionBox = [_leapFrame interactionBox];
     
     [self organizeHands];
+    [self updateHandsAndPointablesViews];
+    [self removeMissingHands];
 }
 
 

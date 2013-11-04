@@ -37,7 +37,10 @@
 
 @interface OLKHelpers : NSObject
 
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view forFrame:(LeapFrame *)frame trim:(NSSize)trimAmount;
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toView:(NSView *)view forFrame:(LeapFrame *)frame trim:(NSSize)trimAmount;
+// Uses the leap interaction box to map leap positions to a view, trimming off a specified amount of the interaction box when its values are non-optimal.
++ (NSPoint)convertInteractionBoxLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view forFrame:(LeapFrame *)frame trim:(NSSize)trimAmount;
+
+// Maps leap positions to a view, using the device range with supplied offset, and horizontal angle to calculate .
++ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view proximityOffset:(float)proximityOffset rangeOffset:(float)rangeOffset percentRangeOfMaxWidth:(float)percentRangeOfMaxWidth forLeapDevice:(LeapDevice *)leapDevice;
 
 @end

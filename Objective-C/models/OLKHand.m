@@ -53,6 +53,33 @@ static OLKHand *gPrevHand=nil;
         gPrevHand = [[OLKHand alloc] init];
 }
 
++ (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand
+{
+    NSArray *pointables = [hand pointables];
+    if ([pointables count] == 0)
+        return nil;
+    
+    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
+    LeapVector *handYBasis = [[hand palmNormal] negate];
+    LeapVector *handZBasis = [[hand direction] negate];
+    LeapVector *handOrigin =  [hand palmPosition];
+    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
+    handTransform = [handTransform rigidInverse];
+    float furthestTipDist = 0;
+    LeapPointable *furthestPointable;
+    for (LeapPointable *pointable in pointables)
+    {
+        LeapVector *transformedPosition = [handTransform transformPoint:[pointable tipPosition]];
+        float dist = handOrigin.z - transformedPosition.z;
+        if (dist > furthestTipDist)
+        {
+            furthestTipDist = dist;
+            furthestPointable = pointable;
+        }
+    }
+    return furthestPointable;
+}
+
 + (OLKHandedness)handednessByThumbTipDistFromPalm:(LeapHand *)hand
 {
     if ([[hand fingers] count] == 0)
@@ -72,7 +99,6 @@ static OLKHand *gPrevHand=nil;
     for( LeapFinger *finger in [hand fingers])
     {
         LeapVector *transformedPosition = [handTransform transformPoint:[finger tipPosition]];
-        LeapVector *transformedDirection = [handTransform transformDirection:[finger direction]];
     
         [transformedFingers addObject:transformedPosition];
         avgDist -= transformedPosition.z;
@@ -115,7 +141,7 @@ static OLKHand *gPrevHand=nil;
         return OLKLeftHand;
 }
 
-+ (OLKHandedness)handednessByThumbBasePosToPalm:(LeapHand *)hand
++ (OLKHandedness)handednessByThumbBasePosToPalm:(LeapHand *)hand thumbId:(int *)pThumbId
 {
     if ([[hand fingers] count] == 0)
         return OLKHandednessUnknown;
@@ -139,6 +165,8 @@ static OLKHand *gPrevHand=nil;
 
         if (fingerBaseZ > 0)
         {
+            if (pThumbId)
+                *pThumbId = [finger identifier];
             foundThumb = TRUE;
             break;
         }
@@ -157,7 +185,7 @@ static OLKHand *gPrevHand=nil;
         return OLKLeftHand;
 }
 
-+ (OLKHandedness)handednessByThumbTipAndBaseCombo:(LeapHand *)hand
++ (OLKHandedness)handednessByThumbTipAndBaseCombo:(LeapHand *)hand thumbId:(int *)pThumbId
 {
     if ([[hand fingers] count] == 0)
         return OLKHandednessUnknown;
@@ -177,7 +205,7 @@ static OLKHand *gPrevHand=nil;
     
     NSMutableArray *transformedFingers = [[NSMutableArray alloc] init];
     
-    for( finger in [hand fingers])
+    for (finger in [hand fingers])
     {
         transformedPosition = [handTransform transformPoint:[finger tipPosition]];
         transformedDirection = [handTransform transformDirection:[finger direction]];
@@ -187,6 +215,8 @@ static OLKHand *gPrevHand=nil;
         
         if (fingerBaseZ > 10)
         {
+            if (pThumbId)
+                *pThumbId = [finger identifier];
             foundThumb = TRUE;
             break;
         }
@@ -200,9 +230,15 @@ static OLKHand *gPrevHand=nil;
         float fingerBaseX = transformedPosition.x - transformedDirection.x*[finger length];
         
         if (fingerBaseX < 0)
+        {
+//            NSLog(@"Right Handed detected by finger base");
             return OLKRightHand;
+        }
         else
+        {
+//            NSLog(@"Left Handed detected by finger base");
             return OLKLeftHand;
+        }
     }
 
     if ([[hand fingers] count] <= 1)
@@ -233,14 +269,20 @@ static OLKHand *gPrevHand=nil;
     
     avgDist /= fingerCount-1;
 
-//    NSLog(@"avg: %f, leftmost finger: %f, rightmostfinger: %f, ratio left: %f, ratio right: %f", avgDist, leftMostFingerVector.z, rightMostFingerVector.z, -leftMostFingerVector.z/avgDist, -rightMostFingerVector.z/avgDist);
-    if (-leftMostFingerVector.z > avgDist*0.55 && -rightMostFingerVector.z > avgDist*0.55)
+    if (-leftMostFingerVector.z > avgDist*0.5 && -rightMostFingerVector.z > avgDist*0.5)
         return OLKHandednessUnknown;
-    
+
+//    NSLog(@"avg: %f, leftmost finger: %f, rightmostfinger: %f, ratio left: %f, ratio right: %f", avgDist, leftMostFingerVector.z, rightMostFingerVector.z, -leftMostFingerVector.z/avgDist, -rightMostFingerVector.z/avgDist);
     if (leftMostFingerVector.z > rightMostFingerVector.z)
+    {
+//        NSLog(@"Right Handed detected by finger length");
         return OLKRightHand;
+    }
     else
+    {
+//        NSLog(@"Left Handed detected by finger length");
         return OLKLeftHand;
+    }
 }
 
 + (OLKHandedness)handednessByShortestFinger:(LeapHand *)hand
@@ -278,11 +320,6 @@ static OLKHand *gPrevHand=nil;
 
 }
 
-+ (OLKHandedness)handedness:(LeapHand *)hand
-{
-    return [self handednessByThumbTipAndBaseCombo:hand];
-}
-
 + (NSArray *)simpleLeftRightHandSearch:(NSArray *)hands
 {
     LeapHand *leftMostHand=nil;
@@ -292,12 +329,13 @@ static OLKHand *gPrevHand=nil;
     
     for (LeapHand *hand in hands)
     {
-        if ([self handedness:hand] == OLKLeftHand)
+        OLKHandedness handedness = [self handednessByThumbTipAndBaseCombo:hand thumbId:nil];
+        if (handedness == OLKLeftHand)
         {
             if (leftMostLeftHand == nil || [hand palmPosition].x < [leftMostLeftHand palmPosition].x)
                 leftMostLeftHand = hand;
         }
-        else if ([self handedness:hand] == OLKRightHand)
+        else if (handedness == OLKRightHand)
         {
             if (rightMostRightHand == nil || [hand palmPosition].x > [rightMostRightHand palmPosition].x)
                 rightMostRightHand = hand;
@@ -357,11 +395,20 @@ static OLKHand *gPrevHand=nil;
     _leapFrame = [leapHand frame];
 }
 
+- (OLKHandedness)defaultHandednessAlgorithm
+{
+    int thumbId=0;
+    OLKHandedness handedness = [OLKHand handednessByThumbTipAndBaseCombo:_leapHand thumbId:&thumbId];
+    if (thumbId != 0)
+        _thumb = [_leapHand finger:thumbId];
+    return handedness;
+}
+
 - (OLKHandedness)updateHandedness
 {
 //    NSLog(@"Left handedness count: %lu; Right handedness count: %lu!", (unsigned long)_numLeftHandedness, (unsigned long)_numRightHandedness);
 
-    OLKHandedness handedness = [OLKHand handedness:_leapHand];
+    OLKHandedness handedness = [self defaultHandednessAlgorithm];
     if (handedness == OLKLeftHand)
         _numLeftHandedness ++;
     else if (handedness == OLKRightHand)

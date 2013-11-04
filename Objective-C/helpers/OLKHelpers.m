@@ -35,7 +35,7 @@
 
 @implementation OLKHelpers
 
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view forFrame:(LeapFrame *)frame trim:(NSSize)trimAmount
++ (NSPoint)convertInteractionBoxLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view forFrame:(LeapFrame *)frame trim:(NSSize)trimAmount
 {
     LeapInteractionBox *interactionBox = [frame interactionBox];
     LeapVector *ibNormPos = [interactionBox normalizePoint:leapPos clamp:YES];
@@ -62,19 +62,23 @@
     return viewPos;
 }
 
-// TODO: Not functioning, need to complete.
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toView:(NSView *)view forFrame:(LeapFrame *)frame trim:(NSSize)trimAmount
++ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view proximityOffset:(float)proximityOffset rangeOffset:(float)rangeOffset percentRangeOfMaxWidth:(float)percentRangeOfMaxWidth forLeapDevice:(LeapDevice *)leapDevice
 {
-    LeapInteractionBox *interactionBox = [frame interactionBox];
-    LeapVector *ibNormPos = [interactionBox normalizePoint:leapPos clamp:NO];
+    float rangeOfMaxWidth = [leapDevice range]*percentRangeOfMaxWidth;
+    float xAngle = [leapDevice horizontalViewAngle];
+    
+    float widthToMap = rangeOfMaxWidth * xAngle/2 * 2;
+    
     NSRect boundsRect = [view bounds];
     NSSize viewSize = boundsRect.size;
-    
+
+    float ratioLeapToViewWidth = viewSize.width / widthToMap;
+    float ratioLeapToViewHeight = viewSize.height / (([leapDevice range] + rangeOffset) - proximityOffset);
+
     NSPoint viewPos;
-//    viewPos.x = ibNormPos.x - ;
-    viewPos.y = ibNormPos.y - ibNormPos.y*trimAmount.height;
-    viewPos.x = viewPos.x*viewSize.width;
-    viewPos.y = viewPos.y*viewSize.height;
+    viewPos.x = leapPos.x * ratioLeapToViewWidth + viewSize.width/2;
+    viewPos.y = ((leapPos.y + rangeOffset) - proximityOffset) * ratioLeapToViewHeight;
+    
     return viewPos;
 }
 
