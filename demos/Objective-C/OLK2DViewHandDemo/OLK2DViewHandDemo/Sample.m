@@ -189,4 +189,28 @@
         [_handsOverlayController setEnableAutoFitHands:NO];
 }
 
+- (IBAction)enable3DHand:(id)sender
+{
+    if ([(NSButton*)sender state] == NSOnState)
+        [_handsOverlayController setEnable3DHand:YES];
+    else
+        [_handsOverlayController setEnable3DHand:NO];
+}
+
+- (IBAction)enableStabilizedPalms:(id)sender
+{
+    if ([(NSButton*)sender state] == NSOnState)
+        [_handsOverlayController setEnableStablePalms:YES];
+    else
+        [_handsOverlayController setEnableStablePalms:NO];
+}
+
+- (IBAction)enableInteractionBox:(id)sender
+{
+    if ([(NSButton*)sender state] == NSOnState)
+        [_handsOverlayController setUseInteractionBox:YES];
+    else
+        [_handsOverlayController setUseInteractionBox:NO];
+}
+
 @end

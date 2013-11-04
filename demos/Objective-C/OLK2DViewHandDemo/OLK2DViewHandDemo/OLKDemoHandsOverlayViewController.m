@@ -44,6 +44,8 @@
 @synthesize enableDrawFingers = _enableDrawFingers;
 @synthesize enableDrawFingerTips = _enableDrawFingerTips;
 @synthesize enableScreenYAxisUsesZAxis = _enableScreenYAxisUsesZAxis;
+@synthesize enable3DHand = _enable3DHand;
+@synthesize enableStablePalms = _enableStablePalms;
 
 - (id)init
 {
@@ -56,6 +58,8 @@
         _enableDrawHandsBoundingCircle = YES;
         _enableDrawPalms = YES;
         _enableScreenYAxisUsesZAxis = YES;
+        _enable3DHand = YES;
+        _enableStablePalms = YES;
     }
     return self;
 }
@@ -70,6 +74,7 @@
     [handView setEnableDrawFingerTips:_enableDrawFingerTips];
     [handView setEnableDrawFingers:_enableDrawFingers];
     [handView setEnableAutoFitHand:_enableAutoFitHands];
+    [handView setEnable3DHand:_enable3DHand];
     
     return handView;
 }
@@ -138,6 +143,29 @@
         [leftHandView setEnableDrawPalm:enableDrawPalms];
     if (rightHandView)
         [rightHandView setEnableDrawPalm:enableDrawPalms];
+}
+
+-(void)setEnable3DHand:(BOOL)enable3DHand
+{
+    _enable3DHand = enable3DHand;
+    OLKSimpleVectHandView *leftHandView = (OLKSimpleVectHandView *)[self leftHandView];
+    OLKSimpleVectHandView *rightHandView = (OLKSimpleVectHandView *)[self rightHandView];
+    if (leftHandView)
+        [leftHandView setEnable3DHand:enable3DHand];
+    if (rightHandView)
+        [rightHandView setEnable3DHand:enable3DHand];
+}
+
+-(void)setEnableStablePalms:(BOOL)enableStablePalms
+{
+    _enableStablePalms = enableStablePalms;
+    [super setUseStabilized:enableStablePalms];
+    OLKSimpleVectHandView *leftHandView = (OLKSimpleVectHandView *)[self leftHandView];
+    OLKSimpleVectHandView *rightHandView = (OLKSimpleVectHandView *)[self rightHandView];
+    if (leftHandView)
+        [leftHandView setEnableStable:enableStablePalms];
+    if (rightHandView)
+        [rightHandView setEnableStable:enableStablePalms];
 }
 
 

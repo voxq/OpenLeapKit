@@ -44,5 +44,7 @@
 @property (nonatomic) BOOL enableDrawFingers;
 @property (nonatomic) BOOL enableDrawFingerTips;
 @property (nonatomic) BOOL enableScreenYAxisUsesZAxis;
+@property (nonatomic) BOOL enable3DHand;
+@property (nonatomic) BOOL enableStablePalms;
 
 @end

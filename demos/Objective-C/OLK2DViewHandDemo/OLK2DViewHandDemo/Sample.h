@@ -22,5 +22,8 @@
 - (IBAction)enableFingersZisY:(id)sender;
 - (IBAction)enableDrawPalm:(id)sender;
 - (IBAction)enableAutoHandSize:(id)sender;
+- (IBAction)enable3DHand:(id)sender;
+- (IBAction)enableStabilizedPalms:(id)sender;
+- (IBAction)enableInteractionBox:(id)sender;
 
 @end
