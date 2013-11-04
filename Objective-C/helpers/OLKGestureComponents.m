@@ -64,7 +64,7 @@
 
 }
 
-- (BOOL)handBeyondThreshold:(float)threshold inDirMinus:(BOOL)inDirMinus hand:(LeapHand *)hand // frame:(LeapFrame *)frame
+- (BOOL)handBeyondThreshold:(float)threshold inDirMinus:(BOOL)inDirMinus hand:(LeapHand *)hand
 {
     if (hand == nil)
         return NO;
@@ -306,12 +306,29 @@
     return FALSE;
 }
 
+- (BOOL)handsCloserThan:(float)proximity hand:(LeapHand*)hand1 otherHand:(LeapHand*)hand2
+{
+    LeapVector *palmPos = [hand1 palmPosition];
+    LeapVector *compPalmPos = [hand2 palmPosition];
+
+    float dist = (palmPos.x - compPalmPos.x)*(palmPos.x - compPalmPos.x) + (palmPos.y - compPalmPos.y)*(palmPos.y - compPalmPos.y) + (palmPos.z - compPalmPos.z)*(palmPos.z - compPalmPos.z);
+    dist = sqrtf(dist);
+    
+    if (dist < proximity)
+        return TRUE;
+    
+    return FALSE;
+}
+
 - (BOOL)handsFurtherThan:(float)proximity hand:(LeapHand*)hand1 otherHand:(LeapHand*)hand2
 {
     LeapVector *palmPos = [hand1 palmPosition];
     LeapVector *compPalmPos = [hand2 palmPosition];
     
-    if (fabs(palmPos.x - compPalmPos.x) < proximity && fabs(palmPos.y - compPalmPos.y) < proximity && fabs(palmPos.z - compPalmPos.z) < proximity)
+    float dist = (palmPos.x - compPalmPos.x)*(palmPos.x - compPalmPos.x) + (palmPos.y - compPalmPos.y)*(palmPos.y - compPalmPos.y) + (palmPos.z - compPalmPos.z)*(palmPos.z - compPalmPos.z);
+    dist = sqrtf(dist);
+    
+    if (dist > proximity)
         return TRUE;
     
     return FALSE;
@@ -328,6 +345,12 @@
     return FALSE;
 }
 
+
+
+#pragma mark -
+#pragma two hand complex components
+
+
 // TODO: This assumes facing on one of the three axis, need to change to work for an arbitrary direction. Need to rotate one hand to a known axis, then apply this rotation to the other, then check the normal threshold against this.
 - (BOOL)handsSpreadPalmsParallel:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 spread:(float)spread axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
 {
@@ -338,12 +361,6 @@
     
     return FALSE;
 }
-
-
-
-#pragma mark -
-#pragma two hand complex components
-
 
 - (BOOL)handsInProximityBeside:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity axisTolerance:(float)axisTolerance
 {
@@ -364,7 +381,7 @@
 }
 
 // TODO: This assumes facing on one of the three axis, need to change to work for an arbitrary direction. Need to rotate one hand to a known axis, then apply this rotation to the other, then check the normal threshold against this.
-- (BOOL)handsClampedAndPalmsFacing:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
+- (BOOL)palmsClamped:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
 {
     if ([self palmsFacing:hand1 otherHand:hand2 normalThreshold:normalThreshold])
     {
@@ -384,6 +401,16 @@
     return FALSE;
 }
 
+- (BOOL)handsSidewayClamped:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
+{
+    if ([self palmsAimingSideway:hand1 otherHand:hand2 normalThreshold:normalThreshold])
+    {
+        if (fabsf([hand1 palmPosition].x - [hand2 palmPosition].x) < proximity)
+            return TRUE;
+    }
+    return FALSE;
+}
+
 - (BOOL)handsInProximityBesideAndPalmsDown:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity normalThreshold:(float)normalThreshold axisTolerance:(float)axisTolerance
 {
     if ([self palmsDown:hand1 otherHand:hand2 normalThreshold:normalThreshold])
@@ -394,21 +421,29 @@
     return FALSE;
 }
 
+- (BOOL)palmsBesideAimingSideway:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
+{
+    if ([self palmsAimingSideway:hand1 otherHand:hand2 normalThreshold:normalThreshold])
+    {
+        if ([self handsBeside:hand1 otherHand:hand2 axisTolerance:axisTolerance])
+            return YES;
+    }
+    return NO;
+}
+
 - (BOOL)palmsBesideAndFacing:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
 {
     if ([self palmsSidewayAndFacing:hand1 otherHand:hand2 normalThreshold:normalThreshold])
     {
         if ([self handsBeside:hand1 otherHand:hand2 axisTolerance:axisTolerance])
-        {
             return YES;
-        }
     }
     return NO;
 }
 
 - (BOOL)palmsSidewayClamped:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
 {
-    if ([self palmsAimingSideway:hand1 otherHand:hand2 normalThreshold:normalThreshold])
+    if ([self palmsSidewayAndFacing:hand1 otherHand:hand2 normalThreshold:normalThreshold])
     {
         if (fabsf([hand1 palmPosition].x - [hand2 palmPosition].x) < proximity)
             return TRUE;
@@ -416,11 +451,11 @@
     return FALSE;
 }
 
-- (BOOL)palmsSidewayClampedAndFacing:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
+- (BOOL)palmsSpreadBesideAimingSideway:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 spread:(float)spread axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
 {
-    if ([self palmsSidewayAndFacing:hand1 otherHand:hand2 normalThreshold:normalThreshold])
+    if ([self palmsBesideAimingSideway:hand1 otherHand:hand2 axisTolerance:axisTolerance normalThreshold:normalThreshold])
     {
-        if (fabsf([hand1 palmPosition].x - [hand2 palmPosition].x) < proximity)
+        if (fabsf([hand1 palmPosition].x - [hand2 palmPosition].x) > spread)
             return TRUE;
     }
     return FALSE;
