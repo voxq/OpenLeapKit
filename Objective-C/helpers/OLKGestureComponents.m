@@ -27,12 +27,48 @@
 #pragma mark -
 #pragma single hand components
 
+- (BOOL)palmAimingLeft:(LeapHand *)hand normalThreshold:(float)normalThreshold
+{
+    LeapVector *palmNormal = [hand palmNormal];
+    
+    if (palmNormal.x < -normalThreshold)
+        return TRUE;
+    return NO;
+}
+
+- (BOOL)palmAimingRight:(LeapHand *)hand normalThreshold:(float)normalThreshold
+{
+    LeapVector *palmNormal = [hand palmNormal];
+    
+    if (palmNormal.x > normalThreshold)
+        return TRUE;
+    return NO;
+}
+
 - (BOOL)palmAimingSideway:(LeapHand *)hand normalThreshold:(float)normalThreshold
 {
     LeapVector *palmNormal = [hand palmNormal];
     if (palmNormal.x > normalThreshold || palmNormal.x < -normalThreshold)
         return YES;
     
+    return NO;
+}
+
+- (BOOL)palmAimingIn:(LeapHand *)hand normalThreshold:(float)normalThreshold
+{
+    LeapVector *palmNormal = [hand palmNormal];
+    
+    if (palmNormal.z < -normalThreshold)
+        return TRUE;
+    return NO;
+}
+
+- (BOOL)palmAimingOut:(LeapHand *)hand normalThreshold:(float)normalThreshold
+{
+    LeapVector *palmNormal = [hand palmNormal];
+    
+    if (palmNormal.z > normalThreshold)
+        return TRUE;
     return NO;
 }
 
@@ -45,13 +81,14 @@
     return NO;
 }
 
-- (BOOL)palmAimingUpOrDown:(LeapHand *)hand normalThreshold:(float)normalThreshold
+- (BOOL)palmUp:(LeapHand *)hand normalThreshold:(float)normalThreshold
 {
     LeapVector *palmNormal = [hand palmNormal];
-    if (palmNormal.z > normalThreshold || palmNormal.z < -normalThreshold)
-        return YES;
     
+    if (palmNormal.y > normalThreshold)
+        return TRUE;
     return NO;
+    
 }
 
 - (BOOL)palmDown:(LeapHand *)hand normalThreshold:(float)normalThreshold
@@ -61,7 +98,16 @@
     if (palmNormal.y < -normalThreshold)
         return TRUE;
     return NO;
+    
+}
 
+- (BOOL)palmAimingUpOrDown:(LeapHand *)hand normalThreshold:(float)normalThreshold
+{
+    LeapVector *palmNormal = [hand palmNormal];
+    if (palmNormal.z > normalThreshold || palmNormal.z < -normalThreshold)
+        return YES;
+    
+    return NO;
 }
 
 - (BOOL)handBeyondThreshold:(float)threshold inDirMinus:(BOOL)inDirMinus hand:(LeapHand *)hand
