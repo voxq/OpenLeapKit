@@ -9,6 +9,7 @@ Initial focus is to provide a jumpstart for developers to move forward with idea
 
 Current Features:
 - draws simple hands for 2D interaction (using various optional settings).
+- draws simple 3D hand/fingers confined to 2D surface (for screen interaction)
 - advanced detection of thumb (determine the finger with the greatest z value and above a threshold based on average of all fingers, relative to the palm, after transforming fingers to hand's reference space.)
 - detects whether a hand is right or left (simplistic technique of detecting whether the shortest finger is predominantly on the right or left).
 - translates vector information to a confined 2D (x,y) view using InteractionBox, with option to trim the InteractionBox.
@@ -18,7 +19,7 @@ Current Features:
 
 Intended Features:
 - extrapolated hand/fingers (ex. https://github.com/asetniop/Leap-Finger-Tracking) such that they do not disappear simply because they vanished according to Leap's algorithms. Use last actions to estimate whether finger was closing, getting close to another finger, or... and then simulate the finger. When it comes back according to Leap, animate from simulated to real.
-- draw 3D hand/fingers with option to confine to 2D surface (for screen interaction)
+- enable 3D movement in depth (z axis movement)
 - Rig 3D mesh to hand/fingers
 - advanced detection of right/left hands
 - diverse gestures and interactions
