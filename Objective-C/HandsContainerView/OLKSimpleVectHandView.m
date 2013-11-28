@@ -79,7 +79,7 @@
 - (void)setHand:(OLKHand *)hand
 {
     _hand = hand;
-    [self display];
+    [self setNeedsDisplay:YES];
 }
 
 - (void)insertIntoOrderedFingers:(NSPoint)insertFingerBase

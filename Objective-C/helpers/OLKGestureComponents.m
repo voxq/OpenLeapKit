@@ -449,7 +449,7 @@
 
 - (BOOL)handsSidewayClamped:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity axisTolerance:(float)axisTolerance normalThreshold:(float)normalThreshold
 {
-    if ([self palmsAimingSideway:hand1 otherHand:hand2 normalThreshold:normalThreshold])
+    if ([self palmsBesideAimingSideway:hand1 otherHand:hand2 axisTolerance:axisTolerance normalThreshold:normalThreshold])
     {
         if (fabsf([hand1 palmPosition].x - [hand2 palmPosition].x) < proximity)
             return TRUE;
@@ -491,6 +491,9 @@
 {
     if ([self palmsSidewayAndFacing:hand1 otherHand:hand2 normalThreshold:normalThreshold])
     {
+        if (![self handsBeside:hand1 otherHand:hand2 axisTolerance:axisTolerance])
+            return FALSE;
+        
         if (fabsf([hand1 palmPosition].x - [hand2 palmPosition].x) < proximity)
             return TRUE;
     }

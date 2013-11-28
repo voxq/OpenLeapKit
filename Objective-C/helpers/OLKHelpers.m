@@ -77,7 +77,7 @@
 
     NSPoint viewPos;
     viewPos.x = leapPos.x * ratioLeapToViewWidth + viewSize.width/2;
-    viewPos.y = ((leapPos.y + rangeOffset) - proximityOffset) * ratioLeapToViewHeight;
+    viewPos.y = (leapPos.y - proximityOffset) * ratioLeapToViewHeight;
     
     return viewPos;
 }

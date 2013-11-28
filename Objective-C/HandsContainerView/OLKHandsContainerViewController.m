@@ -85,8 +85,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         _allowAllHands = TRUE;
         _showPointables = TRUE;
         _rangeOffset = -80;
-        _proximityOffset = 40;
-        _percentRangeOfMaxWidth = 0.75;
+        _proximityOffset = 0;
+        _percentRangeOfMaxWidth = 0.6;
 
     }
     return self;

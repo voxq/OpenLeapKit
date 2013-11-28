@@ -7,14 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F23D33E183E655E00DF0490 /* OLKButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F23D33C183E655E00DF0490 /* OLKButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F23D343183E674500DF0490 /* OLKToggleButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F23D341183E674500DF0490 /* OLKToggleButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F23D344183E674500DF0490 /* OLKToggleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F23D342183E674500DF0490 /* OLKToggleButton.m */; };
 		2F30E2FB17CF456600F14438 /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F30E2FA17CF456600F14438 /* LeapObjectiveC.mm */; };
 		2F30E2FD17CF484300F14438 /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F30E2F817CF450D00F14438 /* libLeap.dylib */; };
 		2F30E30917CF693100F14438 /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2F30E2F817CF450D00F14438 /* libLeap.dylib */; };
+		2F55EE921846739F00BD4EB8 /* OLKScratchButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F55EE901846739F00BD4EB8 /* OLKScratchButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F55EE931846739F00BD4EB8 /* OLKScratchButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F55EE911846739F00BD4EB8 /* OLKScratchButton.m */; };
 		2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FB65BB617D14828002E1C05 /* OLKGestureComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB65BB417D14828002E1C05 /* OLKGestureComponents.m */; };
-		2FC0A44C17F450E1009B4A7D /* OLKGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC0A44A17F450E1009B4A7D /* OLKGestureRecognizer.h */; };
+		2FC0A44C17F450E1009B4A7D /* OLKGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC0A44A17F450E1009B4A7D /* OLKGestureRecognizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FC0A44D17F450E1009B4A7D /* OLKGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC0A44B17F450E1009B4A7D /* OLKGestureRecognizer.m */; };
-		2FC0A45217F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC0A45017F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h */; };
+		2FC0A45217F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC0A45017F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FC0A45317F45F67009B4A7D /* OLKGestureRecognizerDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC0A45117F45F67009B4A7D /* OLKGestureRecognizerDispatcher.m */; };
 		2FEDD70C17CC970600165DD2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FEDD70B17CC970600165DD2 /* Cocoa.framework */; };
 		2FEDD71617CC970600165DD2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2FEDD71417CC970600165DD2 /* InfoPlist.strings */; };
@@ -44,8 +49,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2F23D33C183E655E00DF0490 /* OLKButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKButton.h; path = views/OLKButton.h; sourceTree = "<group>"; };
+		2F23D341183E674500DF0490 /* OLKToggleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKToggleButton.h; path = views/OLKToggleButton.h; sourceTree = "<group>"; };
+		2F23D342183E674500DF0490 /* OLKToggleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKToggleButton.m; path = views/OLKToggleButton.m; sourceTree = "<group>"; };
 		2F30E2F817CF450D00F14438 /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLeap.dylib; path = ../../../../code/libraries/LeapSDK/lib/libLeap.dylib; sourceTree = "<group>"; };
 		2F30E2FA17CF456600F14438 /* LeapObjectiveC.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = LeapObjectiveC.mm; path = ../../../../code/libraries/LeapSDK/include/LeapObjectiveC.mm; sourceTree = "<group>"; };
+		2F55EE901846739F00BD4EB8 /* OLKScratchButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKScratchButton.h; path = views/OLKScratchButton.h; sourceTree = "<group>"; };
+		2F55EE911846739F00BD4EB8 /* OLKScratchButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKScratchButton.m; path = views/OLKScratchButton.m; sourceTree = "<group>"; };
 		2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureComponents.h; sourceTree = "<group>"; };
 		2FB65BB417D14828002E1C05 /* OLKGestureComponents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKGestureComponents.m; sourceTree = "<group>"; };
 		2FC0A44A17F450E1009B4A7D /* OLKGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureRecognizer.h; sourceTree = "<group>"; };
@@ -86,6 +96,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2F23D340183E656400DF0490 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				2F23D33C183E655E00DF0490 /* OLKButton.h */,
+				2F23D341183E674500DF0490 /* OLKToggleButton.h */,
+				2F23D342183E674500DF0490 /* OLKToggleButton.m */,
+				2F55EE901846739F00BD4EB8 /* OLKScratchButton.h */,
+				2F55EE911846739F00BD4EB8 /* OLKScratchButton.m */,
+			);
+			name = views;
+			sourceTree = "<group>";
+		};
 		2FC0A44F17F45F4F009B4A7D /* controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -98,6 +120,7 @@
 		2FEDD6FE17CC970600165DD2 = {
 			isa = PBXGroup;
 			children = (
+				2F23D340183E656400DF0490 /* views */,
 				2F30E2FA17CF456600F14438 /* LeapObjectiveC.mm */,
 				2FC0A44F17F45F4F009B4A7D /* controllers */,
 				2FEDD72817CC97B500165DD2 /* HandsContainerView */,
@@ -203,6 +226,9 @@
 				2FEDD73717CC97B500165DD2 /* OLKHelpers.h in Headers */,
 				2FEDD73917CC97B500165DD2 /* OLKHand.h in Headers */,
 				2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */,
+				2F23D33E183E655E00DF0490 /* OLKButton.h in Headers */,
+				2F23D343183E674500DF0490 /* OLKToggleButton.h in Headers */,
+				2F55EE921846739F00BD4EB8 /* OLKScratchButton.h in Headers */,
 				2FC0A44C17F450E1009B4A7D /* OLKGestureRecognizer.h in Headers */,
 				2FC0A45217F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h in Headers */,
 			);
@@ -282,6 +308,8 @@
 				2FB65BB617D14828002E1C05 /* OLKGestureComponents.m in Sources */,
 				2FC0A44D17F450E1009B4A7D /* OLKGestureRecognizer.m in Sources */,
 				2FC0A45317F45F67009B4A7D /* OLKGestureRecognizerDispatcher.m in Sources */,
+				2F23D344183E674500DF0490 /* OLKToggleButton.m in Sources */,
+				2F55EE931846739F00BD4EB8 /* OLKScratchButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
