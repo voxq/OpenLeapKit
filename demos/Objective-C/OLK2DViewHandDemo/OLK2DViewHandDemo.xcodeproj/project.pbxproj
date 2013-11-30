@@ -20,6 +20,7 @@
 		2F30E34717CF744F00F14438 /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2F30E33617CF6C6300F14438 /* libLeap.dylib */; };
 		2F30E34917CF747800F14438 /* OpenLeapKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2F30E33D17CF6FAE00F14438 /* OpenLeapKit.framework */; };
 		2F30E34B17CF778200F14438 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 2F30E34A17CF778200F14438 /* LICENSE */; };
+		2F31B0541847553E00913C6B /* LeapMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F31B0521847552200913C6B /* LeapMenuView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +77,8 @@
 		2F30E34217CF706000F14438 /* OLKDemoHandsOverlayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OLKDemoHandsOverlayViewController.h; sourceTree = "<group>"; };
 		2F30E34317CF706000F14438 /* OLKDemoHandsOverlayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OLKDemoHandsOverlayViewController.m; sourceTree = "<group>"; };
 		2F30E34A17CF778200F14438 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		2F31B0511847552200913C6B /* LeapMenuView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeapMenuView.h; sourceTree = "<group>"; };
+		2F31B0521847552200913C6B /* LeapMenuView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LeapMenuView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +142,8 @@
 				2F30E33417CF6BB800F14438 /* Sample.m */,
 				2F30E34217CF706000F14438 /* OLKDemoHandsOverlayViewController.h */,
 				2F30E34317CF706000F14438 /* OLKDemoHandsOverlayViewController.m */,
+				2F31B0511847552200913C6B /* LeapMenuView.h */,
+				2F31B0521847552200913C6B /* LeapMenuView.m */,
 				2F30E32B17CF6B8300F14438 /* MainMenu.xib */,
 				2F30E31D17CF6B8200F14438 /* Supporting Files */,
 			);
@@ -249,6 +254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F31B0541847553E00913C6B /* LeapMenuView.m in Sources */,
 				2F30E34517CF708400F14438 /* OLKDemoHandsOverlayViewController.m in Sources */,
 				2F30E32317CF6B8200F14438 /* main.m in Sources */,
 				2F30E32A17CF6B8200F14438 /* AppDelegate.m in Sources */,

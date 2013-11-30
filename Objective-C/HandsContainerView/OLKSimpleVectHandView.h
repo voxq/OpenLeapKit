@@ -40,6 +40,8 @@ static const NSSize defaultFitHandFact = {150, 150};
 @interface OLKSimpleVectHandView : NSView <OLKHandContainer>
 
 @property (nonatomic) OLKHand *hand;
+@property (nonatomic) NSView *spaceView;
+
 @property (nonatomic) NSSize simpleFingerTipSize;
 @property (nonatomic) NSSize fitHandFact;
 @property (nonatomic) BOOL enableAutoFitHand;

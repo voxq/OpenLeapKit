@@ -33,10 +33,11 @@
 
 #import <Foundation/Foundation.h>
 #import "OLKSimpleVectHandView.h"
+#import "OLKHand.h"
 
 @protocol OLKHandsContainerViewControllerDataSource <NSObject>
 
-- (NSView <OLKHandContainer>*)handView:(NSRect)frame withHandedness:(OLKHandedness)handedness;
+- (NSView <OLKHandContainer>*)handViewForHand:(OLKHand *)hand;
 - (NSView *)pointableView:(NSRect)frame withHandedness:(OLKHandedness)handedness;
 
 @end
@@ -53,8 +54,12 @@
 @interface OLKHandsContainerViewController : NSObject
 
 - (void)onFrame:(NSNotification *)notification;
+- (NSView <OLKHandContainer> *)viewForHand:(OLKHand *)hand;
+- (void)updateHandsAndPointablesViews;
+- (void)updateHandViewForHand:(OLKHand *)hand;
 
-@property (nonatomic) NSView *handsContainerView;
+@property (nonatomic) NSView *handsSpaceView;
+@property (nonatomic) BOOL overrideSpaceViews;
 @property (nonatomic) NSObject <OLKHandsContainerViewControllerDataSource> *dataSource;
 @property (nonatomic) NSObject <OLKHandsContainerViewControllerDelegate> *delegate;
 @property (nonatomic, readonly) OLKHand *leftHand;
@@ -62,14 +67,25 @@
 @property (nonatomic, readonly) NSView <OLKHandContainer> *leftHandView;
 @property (nonatomic, readonly) NSView <OLKHandContainer> *rightHandView;
 @property (nonatomic, readonly) NSArray *pointableViews;
+@property (nonatomic, readonly) NSArray *leftHands;
+@property (nonatomic, readonly) NSArray *rightHands;
+@property (nonatomic, readonly) NSArray *handsNoHandedness;
+@property (nonatomic, readonly) NSArray *handsViews;
+@property (nonatomic, readonly) NSArray *hands;
 @property (nonatomic) BOOL resetAutoFitOnNewHand;
 @property (nonatomic) NSSize trimInteraction;
 @property (nonatomic) BOOL useStabilized;
 @property (nonatomic) BOOL useInteractionBox;
 @property (nonatomic) NSMutableArray *gestureContext;
 @property (nonatomic) BOOL allowAllHands;
+@property (nonatomic) OLKHandednessAlgorithm handednessAlgorithm;
 @property (nonatomic) BOOL showPointables;
 @property (nonatomic) NSSize pointableScale;
 @property (nonatomic) NSSize handScale;
+@property (nonatomic) float rangeOffset;
+@property (nonatomic) float proximityOffset;
+@property (nonatomic) float percentRangeOfMaxWidth;
+@property (nonatomic) NSSize fitHandFact;
+
 
 @end

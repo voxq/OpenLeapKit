@@ -43,6 +43,7 @@
 
 
 @synthesize hand = _hand;
+@synthesize spaceView = _spaceView;
 @synthesize simpleFingerTipSize = _simpleFingerTipSize;
 @synthesize fitHandFact = _fitHandFact;
 @synthesize enableAutoFitHand = _enableAutoFitHand;

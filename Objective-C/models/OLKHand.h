@@ -39,10 +39,23 @@
 @protocol OLKHandContainer <NSObject>
 
 @property (nonatomic) OLKHand *hand;
-@property (nonatomic) BOOL enableStable;
+@property (nonatomic) NSView *spaceView;
 
 @end
 
+static NSString * const OLKHandBestLeftGuessKey = @"BestLeftGuess";
+static NSString * const OLKHandBestRightGuessKey = @"BestRightGuess";
+static NSString * const OLKHandLeftHandsKey = @"LeftHands";
+static NSString * const OLKHandRightHandsKey = @"RightHands";
+static NSString * const OLKHandUnknownHandednessKey = @"UnknownHandednessHands";
+
+
+typedef enum {
+    OLKHandednessAlgorithmHandPos = 1,
+    OLKHandednessAlgorithmThumbBasePos = 2,
+    OLKHandednessAlgorithmThumbTipAndBase = 3,
+    OLKHandednessAlgorithmThumbShortest = 4
+}OLKHandednessAlgorithm;
 
 typedef enum {
     OLKHandednessUnknown=0,
@@ -54,6 +67,7 @@ typedef enum {
 @interface OLKHand : NSObject
 
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;
++ (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm;
 + (NSArray *)simpleLeftRightHandSearch:(NSArray *)hands;
 + (OLKHandedness)handednessByThumbBasePosToPalm:(LeapHand *)hand thumbId:(int *)pThumbId;
 + (OLKHandedness)handednessByThumbTipAndBaseCombo:(LeapHand *)hand thumbId:(int *)pThumbId;
@@ -62,11 +76,17 @@ typedef enum {
 - (void)updateLeapHand:(LeapHand *)leapHand;
 - (OLKHandedness)updateHandedness;
 
+- (OLKHandedness)updateHandednessByThumbTipDistFromPalm;
+- (OLKHandedness)updateHandednessByThumbBasePosToPalm;
+- (OLKHandedness)updateHandednessByShortestFinger;
+- (OLKHandedness)updateHandednessByThumbTipAndBaseCombo;
+
 @property (nonatomic) LeapHand *leapHand;
 @property (nonatomic) LeapFrame *leapFrame;
 @property (nonatomic, readonly) LeapFinger *thumb;
 @property (nonatomic) OLKHandedness handedness;
 @property (nonatomic, readonly) NSUInteger numFramesExist;
 @property (nonatomic) OLKHandedness simHandedness;
-
+@property (nonatomic) OLKHandednessAlgorithm handednessAlgorithm;
+@property (nonatomic) BOOL usesStabilized;
 @end

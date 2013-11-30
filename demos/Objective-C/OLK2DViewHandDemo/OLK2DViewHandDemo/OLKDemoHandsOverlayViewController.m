@@ -37,6 +37,9 @@
 
 
 @implementation OLKDemoHandsOverlayViewController
+{
+    NSSize _handsOverlaySize;
+}
 
 @synthesize enableAutoFitHands = _enableAutoFitHands;
 @synthesize enableDrawHandsBoundingCircle = _enableDrawHandsBoundingCircle;
@@ -52,6 +55,8 @@
     if (self = [super init])
     {
         [self setDataSource:self];
+        _handsOverlaySize.width=250;
+        _handsOverlaySize.height=250;
         _enableAutoFitHands = YES;
         _enableDrawFingers = YES;
         _enableDrawFingerTips = YES;
@@ -64,9 +69,10 @@
     return self;
 }
 
-- (NSView <OLKHandContainer>*)handView:(NSRect)frame withHandedness:(OLKHandedness)handedness
+- (NSView <OLKHandContainer>*)handViewForHand:(OLKHand *)hand;
 {
-    OLKSimpleVectHandView *handView = [[OLKSimpleVectHandView alloc] initWithFrame:frame];
+    NSRect handRect = NSMakeRect(0, 0, _handsOverlaySize.width, _handsOverlaySize.height);
+    OLKSimpleVectHandView *handView = [[OLKSimpleVectHandView alloc] initWithFrame:handRect];
     
     [handView setEnableScreenYAxisUsesZAxis:_enableScreenYAxisUsesZAxis];
     [handView setEnableDrawPalm:_enableDrawPalms];
@@ -75,6 +81,8 @@
     [handView setEnableDrawFingers:_enableDrawFingers];
     [handView setEnableAutoFitHand:_enableAutoFitHands];
     [handView setEnable3DHand:_enable3DHand];
+    [handView setHand:hand];
+    [[self handsSpaceView] addSubview:handView];
     
     return handView;
 }

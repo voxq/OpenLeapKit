@@ -8,9 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "LeapObjectiveC.h"
+#import "LeapMenuView.h"
+#import <OpenLeapKit/OLKCircleOptionInput.h>
 
-
-@interface Sample : NSObject<LeapListener>
+@interface Sample : NSObject<LeapListener,LeapMenuDelegate, OLKCircleOptionInputDelegate>
 
 -(void)run:(NSView *)handView;
 

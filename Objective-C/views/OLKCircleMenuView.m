@@ -7,11 +7,15 @@
     NSImage *_textImage;
 }
 
+@synthesize circleOptionInput = _circleOptionInput;
+
 @synthesize selectedIndex = _selectedIndex;
 @synthesize hoverIndex = _hoverIndex;
 @synthesize radius = _radius;
 @synthesize innerRadius = _innerRadius;
 @synthesize center = _center;
+@synthesize thresholdForHit = _thresholdForHit;
+@synthesize thresholdForRepeat = _thresholdForRepeat;
 @synthesize cellStrings = _cellStrings;
 @synthesize active = _active;
 @synthesize textFontSize = _textFontSize;
@@ -241,9 +245,9 @@
         textRect.origin.x += (textRect.origin.x - _center.x)/distance*5;
         
         textRect.origin.y = _center.y + distance * sin(radAngle) - _textFontSize/2;
-        textRect.origin.y -= (distance - ((textRect.origin.y - _center.y) + distance))/distance*10;
+        textRect.origin.y -= (distance - ((textRect.origin.y - _center.y) + distance))/distance;
         textRect.size.width = 400;
-        textRect.size.height = 35;
+        textRect.size.height = _textFontSize*1.5;
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [style setAlignment:NSCenterTextAlignment];
 //        NSFont *font = [fontManager fontWithFamily:@"Helvetica Neue" traits:NSBoldFontMask weight:0 size:60];

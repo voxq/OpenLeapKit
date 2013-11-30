@@ -303,7 +303,11 @@
         if (_halfway)
         {
             if ([self escapeInY:position])
+            {
+                if (_parentView)
+                    [_parentView setNeedsDisplay:YES];
                 _sliding = NO;
+            }
             else if (position.x > _location.x + _size.width*0.75)
             {
                 _requiresReset = YES;
@@ -318,14 +322,22 @@
             else if (position.x < _location.x+[self switcherOnRestOffsetXPos])
             {
                 if (position.x < _location.x - _size.width*0.25)
+                {
+                    if (_parentView)
+                        [_parentView setNeedsDisplay:YES];
                     _sliding = NO;
+                }
                 position.x = _location.x + [self switcherOnRestOffsetXPos];
             }
         }
         else
         {
             if ([self escapeInY:position])
+            {
+                if (_parentView)
+                    [_parentView setNeedsDisplay:YES];
                 _sliding = NO;
+            }
             else if (position.x < _location.x + [_catcherHalfImg size].width)
             {
                 _requiresReset = YES;
@@ -334,7 +346,11 @@
             else if (position.x > _location.x + [self switcherOffRestOffsetXPos])
             {
                 if (position.x > _location.x+_size.width+_size.width*0.25)
+                {
+                    if (_parentView)
+                        [_parentView setNeedsDisplay:YES];
                     _sliding = NO;
+                }
                 position.x = _location.x + [self switcherOffRestOffsetXPos];
             }
         }
