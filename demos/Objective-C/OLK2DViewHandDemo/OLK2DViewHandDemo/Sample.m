@@ -74,6 +74,7 @@
 - (void)onExit:(NSNotification *)notification
 {
     NSLog(@"Exited");
+    [_controller removeListener:self];
 }
 
 - (IBAction)goFullScreen:(id)sender
@@ -341,7 +342,6 @@
     [_menuView setCursorPos:cursorPos cursorObject:hand];
     if (_showingOptions)
     {
-        [_optionsView setCursorPos:cursorPos];
         [_optionsModel setCursorPos:[self cursorPosRelativeToCenter]];
     }
 }

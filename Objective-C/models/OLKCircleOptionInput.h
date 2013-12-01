@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OLKRepeatTracker.h"
 
 static int const OLKCircleOptionInputInvalidSelection = -1;
 
@@ -15,6 +16,8 @@ static int const OLKCircleOptionInputInvalidSelection = -1;
 @optional
 - (void)hoverIndexChanged:(int)index sender:(id)sender;
 - (void)selectedIndexChanged:(int)index sender:(id)sender;
+- (void)repeatTriggered:(id)sender;
+- (void)repeatEnded:(id)sender;
 - (void)cursorMovedToInner:(id)sender;
 - (void)cursorMovedToCenter:(id)sender;
 
@@ -43,14 +46,7 @@ static int const OLKCircleOptionInputInvalidSelection = -1;
 @property (nonatomic) int hoverIndex;
 @property (nonatomic) NSPoint cursorPos;
 
-@property (nonatomic) BOOL repeating;
-@property (nonatomic) BOOL repeatIsKey;
-@property (nonatomic) int repeatRate;
-@property (nonatomic) int repeatCycles;
-@property (nonatomic) int repeatedChars;
-@property (nonatomic) int repeatAccelOnCycles;
-@property (nonatomic) int repeatAccelAmt;
-@property (nonatomic) int repeatAccel;
-@property (nonatomic) int repeatChar;
+@property (nonatomic) OLKRepeatTracker *repeatTracker;
 
+@property (nonatomic) BOOL enableRepeatTracking;
 @end

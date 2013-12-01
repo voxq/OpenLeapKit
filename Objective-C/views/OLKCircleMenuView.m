@@ -15,6 +15,13 @@
 @synthesize textFontSize = _textFontSize;
 @synthesize currentAlpha = _currentAlpha;
 @synthesize highlightPositions = _highlightPositions;
+@synthesize inactiveAlphaMultiplier = _inactiveAlphaMultiplier;
+@synthesize optionRingColor = _optionRingColor;
+@synthesize optionSeparatorColor = _optionSeparatorColor;
+@synthesize optionHoverColor = _optionHoverColor;
+@synthesize optionHighlightColor = _optionHighlightColor;
+@synthesize optionInnerHighlightColor = _optionInnerHighlightColor;
+@synthesize optionSelectColor = _optionSelectColor;
 
 // Many of the methods here are similar to those in the simpler DotView example.
 // See that example for detailed explanations; here we will discuss those
@@ -51,6 +58,13 @@
 
 - (void)configDefaultView
 {
+    _optionHighlightColor = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:1 alpha:1];
+    _optionSeparatorColor = [NSColor colorWithCalibratedRed:0.8 green:1 blue:0.8 alpha:1];
+    _optionRingColor = [NSColor colorWithCalibratedRed:0.5 green:1 blue:0.5 alpha:1];
+    _optionInnerHighlightColor = [NSColor colorWithCalibratedRed:0.3 green:0.8 blue:0.8 alpha:1];
+    _optionSelectColor = [NSColor colorWithCalibratedRed:1 green:0.3 blue:0.3 alpha:1];
+    _optionHoverColor = [NSColor colorWithCalibratedRed:0.5 green:0.75 blue:0.95 alpha:1];
+    
     _currentAlpha = 1.0;
     _innerRadius = [_circleOptionInput radius] * [_circleOptionInput thresholdForHit];
     _textFontSize = ([_circleOptionInput radius] - _innerRadius)/2;
@@ -106,10 +120,10 @@
         }
         if (closePath || index == [_circleOptionInput selectedIndex])
         {
-            [[NSColor colorWithCalibratedRed:0.5 green:1 blue:0.5 alpha:1] set] ;
+            [_optionRingColor set] ;
             // and fill it
             [greenPath fill] ;
-            [[NSColor colorWithCalibratedRed:0.8 green:1 blue:0.8 alpha:1] set] ;
+            [_optionSeparatorColor set] ;
             [greenPath stroke] ;
             [greenPath removeAllPoints];
             position = 0;
@@ -120,10 +134,10 @@
             [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
             [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
             [greenPath closePath];
-            [[NSColor colorWithCalibratedRed:0.5 green:0.5 blue:1 alpha:1] set] ;
+            [_optionHighlightColor set] ;
             // and fill it
             [greenPath fill] ;
-            [[NSColor colorWithCalibratedRed:0.8 green:1 blue:0.8 alpha:1] set] ;
+            [_optionSeparatorColor set] ;
             [greenPath stroke] ;
             [greenPath removeAllPoints];
             continue;
@@ -142,10 +156,10 @@
 
     if (position != 0)
     {
-        [[NSColor colorWithCalibratedRed:0.5 green:1 blue:0.5 alpha:1] set] ;
+        [_optionRingColor set] ;
         // and fill it
         [greenPath fill] ;
-        [[NSColor colorWithCalibratedRed:0.8 green:1 blue:0.8 alpha:1] set] ;
+        [_optionSeparatorColor set] ;
         [greenPath stroke] ;
     }
     
@@ -178,7 +192,7 @@
             [highlightPath lineToPoint: NSMakePoint( _center.x, _center.y ) ] ;
         }
         
-        [[NSColor colorWithCalibratedRed:0.5 green:0.5 blue:1 alpha:0.5] set] ;
+        [_optionInnerHighlightColor set] ;
         // and fill it
         [highlightPath fill] ;
     }
@@ -213,9 +227,9 @@
         textRect.origin.x += (textRect.origin.x - _center.x)/distance*5;
         
         textRect.origin.y = _center.y + distance * sin(radAngle) - _textFontSize/2;
-        textRect.origin.y -= (distance - ((textRect.origin.y - _center.y) + distance))/distance;
+        textRect.origin.y -= (distance - ((textRect.origin.y - _center.y) + distance))/(distance/10);
         textRect.size.width = 400;
-        textRect.size.height = _textFontSize*1.5;
+        textRect.size.height = _textFontSize*1.2;
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [style setAlignment:NSCenterTextAlignment];
 //        NSFont *font = [fontManager fontWithFamily:@"Helvetica Neue" traits:NSBoldFontMask weight:0 size:60];
@@ -232,11 +246,17 @@
     if (!objectCount)
         return;
     float radiusWithRoomForHover = [_circleOptionInput radius]-4;
-    float arcAngleOffset = (360.0 / (float)objectCount) / 2.0;
+    float arcAngleOffset = (180.0 / (float)objectCount);
     float degAngle;
     float scaledAlpha = _currentAlpha;
     if (!_active)
         scaledAlpha *= 0.33;
+    
+    boundsRect.origin.x -= [_image size].width/2-_center.x;
+    boundsRect.origin.y -= [_image size].height/2-_center.y;
+    [_image drawInRect:boundsRect fromRect:NSMakeRect(0, 0, [_image size].width, [_image size].height)
+             operation: NSCompositeSourceOver
+              fraction: scaledAlpha];
     
     if ([_circleOptionInput selectedIndex] < objectCount && [_circleOptionInput selectedIndex] >= 0)
     {
@@ -258,18 +278,11 @@
         // close the slice , by drawing a line to the center
         [selPath lineToPoint: NSMakePoint( _center.x, _center.y ) ] ;
         
-        [[NSColor colorWithCalibratedRed:1 green:0.3 blue:0.3 alpha:scaledAlpha] set] ;
+        [[_optionSelectColor colorWithAlphaComponent:scaledAlpha] set] ;
         // and fill it
         [selPath fill] ;
     }
 
-    // Draw the image in the current context.
-    boundsRect.origin.x -= [_image size].width/2-_center.x;
-    boundsRect.origin.y -= [_image size].height/2-_center.y;
-    [_image drawInRect:boundsRect fromRect:NSMakeRect(0, 0, [_image size].width, [_image size].height)
-              operation: NSCompositeSourceOver
-               fraction: scaledAlpha];
-    
 //    NSLog(@"drawing rect: %f, %f, %f, %f",rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     degAngle = 360 - (float)arcAngleOffset*2 * ([_circleOptionInput hoverIndex]) + 90;
 
@@ -280,18 +293,18 @@
     [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover + (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
     [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover - (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
     [aimedLetterHighlightPath closePath];
-    [[NSColor colorWithCalibratedRed:0.5 green:0.7 blue:1 alpha:scaledAlpha] set];
+    [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
     [aimedLetterHighlightPath fill];
-    [[NSColor colorWithCalibratedRed:0.7 green:0.95 blue:1 alpha:scaledAlpha] set];
+    [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
     [aimedLetterHighlightPath stroke];
     aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
     [aimedLetterHighlightPath setLineWidth:1] ;
     [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
     [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
     [aimedLetterHighlightPath closePath];
-    [[NSColor colorWithCalibratedRed:0.5 green:0.7 blue:1 alpha:scaledAlpha] set];
+    [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
     [aimedLetterHighlightPath fill];
-    [[NSColor colorWithCalibratedRed:0.7 green:0.95 blue:1 alpha:scaledAlpha] set];
+    [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
     [aimedLetterHighlightPath stroke];
     [_textImage drawInRect:boundsRect fromRect:NSMakeRect(0, 0, [_textImage size].width, [_textImage  size].height)
              operation: NSCompositeSourceOver

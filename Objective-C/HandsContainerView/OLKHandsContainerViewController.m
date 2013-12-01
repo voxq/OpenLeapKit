@@ -35,8 +35,8 @@
 #import "OLKHandsContainerViewController.h"
 #import "OLKHand.h"
 #import "OLKHelpers.h"
-#import "OLKGestureRecognizer.h"
-#import "OLKGestureRecognizerDispatcher.h"
+//#import "OLKGestureRecognizer.h"
+//#import "OLKGestureRecognizerDispatcher.h"
 
 static const float gHandViewDimX=250;
 static const float gHandViewDimY=250;
@@ -216,74 +216,6 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     _handsViews = [NSArray arrayWithArray:handsViews];
 
     return;
-//    NSArray *leftRightHands = [OLKHand simpleLeftRightHandSearch:hands];
-//    OLKHand *leftHand = [handsHandednessDict objectForKey:OLKHandLeftHandsKey];
-//    OLKHand *rightHand = [handsHandednessDict objectForKey:OLKHandRightHandsKey];
-//    LeapHand *bestLeftOption=leftHand;
-//    LeapHand *bestRightOption=rightHand;
-//    
-//    if (_leftHand == nil && bestLeftOption != nil && bestLeftOption != (LeapHand*)[NSNull null])
-//    {
-//        OLKHandedness handedness;
-//        if ([hands count] == 1 && [_leftHand handedness] == OLKHandednessUnknown)
-//            handedness = OLKHandednessUnknown;
-//        else
-//            handedness = OLKLeftHand;
-//        
-//        NSLog(@"New Left Hand!");
-//        LeapVector *palmPosition;
-//        if (_useStabilized)
-//            palmPosition = [bestLeftOption stabilizedPalmPosition];
-//        else
-//            palmPosition = [bestLeftOption palmPosition];
-//        _leftHandView = [_dataSource handView:NSMakeRect(palmPosition.x-gHandViewDimX/2, palmPosition.y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:handedness];
-//        _leftHand = [[OLKHand alloc] init];
-//        if (!_resetAutoFitOnNewHand)
-//            [(OLKSimpleVectHandView *)_leftHandView setFitHandFact:_fitHandFact];
-//        [_leftHandView setHand:_leftHand];
-//        [_leftHandView setEnableStable:_useStabilized];
-//        
-//        [_leftHand setLeapHand:bestLeftOption];
-//        [_leftHand setHandedness:handedness];
-//        if (handedness == OLKHandednessUnknown)
-//            [_leftHand setSimHandedness:OLKLeftHand];
-//        
-//        if (_delegate)
-//            [_delegate willAddHand:_leftHand withHandView:_leftHandView];
-//        [_handsSpaceView addSubview:_leftHandView];
-//    }
-//    
-//    if (_rightHand == nil && bestRightOption != nil && bestRightOption != (LeapHand*)[NSNull null])
-//    {
-//        OLKHandedness handedness;
-//        if ([hands count] == 1 && [_leftHand handedness] == OLKHandednessUnknown)
-//            handedness = OLKHandednessUnknown;
-//        else
-//            handedness = OLKLeftHand;
-//        
-//        NSLog(@"New Right Hand!");
-//        LeapVector *palmPosition;
-//        if (_useStabilized)
-//            palmPosition = [bestRightOption stabilizedPalmPosition];
-//        else
-//            palmPosition = [bestRightOption palmPosition];
-//        _rightHandView = [_dataSource handView:NSMakeRect(palmPosition.x-gHandViewDimX/2, palmPosition.y-gHandViewDimY/2, gHandViewDimX, gHandViewDimY) withHandedness:OLKRightHand];
-//        if (!_resetAutoFitOnNewHand)
-//            [(OLKSimpleVectHandView *)_rightHandView setFitHandFact:_fitHandFact];
-//        _rightHand = [[OLKHand alloc] init];
-//        [_rightHandView setHand:_rightHand];
-//        [_rightHandView setEnableStable:_useStabilized];
-//        
-//        [_rightHand setLeapHand:bestRightOption];
-//        [_rightHand setHandedness:handedness];
-//        if (handedness == OLKHandednessUnknown)
-//            [_rightHand setSimHandedness:OLKRightHand];
-//        
-//        if (_delegate)
-//            [_delegate willAddHand:_rightHand withHandView:_rightHandView];
-//
-//        [_handsSpaceView addSubview:_rightHandView];
-//    }
 }
 
 - (void)removeMissingHands
@@ -491,8 +423,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     _leapFrame = [leapController frame:0];
     
 //    OLKGestureRecognizerDispatcher *dispatcher = [OLKGestureRecognizerDispatcher sharedDispatcher];
-    for (OLKGestureRecognizer *recognizer in _gestureContext)
-         [recognizer updateWithFrame:_leapFrame controller:leapController];
+//    for (OLKGestureRecognizer *recognizer in _gestureContext)
+//         [recognizer updateWithFrame:_leapFrame controller:leapController];
 //        [dispatcher dispatchGestureRecognizer:recognizer frame:_leapFrame controller:leapController];
     
     if (_interactionBox == nil)

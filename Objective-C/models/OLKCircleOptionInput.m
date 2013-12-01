@@ -20,21 +20,15 @@
 @synthesize thresholdForRepeat = _thresholdForRepeat;
 @synthesize thresholdForCenter = _thresholdForCenter;
 
+@synthesize repeatTracker = _repeatTracker;
+@synthesize enableRepeatTracking = _enableRepeatTracking;
+
 @synthesize cursorPos = _cursorPos;
 @synthesize optionObjects = _optionObjects;
 
 @synthesize requiresMoveToCenter = _requiresMoveToCenter;
 @synthesize requiresMoveToInner = _requiresMoveToInner;
 
-@synthesize repeating = _repeating;
-@synthesize repeatIsKey = _repeatIsKey;
-@synthesize repeatRate = _repeatRate;
-@synthesize repeatCycles = _repeatCycles;
-@synthesize repeatedChars = _repeatedChars;
-@synthesize repeatAccelOnCycles = _repeatAccelOnCycles;
-@synthesize repeatAccelAmt = _repeatAccelAmt;
-@synthesize repeatAccel = _repeatAccel;
-@synthesize repeatChar = _repeatChar;
 
 - (id)init
 {
@@ -42,16 +36,13 @@
     {
         [self resetToDefaults];
         [self reset];
+        _enableRepeatTracking = FALSE;
     }
     return self;
 }
 
 - (void)resetToDefaults
 {
-    _repeatRate = 20;
-    _repeatAccelOnCycles = 1;
-    _repeatAccelAmt = 5;
-    _repeatAccel = 1;
     _thresholdForRepeat = 1;
     _thresholdForHit = 6.0/7.0;
     _thresholdForCenter = 1.0/3.0;
@@ -60,14 +51,17 @@
 
 - (void)reset
 {
-    _repeatCycles = 0;
-    _repeatedChars = 0;
-    _repeating = FALSE;
-    _repeatIsKey = NO;
     _requiresMoveToCenter = TRUE;
     _requiresMoveToInner = TRUE;
     _selectedIndex = OLKCircleOptionInputInvalidSelection;
     _hoverIndex = OLKCircleOptionInputInvalidSelection;
+}
+
+- (void)setEnableRepeatTracking:(BOOL)enableRepeatTracking
+{
+    _enableRepeatTracking = enableRepeatTracking;
+    if (enableRepeatTracking && !_repeatTracker)
+        _repeatTracker = [[OLKRepeatTracker alloc] init];
 }
 
 - (id)objectAtAngle:(float)degree
@@ -119,7 +113,7 @@
                 [_delegate cursorMovedToInner:self];
         }
         
-        if (_requiresMoveToCenter && _lastUpdateCursorDistance < _thresholdForCenter*_radius)
+        if (_requiresMoveToCenter && _lastUpdateCursorDistance < _thresholdForCenter * _radius)
         {
             _requiresMoveToCenter = FALSE;
             if ([_delegate respondsToSelector:@selector(cursorMovedToCenter:)])
@@ -142,14 +136,40 @@
         return;
     }
     
+    if (_repeatTracker && [_repeatTracker isRepeating])
+    {
+        if (_lastUpdateCursorDistance <= _thresholdForRepeat * _radius)
+        {
+            
+            if (_lastUpdateCursorDistance >= _thresholdForHit * _radius)
+            {
+                if (![_repeatTracker detectRepeatWithObject:[NSNumber numberWithInt:index]])
+                    return;
+                
+                if ([_delegate respondsToSelector:@selector(repeatTriggered:)])
+                    [_delegate repeatTriggered:self];
+            }
+        }
+        else
+        {
+            [_repeatTracker setIsRepeating:NO];
+            if ([_delegate respondsToSelector:@selector(repeatEnded:)])
+                [_delegate repeatEnded:self];
+        }
+    }
+    
     if (_requiresMoveToInner)
         return;
     
+    _requiresMoveToInner = YES;
     _selectedIndex = index;
+    
     if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:)])
         [_delegate selectedIndexChanged:index sender:self];
+    
+    if (_repeatTracker)
+        [_repeatTracker initRepeatWithObject:[NSNumber numberWithInt:index]];
 }
-
 
 - (void)setCursorPos:(NSPoint)cursorPos
 {
