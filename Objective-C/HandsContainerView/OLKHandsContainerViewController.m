@@ -292,7 +292,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     
     for (OLKHand *hand in _hands)
     {
-        LeapHand *leapHand = [_leapFrame hand:[[hand leapHand] identifier]];
+        LeapHand *leapHand = [_leapFrame hand:[[hand leapHand] id]];
         if ([leapHand isValid])
         {
             [hand setLeapHand:leapHand];
@@ -325,6 +325,12 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         }
     }
     _hands = [foundHands allObjects];
+    if (![_hands count])
+    {
+        _leftHand = nil;
+        _rightHand = nil;
+    }
+    
 }
 
 - (void)updateHandedness

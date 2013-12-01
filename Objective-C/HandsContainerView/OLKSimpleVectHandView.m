@@ -87,7 +87,7 @@
 {
     for (NSValue *fingerBaseValue in _fingerBases)
     {
-        NSPoint *fingerBase = (NSPoint*)[fingerBaseValue objCType];
+//        NSPoint *fingerBase = (NSPoint*)[fingerBaseValue objCType];
 //        if
     }
 }

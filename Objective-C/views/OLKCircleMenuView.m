@@ -9,14 +9,8 @@
 
 @synthesize circleOptionInput = _circleOptionInput;
 
-@synthesize selectedIndex = _selectedIndex;
-@synthesize hoverIndex = _hoverIndex;
-@synthesize radius = _radius;
 @synthesize innerRadius = _innerRadius;
 @synthesize center = _center;
-@synthesize thresholdForHit = _thresholdForHit;
-@synthesize thresholdForRepeat = _thresholdForRepeat;
-@synthesize cellStrings = _cellStrings;
 @synthesize active = _active;
 @synthesize textFontSize = _textFontSize;
 @synthesize currentAlpha = _currentAlpha;
@@ -38,29 +32,28 @@
     return self;
 }
 
+- (void)setNeedsDisplay:(BOOL)flag
+{
+    [super setNeedsDisplay:flag];
+}
 - (void)setFrame:(NSRect)frameRect
 {
     [super setFrame:frameRect];
-    NSRect boundsRect = [self bounds];
-    _radius = boundsRect.size.height / 2.1;
-    _innerRadius = _radius * 6 / 7;
-    _center.x = boundsRect.size.width / 2;
-    _center.y = boundsRect.size.height / 2;
-    _textFontSize = (_radius - _innerRadius)/2;
+    NSRect boundsRect = [super bounds];
+    _innerRadius = [_circleOptionInput radius] * [_circleOptionInput thresholdForHit];
+    _textFontSize = ([_circleOptionInput radius] - _innerRadius)/2;
     _textFont = [NSFont fontWithName:@"Helvetica Neue" size:_textFontSize];
+    _center = boundsRect.origin;
+    _center.x += boundsRect.size.width/2;
+    _center.y += boundsRect.size.height/2;
     [self drawIntoImage];
 }
 
 - (void)configDefaultView
 {
     _currentAlpha = 1.0;
-    _selectedIndex = -1;
-    NSRect boundsRect = [self bounds];
-    _radius = boundsRect.size.height / 2.1;
-    _innerRadius = _radius * 6 / 7;
-    _center.x = boundsRect.size.width / 2;
-    _center.y = boundsRect.size.height / 2;
-    _textFontSize = (_radius - _innerRadius)/2;
+    _innerRadius = [_circleOptionInput radius] * [_circleOptionInput thresholdForHit];
+    _textFontSize = ([_circleOptionInput radius] - _innerRadius)/2;
     _textFont = [NSFont fontWithName:@"Helvetica Neue" size:_textFontSize];
     [self drawIntoImage];
 }
@@ -74,38 +67,12 @@
 - (void)dealloc {
 }
 
-- (void)setCellStrings:(NSArray *)cellStrings
-{
-    _cellStrings = cellStrings;
-    [self setNeedsDisplay:YES];
-}
-
-- (NSString *)textAtAngle:(float)degree
-{
-    int index = [self indexAtAngle:degree];
-    return [self textAtIndex:index];
-}
-
-- (int)indexAtAngle:(float)degree
-{
-    float arcAngleOffset = (360.0 / (float)[_cellStrings count]);
-    float pos = degree + arcAngleOffset/2;
-    if (pos > 359)
-        pos -= 360;
-    pos /= arcAngleOffset;
-    return (int)pos;
-}
-
-- (NSString *)textAtIndex:(int)index
-{
-    return [_cellStrings objectAtIndex:index];
-}
-
 - (void)drawIntoImage
 {
-    if (_cellStrings == nil)
+    if ([_circleOptionInput optionObjects] == nil)
         return;
     
+    float radiusWithRoomForHover = [_circleOptionInput radius]-4;
     int index;
     NSRect boundsRect = [self bounds];
 
@@ -117,26 +84,27 @@
     
     NSBezierPath *greenPath = [NSBezierPath bezierPath] ;
     [greenPath setLineWidth: 2 ] ;
-    
-    float arcAngleOffset = (360.0 / (float)[_cellStrings count]) / 2.0;
+
+    int objectCount = [[_circleOptionInput optionObjects] count];
+    float arcAngleOffset = (360.0 / (float)objectCount) / 2.0;
     float degAngle;
     
     int position = 0;
     BOOL closePath = FALSE;
     
-    for (index = 0; index < [_cellStrings count]; index ++)
+    for (index = 0; index < objectCount; index ++)
     {
         if (_highlightPositions && [_highlightPositions count] > 0)
         {
-            NSInteger highlightCheck = [_cellStrings count]-index;
-            if (highlightCheck == [_cellStrings count])
+            NSInteger highlightCheck = objectCount-index;
+            if (highlightCheck == objectCount)
                 highlightCheck = 0;
             if ([_highlightPositions containsObject:[NSNumber numberWithInteger:highlightCheck]])
             {
                 closePath = TRUE;
             }
         }
-        if (closePath || index == _selectedIndex)
+        if (closePath || index == [_circleOptionInput selectedIndex])
         {
             [[NSColor colorWithCalibratedRed:0.5 green:1 blue:0.5 alpha:1] set] ;
             // and fill it
@@ -146,10 +114,10 @@
             [greenPath removeAllPoints];
             position = 0;
             closePath = FALSE;
-            degAngle = 360.0/(float)[_cellStrings count] * index + 90;
+            degAngle = 360.0/(float)objectCount * index + 90;
             
             // draw an arc (perc is a certain percentage ; something between 0 and 1
-            [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_radius startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+            [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
             [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
             [greenPath closePath];
             [[NSColor colorWithCalibratedRed:0.5 green:0.5 blue:1 alpha:1] set] ;
@@ -161,10 +129,10 @@
             continue;
         }
         
-        degAngle = 360.0/(float)[_cellStrings count] * index + 90;
+        degAngle = 360.0/(float)objectCount * index + 90;
         
         // draw an arc (perc is a certain percentage ; something between 0 and 1
-        [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_radius startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+        [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
         NSPoint nextStartPoint = [greenPath currentPoint];
         [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
         [greenPath closePath];
@@ -193,16 +161,16 @@
         // size_x and size_y are the height and width of the view
         
         [highlightPath moveToPoint: NSMakePoint( _center.x, _center.y ) ] ;
-        for (index = 0; index < [_cellStrings count]; index +=1)
+        for (index = 0; index < objectCount; index +=1)
         {
-            int highlightCheck = [_cellStrings count]-index;
-            if (highlightCheck == [_cellStrings count])
+            int highlightCheck = objectCount-index;
+            if (highlightCheck == objectCount)
                 highlightCheck = 0;
             if (![_highlightPositions containsObject:[NSNumber numberWithInteger:highlightCheck]])
                 continue;
-            if (index == _selectedIndex)
+            if (index == [_circleOptionInput selectedIndex])
                 continue;
-            degAngle = 360/(float)[_cellStrings count] * index + 90;
+            degAngle = 360/(float)objectCount * index + 90;
             // draw an arc (perc is a certain percentage ; something between 0 and 1
             [highlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius startAngle:degAngle-arcAngleOffset  endAngle:degAngle+arcAngleOffset ] ;
             
@@ -226,16 +194,16 @@
     _textImage = [[NSImage alloc] initWithSize:boundsRect.size];
     [_textImage lockFocus];
 
-    float distance = _radius - (_radius - _innerRadius)/1.5;
-    float offset = M_PI_4 + M_PI/[_cellStrings count];
-    for (index = 0; index < [_cellStrings count]; index++) {
+    float distance = radiusWithRoomForHover - (radiusWithRoomForHover - _innerRadius)/1.5;
+    float offset = M_PI_4 + M_PI/objectCount;
+    for (index = 0; index < objectCount; index++) {
         float radAngle;
-        int pos = [_cellStrings count] - 1 - index;
-        NSString *string = [_cellStrings objectAtIndex:index];
+        int pos = objectCount - 1 - index;
+        NSString *string = [[_circleOptionInput optionObjects] objectAtIndex:index];
         if (pos == 0)
             radAngle = 0;
         else
-            radAngle = M_PI/(float)[_cellStrings count] * pos;
+            radAngle = M_PI/(float)objectCount * pos;
         
         radAngle += offset;
         radAngle *=2;
@@ -260,13 +228,17 @@
 
 - (void)drawRect:(NSRect)rect {
     NSRect boundsRect = [self bounds];
-    float arcAngleOffset = (360.0 / (float)[_cellStrings count]) / 2.0;
+    int objectCount = [[_circleOptionInput optionObjects] count];
+    if (!objectCount)
+        return;
+    float radiusWithRoomForHover = [_circleOptionInput radius]-4;
+    float arcAngleOffset = (360.0 / (float)objectCount) / 2.0;
     float degAngle;
     float scaledAlpha = _currentAlpha;
     if (!_active)
         scaledAlpha *= 0.33;
     
-    if (_selectedIndex < [_cellStrings count] && _selectedIndex >= 0)
+    if ([_circleOptionInput selectedIndex] < objectCount && [_circleOptionInput selectedIndex] >= 0)
     {
         NSBezierPath *selPath = [NSBezierPath bezierPath] ;
         
@@ -277,11 +249,11 @@
         // move to the center so that we have a closed slice
         // size_x and size_y are the height and width of the view
 
-        degAngle = 360 - (float)arcAngleOffset*2 * (_selectedIndex) + 90;
+        degAngle = 360 - (float)arcAngleOffset*2 * ([_circleOptionInput selectedIndex]) + 90;
         
         [selPath moveToPoint: NSMakePoint( _center.x, _center.y ) ] ;
         // draw an arc (perc is a certain percentage ; something between 0 and 1
-        [selPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_radius startAngle:degAngle-arcAngleOffset  endAngle:degAngle+arcAngleOffset ] ;
+        [selPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset  endAngle:degAngle+arcAngleOffset ] ;
         
         // close the slice , by drawing a line to the center
         [selPath lineToPoint: NSMakePoint( _center.x, _center.y ) ] ;
@@ -298,14 +270,15 @@
               operation: NSCompositeSourceOver
                fraction: scaledAlpha];
     
-    degAngle = 360 - (float)arcAngleOffset*2 * (_hoverIndex) + 90;
+//    NSLog(@"drawing rect: %f, %f, %f, %f",rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    degAngle = 360 - (float)arcAngleOffset*2 * ([_circleOptionInput hoverIndex]) + 90;
 
     NSBezierPath *aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
     [aimedLetterHighlightPath setLineWidth:2] ;
     
     // draw an arc (perc is a certain percentage ; something between 0 and 1
-    [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_radius + (_radius - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-    [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_radius - (_radius - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+    [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover + (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+    [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover - (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
     [aimedLetterHighlightPath closePath];
     [[NSColor colorWithCalibratedRed:0.5 green:0.7 blue:1 alpha:scaledAlpha] set];
     [aimedLetterHighlightPath fill];
@@ -313,8 +286,8 @@
     [aimedLetterHighlightPath stroke];
     aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
     [aimedLetterHighlightPath setLineWidth:1] ;
-    [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - (_radius - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-    [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + (_radius - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+    [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+    [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
     [aimedLetterHighlightPath closePath];
     [[NSColor colorWithCalibratedRed:0.5 green:0.7 blue:1 alpha:scaledAlpha] set];
     [aimedLetterHighlightPath fill];
@@ -343,11 +316,6 @@
     _center = [self convertPoint:eventLocation fromView:nil];
     [self setNeedsDisplay:YES];
     NSLog(@"center = %f, %f", _center.x, _center.y);
-}
-
-- (void)setRadius:(CGFloat)distance {
-    _radius = distance;
-    [self setNeedsDisplay:YES];
 }
 
 @end

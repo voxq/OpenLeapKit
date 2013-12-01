@@ -158,7 +158,7 @@
 
 - (NSArray*)handArraySortedFromHands:(LeapHand *)hand1 otherHand:(LeapHand*)hand2
 {
-    if ([hand1 identifier] > [hand2 identifier])
+    if ([hand1 id] > [hand2 id])
     {
         LeapHand *handSwap = hand1;
         hand1 = hand2;
@@ -170,7 +170,7 @@
 
 - (LeapVector*)handsMidPoint:(LeapHand *)hand1 otherHand:(LeapHand *)hand2
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return nil;
     
     float xdif = ([hand1 palmPosition].x - [hand2 palmPosition].x);
@@ -185,7 +185,7 @@
 // TODO: This assumes facing on one of the three axis, need to change to work for an arbitrary direction. Need to rotate one hand to a known axis, then apply this rotation to the other, then check the normal threshold against this.
 - (BOOL)palmsFacing:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 normalThreshold:(float)normalThreshold
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return NO;
     
     LeapVector *palmNormal = [hand1 palmNormal];
@@ -214,7 +214,7 @@
 
 - (BOOL)palmsSidewayAndFacing:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 normalThreshold:(float)normalThreshold
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return NO;
     
     LeapVector *palmNormal = [hand1 palmNormal];
@@ -231,7 +231,7 @@
 
 - (BOOL)palmsSidewayAndFacingSame:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 normalThreshold:(float)normalThreshold
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return NO;
     
     LeapVector *palmNormal = [hand1 palmNormal];
@@ -248,7 +248,7 @@
 
 - (BOOL)palmsInOutAndFacing:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 normalThreshold:(float)normalThreshold
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return NO;
     
     LeapVector *palmNormal = [hand1 palmNormal];
@@ -265,7 +265,7 @@
 
 - (BOOL)palmsUpDownAndFacing:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 normalThreshold:(float)normalThreshold
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return NO;
     
     LeapVector *palmNormal = [hand1 palmNormal];
@@ -283,7 +283,7 @@
 // TODO: This assumes facing on one of the three axis, need to change to work for an arbitrary direction. Need to rotate one hand to a known axis, then apply this rotation to the other, then check the normal threshold against this.
 - (BOOL)palmsFacingSame:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 normalThreshold:(float)normalThreshold
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return NO;
     
     LeapVector *palmNormal = [hand1 palmNormal];
@@ -328,7 +328,7 @@
 
 - (BOOL)handsBeside:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 axisTolerance:(float)axisTolerance
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return NO;
     
     LeapVector *palmPos = [hand1 palmPosition];
@@ -410,7 +410,7 @@
 
 - (BOOL)handsInProximityBeside:(LeapHand *)hand1 otherHand:(LeapHand *)hand2 proximity:(float)proximity axisTolerance:(float)axisTolerance
 {
-    if ([hand1 identifier] == [hand2 identifier])
+    if ([hand1 id] == [hand2 id])
         return NO;
     
     LeapVector *palmPos = [hand1 palmPosition];

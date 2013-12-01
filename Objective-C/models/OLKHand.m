@@ -485,7 +485,7 @@ static OLKHand *gPrevHand=nil;
         return NO;
     
     LeapHand *otherHand = (LeapHand *)[object leapHand];
-    if ([otherHand isValid] && [_leapHand identifier] == [otherHand identifier])
+    if ([otherHand isValid] && [_leapHand id] == [otherHand id])
         return YES;
 
     return NO;
@@ -493,7 +493,7 @@ static OLKHand *gPrevHand=nil;
 
 - (BOOL)isLeapHand:(LeapHand *)leapHand
 {
-    if ([leapHand identifier] == [_leapHand identifier])
+    if ([leapHand id] == [_leapHand id])
         return YES;
     
     return NO;

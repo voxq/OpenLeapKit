@@ -11,13 +11,8 @@
 @property (nonatomic) OLKCircleOptionInput *circleOptionInput;
 @property (nonatomic) BOOL active;
 @property (nonatomic) NSPoint center;
-@property (nonatomic) CGFloat radius;
 @property (nonatomic) CGFloat innerRadius;
-@property (nonatomic) NSInteger selectedIndex;
-@property (nonatomic) float thresholdForHit;
-@property (nonatomic) float thresholdForRepeat;
 
-@property (nonatomic) NSInteger hoverIndex;
 @property (nonatomic) float currentAlpha;
 @property (nonatomic) NSPoint cursorPos;
 @property (nonatomic) NSSize cursorSize;

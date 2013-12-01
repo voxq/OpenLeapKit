@@ -257,25 +257,25 @@
     else
         viewForMenu = _handsView;
     
+    NSRect optionsViewRect = [viewForMenu bounds];
     if (!_optionsView)
     {
-        NSRect optionsViewRect = [viewForMenu bounds];
         _optionsView = [[OLKCircleMenuView alloc] initWithFrame:optionsViewRect];
-        [_optionsView setCellStrings:[NSArray arrayWithObjects:@"Option 1", @"Option 2", @"exit", nil]];
         
         _optionsModel = [[OLKCircleOptionInput alloc] init];
         [_optionsModel setDelegate:self];
         [_optionsModel setOptionObjects:[NSArray arrayWithObjects:@"Option 1", @"Option 2", @"exit", nil]];
-
-        if (optionsViewRect.size.width < optionsViewRect.size.height)
-            [_optionsModel setRadius:optionsViewRect.size.width/2.0];
-        else
-            [_optionsModel setRadius:optionsViewRect.size.height/2.0];
+        
         [_optionsView setCircleOptionInput:_optionsModel];
     }
-    
-    NSRect keyViewRect = [viewForMenu bounds];
-    [_optionsView setFrame:NSMakeRect(keyViewRect.origin.x+keyViewRect.size.width/6, keyViewRect.origin.y+keyViewRect.size.height/6, keyViewRect.size.width/1.5, keyViewRect.size.height/1.5)];
+    optionsViewRect.size.width /= 1.5;
+    optionsViewRect.size.height /= 1.5;
+    if (optionsViewRect.size.width < optionsViewRect.size.height)
+        [_optionsModel setRadius:optionsViewRect.size.width/2.0];
+    else
+        [_optionsModel setRadius:optionsViewRect.size.height/2.0];
+
+    [_optionsView setFrame:NSMakeRect(optionsViewRect.origin.x+optionsViewRect.size.width/6, optionsViewRect.origin.y+optionsViewRect.size.height/6, optionsViewRect.size.width, optionsViewRect.size.height)];
     
     [viewForMenu addSubview:_optionsView];
     [_optionsView setActive:YES];
@@ -350,11 +350,25 @@
 {
     NSLog(@"Moved To Center");
     
+    NSView *viewForMenu;
+    if (_fullScreenMode)
+        viewForMenu = _fullOverlayView;
+    else
+        viewForMenu = _handsView;
+    
+    [viewForMenu setNeedsDisplay:YES];
 }
 
 - (void)cursorMovedToInner:(id)sender
 {
     NSLog(@"Moved To Inner");
+    NSView *viewForMenu;
+    if (_fullScreenMode)
+        viewForMenu = _fullOverlayView;
+    else
+        viewForMenu = _handsView;
+    
+    [viewForMenu setNeedsDisplay:YES];
 }
 
 - (void)selectedIndexChanged:(int)index sender:(id)sender
@@ -363,15 +377,31 @@
         NSLog(@"Deselected Index");
     else
     {
+        if (index == 2)
+            [self exitOptionsView];
         NSLog(@"Selected Index: %d", index);
         [_optionsModel setRequiresMoveToInner:TRUE];
     }
+    NSView *viewForMenu;
+    if (_fullScreenMode)
+        viewForMenu = _fullOverlayView;
+    else
+        viewForMenu = _handsView;
+    
+    [viewForMenu setNeedsDisplay:YES];
 }
 
 - (void)hoverIndexChanged:(int)index sender:(id)sender
 {
     NSLog(@"Hover changed to Index: %d", index);
     
+    NSView *viewForMenu;
+    if (_fullScreenMode)
+        viewForMenu = _fullOverlayView;
+    else
+        viewForMenu = _handsView;
+    
+    [viewForMenu setNeedsDisplay:YES];
 }
 
 @end
