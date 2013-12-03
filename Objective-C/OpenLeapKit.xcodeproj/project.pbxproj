@@ -453,7 +453,6 @@
 				HEADER_SEARCH_PATHS = ../../../../code/libraries/LeapSDK/include;
 				INFOPLIST_FILE = "OpenLeapKit/OpenLeapKit-Info.plist";
 				INSTALL_PATH = "@rpath";
-				LD_RUNPATH_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../code/libraries/LeapSDK/lib\"",
@@ -477,7 +476,6 @@
 				HEADER_SEARCH_PATHS = ../../../../code/libraries/LeapSDK/include;
 				INFOPLIST_FILE = "OpenLeapKit/OpenLeapKit-Info.plist";
 				INSTALL_PATH = "@rpath";
-				LD_RUNPATH_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../code/libraries/LeapSDK/lib\"",
