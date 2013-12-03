@@ -28,6 +28,8 @@
 @synthesize switcherPosition = _switcherPosition;
 @synthesize target = _target;
 @synthesize action = _action;
+@synthesize label = _label;
+@synthesize drawLocation = _drawLocation;
 
 - (id)init
 {
@@ -121,6 +123,11 @@
 - (float)switcherRestYOffsetPos
 {
     return _size.height*0.15;
+}
+
+- (void)draw
+{
+    [self draw:_label at:_drawLocation];
 }
 
 - (void)draw:(NSString *)label at:(NSPoint)drawLocation

@@ -11,6 +11,7 @@
 @protocol OLKButton <NSObject>
 
 - (void)onFrame:(NSNotification *)notification;
+- (void)draw;
 - (void)draw:(NSString *)label at:(NSPoint)drawLocation;
 
 @property (nonatomic) int identifier;
@@ -20,5 +21,7 @@
 @property (nonatomic) NSSize size;
 @property (weak) id target;
 @property (nonatomic) SEL action;
+@property (nonatomic) NSString *label;
+@property (nonatomic) NSPoint drawLocation;
 
 @end

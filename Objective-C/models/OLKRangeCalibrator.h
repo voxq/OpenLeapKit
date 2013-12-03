@@ -12,19 +12,23 @@
 @interface OLKRangeCalibrator : NSObject
 
 - (NSPoint)screenPosFromLeapPos:(LeapVector*)leapPos;
-- (void)calibrateWithScreenPos1:(NSPoint)screenPos1 andScreenPos2:(NSPoint)screenPos2 mappingLeapPos1:(LeapVector*)leapPos1 andLeapPos2:(LeapVector *)leapPos2;
+- (void)calibrate2PointWithScreenPos1:(NSPoint)screenPos1 screenPos2:(NSPoint)screenPos2 mappingLeapPos1:(LeapVector*)leapPos1 leapPos2:(LeapVector *)leapPos2;
+- (void)calibrate3PointWithScreenPos1:(NSPoint)screenPos1 screenPos2:(NSPoint)screenPos2 screenPos3:(NSPoint)screenPos3 mappingLeapPos1:(LeapVector*)leapPos1 leapPos2:(LeapVector *)leapPos2 leapPos3:(LeapVector *)leapPos3;
 - (void)calibrate;
 - (void)configScreenPositionsFromWindow:(NSWindow *)window;
 - (void)configScreenPositions;
-- (void)configScreenPositionsFromRect:(NSRect)screenRect;
 
 @property (nonatomic) float heightFactor;
 @property (nonatomic) float widthFactor;
 @property (nonatomic) float offsetToBase;
+@property (nonatomic) float offsetFromHorizCenter;
 @property (nonatomic) NSRect screenFrame;
 @property (nonatomic) LeapVector *leapPos1;
 @property (nonatomic) LeapVector *leapPos2;
+@property (nonatomic) LeapVector *leapPos3;
 @property (nonatomic) NSPoint screenPos1;
 @property (nonatomic) NSPoint screenPos2;
+@property (nonatomic) NSPoint screenPos3;
+@property (nonatomic) BOOL use3PointCalibration;
 
 @end

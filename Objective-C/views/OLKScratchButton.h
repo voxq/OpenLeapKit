@@ -12,6 +12,7 @@
 @interface OLKScratchButton : NSObject <OLKButton>
 
 - (BOOL)handMovedTo:(NSPoint)position;
+- (void)clear;
 
 @property (nonatomic) int identifier;
 @property (nonatomic) BOOL enable;
@@ -24,5 +25,11 @@
 @property (weak) id target;
 @property (nonatomic) SEL action;
 @property (nonatomic) NSView *parentView;
+@property (nonatomic) NSString *label;
+@property (nonatomic) NSPoint drawLocation;
+@property (nonatomic) NSSize escapeZone;
+@property (nonatomic) NSSize outerHotZone;
+@property (nonatomic) NSSize resetEscapeZone;
+@property (nonatomic) float innerHotZone;
 
 @end

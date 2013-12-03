@@ -77,9 +77,9 @@
     if (!_rangeCalibrator)
         return;
 
-    NSPoint drawLocation=[_rangeCalibrator screenPos1];
+    NSPoint drawLocation;
     NSRect convertRect;
-    convertRect.origin = drawLocation;
+    convertRect.origin = [_rangeCalibrator screenPos1];
     convertRect.size = NSMakeSize(0, 0);
     convertRect = [[self window] convertRectFromScreen:convertRect];
 
@@ -95,8 +95,7 @@
     else
         [_selectPointCalibratedImg drawAtPoint:drawLocation fromRect:selectPointRect operation:NSCompositeSourceOver fraction:1];
     
-    drawLocation=[_rangeCalibrator screenPos2];
-    convertRect.origin = drawLocation;
+    convertRect.origin = [_rangeCalibrator screenPos2];
     convertRect.size = NSMakeSize(0, 0);
     convertRect = [[self window] convertRectFromScreen:convertRect];
     
@@ -106,7 +105,23 @@
     drawLocation.y -= _selectPointSize.height/2;
     if (_positionsCalibrated == OLKRangeFirstPositionCalibrated)
         [_selectPointUncalibratedImg drawAtPoint:drawLocation fromRect:selectPointRect operation:NSCompositeSourceOver fraction:1];
-    else if (_positionsCalibrated == OLKRangeBothPositionsCalibrated)
+    else if (_positionsCalibrated != OLKRangeNoPositionsCalibrated)
+        [_selectPointCalibratedImg drawAtPoint:drawLocation fromRect:selectPointRect operation:NSCompositeSourceOver fraction:1];
+
+    if (![_rangeCalibrator use3PointCalibration])
+        return;
+    
+    convertRect.origin = [_rangeCalibrator screenPos3];
+    convertRect.size = NSMakeSize(0, 0);
+    convertRect = [[self window] convertRectFromScreen:convertRect];
+    
+    drawLocation = convertRect.origin;
+    
+    drawLocation.x -= _selectPointSize.width/2;
+    drawLocation.y -= _selectPointSize.height/2;
+    if (_positionsCalibrated == OLKRangeSecondPositionCalibrated)
+        [_selectPointUncalibratedImg drawAtPoint:drawLocation fromRect:selectPointRect operation:NSCompositeSourceOver fraction:1];
+    else if (_positionsCalibrated == OLKRangeAllPositionsCalibrated)
         [_selectPointCalibratedImg drawAtPoint:drawLocation fromRect:selectPointRect operation:NSCompositeSourceOver fraction:1];
 }
 
@@ -121,12 +136,20 @@
             break;
             
         default:
-            if (_positionsCalibrated == OLKRangeBothPositionsCalibrated)
+            if (_positionsCalibrated == OLKRangeAllPositionsCalibrated)
                 break;
             if (_positionsCalibrated == OLKRangeNoPositionsCalibrated)
                 _positionsCalibrated = OLKRangeFirstPositionCalibrated;
+            else if ([_rangeCalibrator use3PointCalibration])
+            {
+                if (_positionsCalibrated == OLKRangeFirstPositionCalibrated)
+                    _positionsCalibrated = OLKRangeSecondPositionCalibrated;
+                else
+                    _positionsCalibrated = OLKRangeAllPositionsCalibrated;
+            }
             else if (_positionsCalibrated == OLKRangeFirstPositionCalibrated)
-                _positionsCalibrated = OLKRangeBothPositionsCalibrated;
+                _positionsCalibrated = OLKRangeAllPositionsCalibrated;
+
             [self setNeedsDisplay:YES];
             [_delegate calibratedPosition:_positionsCalibrated];
             break;

@@ -9,15 +9,23 @@
 
 typedef enum
 {
-    LeapMenuItemOptions = 1,
-    LeapMenuItemTypingMode = 2,
-    LeapMenuItemCharSets = 3,
-    LeapMenuItemLayout = 4
+    LeapMenuItemBoundedHand,
+    LeapMenuItemFingerTips,
+    LeapMenuItemFingerLines,
+    LeapMenuItemPalm,
+    LeapMenuItemFingerDepthY,
+    LeapMenuItem3DHand,
+    LeapMenuItemAutoSizeHandToBounds,
+    LeapMenuItemUseInteractionBox,
+    LeapMenuItemUseStablePalm,
+    LeapMenuItemGoFullScreen,
+    LeapMenuItemCalibrate
 }LeapMenuItem;
 
 @protocol LeapMenuDelegate <NSObject>
 
-- (void)menuItemChangedValue:(LeapMenuItem)menuItem;
+- (void)menuItemChangedValue:(LeapMenuItem)menuItem enabled:(BOOL)enabled;
+- (BOOL)enabledMenuItem:(LeapMenuItem)item;
 
 @end
 

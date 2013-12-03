@@ -11,10 +11,17 @@
 
 @implementation LeapMenuView
 {
-    OLKToggleButton *_typeModeButton;
-    OLKScratchButton *_optionsButton;
-    OLKToggleButton *_charSetsButton;
-    OLKToggleButton *_layoutButton;
+    OLKScratchButton *_calibrateButton;
+    OLKScratchButton *_goFullScreenButton;
+    OLKToggleButton *_boundedHandButton;
+    OLKToggleButton *_fingerTipsButton;
+    OLKToggleButton *_fingerLinesButton;
+    OLKToggleButton *_fingerDepthYButton;
+    OLKToggleButton *_palmButton;
+    OLKToggleButton *_hand3DButton;
+    OLKToggleButton *_autoSizeButton;
+    OLKToggleButton *_stablePalmsButton;
+    OLKToggleButton *_interactionBoxButton;
     BOOL _changeInMenu;
     NSImage *_menuImage;
 }
@@ -42,18 +49,39 @@
 - (void)setCursorPos:(NSPoint)cursorPos cursorObject:(id)cursorObject
 {
     _changeInMenu = TRUE;
-    if ([_typeModeButton handMovedTo:cursorPos])
+    if ([_boundedHandButton handMovedTo:cursorPos])
         return;
     
-    if ([_layoutButton handMovedTo:cursorPos])
+    if ([_fingerLinesButton handMovedTo:cursorPos])
         return;
     
-    if ([_charSetsButton handMovedTo:cursorPos])
+    if ([_fingerTipsButton handMovedTo:cursorPos])
         return;
     
-    if ([_optionsButton handMovedTo:cursorPos])
+    if ([_calibrateButton handMovedTo:cursorPos])
         return;
-
+    
+    if ([_autoSizeButton handMovedTo:cursorPos])
+        return;
+    
+    if ([_interactionBoxButton handMovedTo:cursorPos])
+        return;
+    
+    if ([_stablePalmsButton handMovedTo:cursorPos])
+        return;
+    
+    if ([_hand3DButton handMovedTo:cursorPos])
+        return;
+    
+    if ([_goFullScreenButton handMovedTo:cursorPos])
+        return;
+    
+    if ([_fingerDepthYButton handMovedTo:cursorPos])
+        return;
+    
+    if ([_palmButton handMovedTo:cursorPos])
+        return;
+    
     _changeInMenu = FALSE;
 }
 
@@ -62,47 +90,183 @@
     _changeInMenu = TRUE;
     _active = NO;
     _enableCursor = TRUE;
-    _optionsButton = [[OLKScratchButton alloc] init];
-    [_optionsButton setSize:NSMakeSize(240, 50)];
-    _typeModeButton = [[OLKToggleButton alloc] init];
-    [_typeModeButton setSize:NSMakeSize(120, 50)];
-    _charSetsButton = [[OLKToggleButton alloc] init];
-    [_charSetsButton setSize:NSMakeSize(120, 50)];
-    _layoutButton = [[OLKToggleButton alloc] init];
-    [_layoutButton setSize:NSMakeSize(120, 50)];
-    [_typeModeButton setTarget:self];
-    [_typeModeButton setAction:@selector(typeModeChanged:)];
-    [_layoutButton setTarget:self];
-    [_layoutButton setAction:@selector(layoutChanged:)];
-    [_optionsButton setTarget:self];
-    [_optionsButton setAction:@selector(optionsChanged:)];
-    [_optionsButton setParentView:self];
-    [_charSetsButton setTarget:self];
-    [_charSetsButton setAction:@selector(charSetsChanged:)];
+    
+    _calibrateButton = [[OLKScratchButton alloc] init];
+    [_calibrateButton setSize:NSMakeSize(240, 50)];
+    [_calibrateButton setTarget:self];
+    [_calibrateButton setAction:@selector(calibrateOptionChanged:)];
+    [_calibrateButton setParentView:self];
+    
+    _goFullScreenButton = [[OLKScratchButton alloc] init];
+    [_goFullScreenButton setSize:NSMakeSize(240, 50)];
+    [_goFullScreenButton setTarget:self];
+    [_goFullScreenButton setAction:@selector(goFullScreenOptionChanged:)];
+    [_goFullScreenButton setParentView:self];
+    
+    _boundedHandButton = [[OLKToggleButton alloc] init];
+    [_boundedHandButton setSize:NSMakeSize(120, 50)];
+    [_boundedHandButton setTarget:self];
+    [_boundedHandButton setAction:@selector(boundedHandOptionChanged:)];
+    [_boundedHandButton setEnable:YES];
+    
+    _fingerTipsButton = [[OLKToggleButton alloc] init];
+    [_fingerTipsButton setSize:NSMakeSize(120, 50)];
+    [_fingerTipsButton setTarget:self];
+    [_fingerTipsButton setAction:@selector(fingerTipsOptionChanged:)];
+    [_fingerTipsButton setEnable:YES];
+
+    _fingerLinesButton = [[OLKToggleButton alloc] init];
+    [_fingerLinesButton setSize:NSMakeSize(120, 50)];
+    [_fingerLinesButton setTarget:self];
+    [_fingerLinesButton setAction:@selector(fingerLinesOptionChanged:)];
+    [_fingerLinesButton setEnable:YES];
+
+    _palmButton = [[OLKToggleButton alloc] init];
+    [_palmButton setSize:NSMakeSize(120, 50)];
+    [_palmButton setTarget:self];
+    [_palmButton setAction:@selector(drawPalmOptionChanged:)];
+    [_palmButton setEnable:YES];
+
+    _hand3DButton = [[OLKToggleButton alloc] init];
+    [_hand3DButton setSize:NSMakeSize(120, 50)];
+    [_hand3DButton setTarget:self];
+    [_hand3DButton setAction:@selector(hand3DOptionChanged:)];
+    [_hand3DButton setEnable:YES];
+
+    _autoSizeButton = [[OLKToggleButton alloc] init];
+    [_autoSizeButton setSize:NSMakeSize(120, 50)];
+    [_autoSizeButton setTarget:self];
+    [_autoSizeButton setAction:@selector(autoSizeOptionChanged:)];
+    [_autoSizeButton setEnable:YES];
+    
+    _stablePalmsButton = [[OLKToggleButton alloc] init];
+    [_stablePalmsButton setSize:NSMakeSize(120, 50)];
+    [_stablePalmsButton setTarget:self];
+    [_stablePalmsButton setAction:@selector(stablePalmOptionChanged:)];
+    [_stablePalmsButton setEnable:YES];
+    
+    _interactionBoxButton = [[OLKToggleButton alloc] init];
+    [_interactionBoxButton setSize:NSMakeSize(120, 50)];
+    [_interactionBoxButton setTarget:self];
+    [_interactionBoxButton setAction:@selector(interactionBoxOptionChanged:)];
+    [_interactionBoxButton setEnable:YES];
+
+    _fingerDepthYButton = [[OLKToggleButton alloc] init];
+    [_fingerDepthYButton setSize:NSMakeSize(120, 50)];
+    [_fingerDepthYButton setTarget:self];
+    [_fingerDepthYButton setAction:@selector(fingerDepthOptionChanged:)];
+    [_fingerDepthYButton setEnable:YES];
 }
 
-- (void)typeModeChanged:(id)sender
+- (BOOL)enabledMenuItem:(LeapMenuItem)item
 {
-    if (_delegate)
-        [_delegate menuItemChangedValue:LeapMenuItemTypingMode];
+    switch (item) {
+        case LeapMenuItem3DHand:
+            return [_hand3DButton enable];
+            break;
+            
+        case LeapMenuItemAutoSizeHandToBounds:
+            return [_autoSizeButton enable];
+            break;
+            
+        case LeapMenuItemFingerDepthY:
+            return [_fingerDepthYButton enable];
+            break;
+            
+        case LeapMenuItemBoundedHand:
+            return [_boundedHandButton enable];
+            break;
+            
+        case LeapMenuItemUseInteractionBox:
+            return [_interactionBoxButton enable];
+            break;
+            
+        case LeapMenuItemFingerLines:
+            return [_fingerLinesButton enable];
+            break;
+            
+        case LeapMenuItemFingerTips:
+            return [_fingerTipsButton enable];
+            break;
+            
+        case LeapMenuItemPalm:
+            return [_palmButton enable];
+            break;
+            
+        case LeapMenuItemUseStablePalm:
+            return [_stablePalmsButton enable];
+            break;
+            
+        default:
+            break;
+    }
+    return FALSE;
 }
 
-- (void)layoutChanged:(id)sender
+- (void)fingerDepthOptionChanged:(id)sender
 {
     if (_delegate)
-        [_delegate menuItemChangedValue:LeapMenuItemLayout];
+        [_delegate menuItemChangedValue:LeapMenuItemFingerDepthY enabled:[_fingerDepthYButton enable]];
 }
 
-- (void)optionsChanged:(id)sender
+- (void)hand3DOptionChanged:(id)sender
 {
     if (_delegate)
-        [_delegate menuItemChangedValue:LeapMenuItemOptions];
+        [_delegate menuItemChangedValue:LeapMenuItem3DHand enabled:[_hand3DButton enable]];
 }
 
-- (void)charSetsChanged:(id)sender
+- (void)drawPalmOptionChanged:(id)sender
 {
     if (_delegate)
-        [_delegate menuItemChangedValue:LeapMenuItemCharSets];
+        [_delegate menuItemChangedValue:LeapMenuItemPalm enabled:[_palmButton enable]];
+}
+
+- (void)goFullScreenOptionChanged:(id)sender
+{
+    if (_delegate)
+        [_delegate menuItemChangedValue:LeapMenuItemGoFullScreen enabled:[_goFullScreenButton enable]];
+}
+
+- (void)autoSizeOptionChanged:(id)sender
+{
+    if (_delegate)
+        [_delegate menuItemChangedValue:LeapMenuItemAutoSizeHandToBounds enabled:[_autoSizeButton enable]];
+}
+
+- (void)stablePalmOptionChanged:(id)sender
+{
+    if (_delegate)
+        [_delegate menuItemChangedValue:LeapMenuItemUseStablePalm enabled:[_stablePalmsButton enable]];
+}
+
+- (void)interactionBoxOptionChanged:(id)sender
+{
+    if (_delegate)
+        [_delegate menuItemChangedValue:LeapMenuItemUseInteractionBox enabled:[_interactionBoxButton enable]];
+}
+
+- (void)boundedHandOptionChanged:(id)sender
+{
+    if (_delegate)
+        [_delegate menuItemChangedValue:LeapMenuItemBoundedHand enabled:[_boundedHandButton enable]];
+}
+
+- (void)fingerLinesOptionChanged:(id)sender
+{
+    if (_delegate)
+        [_delegate menuItemChangedValue:LeapMenuItemFingerLines enabled:[_fingerLinesButton enable]];
+}
+
+- (void)calibrateOptionChanged:(id)sender
+{
+    if (_delegate)
+        [_delegate menuItemChangedValue:LeapMenuItemCalibrate enabled:[_calibrateButton enable]];
+}
+
+- (void)fingerTipsOptionChanged:(id)sender
+{
+    if (_delegate)
+        [_delegate menuItemChangedValue:LeapMenuItemFingerTips enabled:[_fingerTipsButton enable]];
 }
 
 - (void)drawMenuInImage
@@ -110,10 +274,50 @@
     NSRect bounds = [self bounds];
     _menuImage = [[NSImage alloc] initWithSize:[self bounds].size];
     [_menuImage lockFocus];
-    [_charSetsButton draw:@"Show Other Characters" at:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/4))];
-    [_typeModeButton draw:@"Finger Mode" at:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/4)-100)];
-    [_layoutButton draw:@"Split Mode" at:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/4)-200)];
-    [_optionsButton draw:@"Options" at:NSMakePoint(bounds.origin.x+bounds.size.width/2 - [_optionsButton size].width/2, bounds.size.height-(bounds.size.width/4)-300)];
+    
+    [_boundedHandButton setLabel:@"Bounded Hand"];
+    [_boundedHandButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16))];
+    [_boundedHandButton draw];
+    
+    [_fingerLinesButton setLabel:@"Finger Lines"];
+    [_fingerLinesButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-70)];
+    [_fingerLinesButton draw];
+    
+    [_fingerTipsButton setLabel:@"Finger Tips"];
+    [_fingerTipsButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-140)];
+    [_fingerTipsButton draw];
+    
+    [_palmButton setLabel:@"Draw Palms"];
+    [_palmButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-210)];
+    [_palmButton draw];
+    
+    [_fingerDepthYButton setLabel:@"Finger Depth on Y Axis"];
+    [_fingerDepthYButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-280)];
+    [_fingerDepthYButton draw];
+
+    [_hand3DButton setLabel:@"Use 3D Perspective Hand"];
+    [_hand3DButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-350)];
+    [_hand3DButton draw];
+
+    [_autoSizeButton setLabel:@"Auto Size Hand to Bounds"];
+    [_autoSizeButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-420)];
+    [_autoSizeButton draw];
+    
+    [_stablePalmsButton setLabel:@"Use Stabilized Palms"];
+    [_stablePalmsButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-490)];
+    [_stablePalmsButton draw];
+    
+    [_interactionBoxButton setLabel:@"Use Interaction Box"];
+    [_interactionBoxButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-560)];
+    [_interactionBoxButton draw];
+
+    [_calibrateButton setLabel:@"Screen Calibrate"];
+    [_calibrateButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-700)];
+    [_calibrateButton draw];
+
+    [_goFullScreenButton setLabel:@"Full Screen"];
+    [_goFullScreenButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-800)];
+    [_goFullScreenButton draw];
     [_menuImage unlockFocus];
 }
 
@@ -124,18 +328,23 @@
         [self drawMenuInImage];
         _changeInMenu = FALSE;
     }
-    else if ([_optionsButton activated])
+    else
     {
-        [_menuImage lockFocus];
-        [[NSColor clearColor] set];
-        NSRect bounds = [self bounds];
-        NSRect clearAreaRect;
-        clearAreaRect.origin = NSMakePoint(0, bounds.size.height-(bounds.size.width/4)-300);
-        clearAreaRect.size.width = 320;
-        clearAreaRect.size.height = 50;
-        NSRectFill(clearAreaRect);
-        [_optionsButton draw:@"Options" at:NSMakePoint(bounds.origin.x+bounds.size.width/2 - [_optionsButton size].width/2, bounds.size.height-(bounds.size.width/4)-300)];
-        [_menuImage unlockFocus];
+         if ([_calibrateButton activated] || [_goFullScreenButton activated])
+         {
+            [_menuImage lockFocus];
+            if ([_calibrateButton activated])
+            {
+                [_calibrateButton clear];
+                [_calibrateButton draw];
+            }
+            if ([_goFullScreenButton activated])
+            {
+                [_goFullScreenButton clear];
+                [_goFullScreenButton draw];
+            }
+            [_menuImage unlockFocus];
+         }
     }
     
     NSRect menuRect;

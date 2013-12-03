@@ -13,7 +13,8 @@ typedef enum
 {
     OLKRangeNoPositionsCalibrated,
     OLKRangeFirstPositionCalibrated,
-    OLKRangeBothPositionsCalibrated
+    OLKRangeSecondPositionCalibrated,
+    OLKRangeAllPositionsCalibrated
 }OLKRangePositionsCalibrated;
 
 @protocol OLKRangeCalibratorViewDelegate <NSObject>

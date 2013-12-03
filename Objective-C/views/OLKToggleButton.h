@@ -22,5 +22,7 @@
 @property (nonatomic) float switcherPosition;
 @property (weak) id target;
 @property (nonatomic) SEL action;
+@property (nonatomic) NSString *label;
+@property (nonatomic) NSPoint drawLocation;
 
 @end

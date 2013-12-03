@@ -11,5 +11,6 @@
 @interface OLKFullScreenOverlayWindow : NSPanel
 
 - (void)resetToDefaultConfig;
+- (void)moveToScreen:(NSScreen *)screen;
 
 @end

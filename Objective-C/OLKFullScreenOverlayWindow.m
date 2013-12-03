@@ -39,5 +39,9 @@
     [self setCanHide:NO];
 }
 
+- (void)moveToScreen:(NSScreen *)screen
+{
+    [self setFrame:[screen frame] display:YES];
+}
 
 @end

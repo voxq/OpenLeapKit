@@ -16,7 +16,6 @@
     NSImage *_switcherOnImg;
     NSImage *_switcherOffImg;
     NSImage *_switcherHalfImg;
-    NSPoint _location;
     BOOL _requiresReset;
     BOOL _sliding;
     BOOL _halfway;
@@ -24,6 +23,10 @@
     NSTimer *_animateTimer;
     float _activateAlpha;
     float _pauseActivateFrames;
+    BOOL _outerHotZoneSet;
+    BOOL _innerHotZoneSet;
+    BOOL _escapeZoneSet;
+    BOOL _resetEscapeZoneSet;
 }
 
 @synthesize identifier = _identifier;
@@ -37,6 +40,12 @@
 @synthesize action = _action;
 @synthesize parentView = _parentView;
 @synthesize enable = _enable;
+@synthesize label = _label;
+@synthesize drawLocation = _drawLocation;
+@synthesize outerHotZone = _outerHotZone;
+@synthesize escapeZone = _escapeZone;
+@synthesize innerHotZone = _innerHotZone;
+@synthesize resetEscapeZone = _resetEscapeZone;
 
 - (id)init
 {
@@ -52,6 +61,10 @@
         _activated = NO;
         _halfway = NO;
         _requiresReset = NO;
+        _outerHotZoneSet = NO;
+        _innerHotZoneSet = NO;
+        _resetEscapeZoneSet = NO;
+        _escapeZoneSet = NO;
     }
     return self;
 }
@@ -151,10 +164,60 @@
     [_catcherHalfImg unlockFocus];
 }
 
+- (void)setOuterHotZone:(NSSize)outerHotZone
+{
+    if (!_outerHotZoneSet)
+        _outerHotZoneSet = YES;
+    
+    _outerHotZone = outerHotZone;
+}
+
+- (void)setInnerHotZone:(float)innerHotZone
+{
+    if (!_innerHotZoneSet)
+        _innerHotZoneSet = YES;
+    
+    _innerHotZone = innerHotZone;
+}
+
+- (void)setResetEscapeZone:(NSSize)resetEscapeZone
+{
+    if (!_resetEscapeZoneSet)
+        _resetEscapeZoneSet = YES;
+
+    _resetEscapeZone = resetEscapeZone;
+}
+
+- (void)setEscapeZone:(NSSize)escapeZone
+{
+    if (!_escapeZoneSet)
+        _escapeZoneSet = YES;
+    
+    _escapeZone = escapeZone;
+}
+
 - (void)setSize:(NSSize)size
 {
     _size = size;
     [self createButtonImages];
+    if (!_outerHotZoneSet)
+    {
+        _outerHotZone.width = 10;
+        _outerHotZone.height = 15;
+    }
+    if (!_escapeZoneSet)
+    {
+        _escapeZone.width = 100;
+        _escapeZone.height = 60;
+    }
+    if (!_resetEscapeZoneSet)
+    {
+        _resetEscapeZone.width = 100;
+        _resetEscapeZone.height = 40;
+    }
+    if (!_innerHotZoneSet)
+        _innerHotZone = [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width*2;
+
 }
 
 - (void)onFrame:(NSNotification *)notification
@@ -177,10 +240,14 @@
     return _size.height*0.15;
 }
 
-- (void)draw:(NSString *)label at:(NSPoint)drawLocation
+- (void)clear
 {
-    _location = drawLocation;
-    
+    [[NSColor clearColor] set];
+    NSRectFill(NSMakeRect(_drawLocation.x, _drawLocation.y, _size.width, _size.height));
+}
+
+- (void)draw
+{
     if (!_visible)
         return;
     
@@ -192,7 +259,9 @@
     NSRect buttonRect;
     buttonRect.origin = NSMakePoint(0, 0);
     buttonRect.size = [_catcherOnImg size];
-    [_catcherHalfImg drawAtPoint:drawLocation fromRect:buttonRect operation:NSCompositeSourceOver fraction:currentAlpha];
+    
+    NSPoint elementDrawLocation = _drawLocation;
+    [_catcherHalfImg drawAtPoint:elementDrawLocation fromRect:buttonRect operation:NSCompositeSourceOver fraction:currentAlpha];
     
     NSRect switcherRect;
     switcherRect.origin = NSMakePoint(0, 0);
@@ -204,15 +273,15 @@
         if (_sliding)
             drawPoint.x = _switcherPosition;
         else
-            drawPoint.x = drawLocation.x + [self switcherOnRestOffsetXPos];
+            drawPoint.x = elementDrawLocation.x + [self switcherOnRestOffsetXPos];
         
-        drawPoint.y = drawLocation.y + [self switcherRestYOffsetPos];
+        drawPoint.y = elementDrawLocation.y + [self switcherRestYOffsetPos];
          [_switcherHalfImg drawAtPoint:drawPoint fromRect:switcherRect operation:NSCompositeSourceOver fraction:currentAlpha];
     }
 
-    drawLocation.x += [self switcherOffRestOffsetXPos];
-    NSPoint savePos = drawLocation;
-    drawLocation.y += [self switcherRestYOffsetPos];
+    elementDrawLocation.x += [self switcherOffRestOffsetXPos];
+    NSPoint savePos = elementDrawLocation;
+    elementDrawLocation.y += [self switcherRestYOffsetPos];
     
     if (!_halfway)
     {
@@ -220,8 +289,8 @@
         if (_sliding)
             adjPos.x = _switcherPosition;
         else
-            adjPos.x = drawLocation.x;
-        adjPos.y = drawLocation.y;
+            adjPos.x = elementDrawLocation.x;
+        adjPos.y = elementDrawLocation.y;
         switcherRect.size = [_switcherOffImg size];
         if (_sliding)
             [_switcherOffImg drawAtPoint:adjPos fromRect:switcherRect operation:NSCompositeSourceOver fraction:currentAlpha];
@@ -244,7 +313,7 @@
         [_catcherOffImg drawAtPoint:savePos fromRect:buttonRect operation:NSCompositeSourceOver fraction:currentAlpha];
     else
     {
-        if (!_activated || !_pauseActivateFrames)
+        if (!_halfway || !_pauseActivateFrames)
             [_catcherOffImg drawAtPoint:savePos fromRect:buttonRect operation:NSCompositeSourceOver fraction:currentAlpha];
         if (_activated)
             [_catcherOnImg drawAtPoint:savePos fromRect:buttonRect operation:NSCompositeSourceOver fraction:currentAlpha*_activateAlpha];
@@ -253,29 +322,28 @@
     }
 
     
-    drawLocation.x += switcherRect.origin.x + switcherRect.size.width + switcherRect.size.width/4;
-    drawLocation.y += _size.height/25;
+    elementDrawLocation.x += switcherRect.origin.x + switcherRect.size.width + switcherRect.size.width/4;
+    elementDrawLocation.y += _size.height/25;
     
     NSRect labelRect;
     labelRect.size.width = 500;
     labelRect.size.height = 35;
-    labelRect.origin.x = _location.x - 20 - labelRect.size.width;
-    labelRect.origin.y = drawLocation.y;
+    labelRect.origin.x = _drawLocation.x - 20 - labelRect.size.width;
+    labelRect.origin.y = elementDrawLocation.y;
     NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [style setAlignment:NSRightTextAlignment];
     
     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Helvetica Neue" size:25], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, nil];
-    [label drawInRect:labelRect withAttributes:attributes];
-    //    [label drawAtPoint:drawLocation withAttributes:attributes];
+    [_label drawInRect:labelRect withAttributes:attributes];
 }
 
 - (BOOL)detectReset:(NSPoint)position
 {
-    if (position.x > _location.x + [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width + 40)
+    if (position.x > _drawLocation.x + [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width + _resetEscapeZone.width)
         return TRUE;
-    if (position.x < _location.x - 40)
+    if (position.x < _drawLocation.x - _resetEscapeZone.width)
         return TRUE;
-    if ([self escapeInY:position])
+    if (position.y < _drawLocation.y-_resetEscapeZone.height || position.y > _drawLocation.y+_size.height+_resetEscapeZone.height)
         return TRUE;
     
     return FALSE;
@@ -283,95 +351,147 @@
 
 - (BOOL)escapeInY:(NSPoint)position
 {
-    if (position.y < _location.y-_size.height*0.35 || position.y > _location.y+_size.height+_size.height*0.35)
+    if (position.y < _drawLocation.y-_escapeZone.height || position.y > _drawLocation.y+_size.height+_escapeZone.height)
         return TRUE;
     
     return FALSE;
 }
 
+- (BOOL)inHotZoneX:(NSPoint)position
+{
+    if (position.x <= _drawLocation.x + _size.width + _outerHotZone.width && position.x > _drawLocation.x + [self switcherOffRestOffsetXPos] - _innerHotZone)
+        return YES;
+    return NO;
+}
+
+- (BOOL)inSlideInitiateZone:(NSPoint)position
+{
+    if (position.x < _drawLocation.x + [self switcherOffRestOffsetXPos] - _outerHotZone.width)
+        return NO;
+    if (position.x > _drawLocation.x + _size.width + _outerHotZone.width)
+        return NO;
+    
+    return YES;
+}
+
+- (BOOL)inHotZone:(NSPoint)position
+{
+    if (position.x < _drawLocation.x - _outerHotZone.width)
+        return NO;
+    
+    if (position.x > _size.width+_drawLocation.x+_outerHotZone.width)
+        return NO;
+    
+    if (position.y < _drawLocation.y-_outerHotZone.height)
+        return NO;
+    
+    if (position.y > _drawLocation.y + _size.height+_outerHotZone.height)
+        return NO;
+    
+    return YES;
+}
+
+- (BOOL)escapedResetZone:(NSPoint)position
+{
+    if (position.x < _drawLocation.x - _resetEscapeZone.width)
+        return YES;
+    
+    if (position.x > _size.width+_drawLocation.x+_resetEscapeZone.width)
+        return YES;
+    
+    if (position.y < _drawLocation.y-_resetEscapeZone.height)
+        return YES;
+    
+    if (position.y > _drawLocation.y + _size.height+_resetEscapeZone.height)
+        return YES;
+    
+    return NO;
+}
+
+- (BOOL)escapedHotZone:(NSPoint)position
+{
+    if (position.x < _drawLocation.x - _escapeZone.width)
+        return YES;
+    
+    if (position.x > _size.width+_drawLocation.x+_escapeZone.width)
+        return YES;
+    
+    if (position.y < _drawLocation.y-_escapeZone.height)
+        return YES;
+    
+    if (position.y > _drawLocation.y + _size.height+_escapeZone.height)
+        return YES;
+    
+    return NO;
+}
+
+- (float)rightBoundForPos
+{
+    return _drawLocation.x + [self switcherOffRestOffsetXPos] + [_switcherOffImg size].width/2;
+}
+
 - (BOOL)handMovedTo:(NSPoint)position
 {
-    
-    if (!_sliding && !_requiresReset && (position.x < _location.x || position.x > _size.width+_location.x || position.y < _location.y || position.y > _location.y + _size.height))
+    if (_requiresReset)
     {
-        _sliding = NO;
-        _requiresReset = NO;
+        if ([self detectReset:position])
+            _requiresReset = NO;
+        
         return FALSE;
     }
+
+    if (!_sliding && ![self inHotZone:position])
+        return FALSE;
     
     if (_sliding)
     {
+        if ([self escapedHotZone:position])
+        {
+            _switcherPosition = [self switcherOffRestOffsetXPos];
+            _sliding = NO;
+            _halfway = NO;
+            if (_parentView)
+                [_parentView setNeedsDisplay:YES];
+            return TRUE;
+        }
         if (_halfway)
         {
-            if ([self escapeInY:position])
-            {
-                if (_parentView)
-                    [_parentView setNeedsDisplay:YES];
-                _sliding = NO;
-            }
-            else if (position.x > _location.x + _size.width*0.75)
+            if (position.x > _drawLocation.x + _size.width-_innerHotZone)
             {
                 _requiresReset = YES;
                 _halfway = NO;
                 _activated = YES;
                 _activatedTime = [NSDate date];
+                _sliding = NO;
+                _switcherPosition = [self switcherOffRestOffsetXPos];
                 [self initAnimateOnActivate];
                 if (_target)
                     [[NSApplication sharedApplication] sendAction:_action to:_target from:self];
-                _sliding = NO;
+                return TRUE;
             }
-            else if (position.x < _location.x+[self switcherOnRestOffsetXPos])
-            {
-                if (position.x < _location.x - _size.width*0.25)
-                {
-                    if (_parentView)
-                        [_parentView setNeedsDisplay:YES];
-                    _sliding = NO;
-                }
-                position.x = _location.x + [self switcherOnRestOffsetXPos];
-            }
+            else if (position.x < _drawLocation.x+[self switcherOnRestOffsetXPos] + [_switcherOnImg size].width/2)
+                position.x = _drawLocation.x + [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width/2;
         }
         else
         {
-            if ([self escapeInY:position])
+            if (position.x < _drawLocation.x + _innerHotZone)
             {
+                _halfway = YES;
                 if (_parentView)
                     [_parentView setNeedsDisplay:YES];
-                _sliding = NO;
             }
-            else if (position.x < _location.x + [_catcherHalfImg size].width)
-            {
-                _requiresReset = YES;
-                _halfway = YES;
-            }
-            else if (position.x > _location.x + [self switcherOffRestOffsetXPos])
-            {
-                if (position.x > _location.x+_size.width+_size.width*0.25)
-                {
-                    if (_parentView)
-                        [_parentView setNeedsDisplay:YES];
-                    _sliding = NO;
-                }
-                position.x = _location.x + [self switcherOffRestOffsetXPos];
-            }
+            else if (position.x > [self rightBoundForPos])
+                position.x = [self rightBoundForPos];
         }
     }
-    else if (_requiresReset)
-    {
-        if ([self detectReset:position])
-            _requiresReset = NO;
-    }
-    else if (position.x < _location.x + _size.width + 20 && position.x > _location.x + [self switcherOffRestOffsetXPos] - 20)
+    else if ([self inSlideInitiateZone:position])
     {
         _sliding = YES;
-        if (position.x > _location.x + [self switcherOffRestOffsetXPos])
-            position.x = _location.x + [self switcherOffRestOffsetXPos];
+        if (position.x > [self rightBoundForPos])
+            position.x = [self rightBoundForPos];
     }
-    if (!_sliding)
-    {
-        _halfway = NO;
-    }
-    _switcherPosition = position.x;
+
+    _switcherPosition = position.x - [_switcherOffImg size].width/2;
     
     return TRUE;
 }
