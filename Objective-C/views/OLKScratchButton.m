@@ -36,6 +36,7 @@
 @synthesize target = _target;
 @synthesize action = _action;
 @synthesize parentView = _parentView;
+@synthesize enable = _enable;
 
 - (id)init
 {

@@ -56,6 +56,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 @synthesize overrideSpaceViews = _overrideSpaceViews;
 @synthesize dataSource = _dataSource;
 @synthesize delegate = _delegate;
+@synthesize oldestHand = _oldestHand;
 @synthesize leftHand = _leftHand;
 @synthesize rightHand = _rightHand;
 @synthesize leftHandView = _leftHandView;
@@ -74,6 +75,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 @synthesize proximityOffset = _proximityOffset;
 @synthesize percentRangeOfMaxWidth = _percentRangeOfMaxWidth;
 @synthesize fitHandFact = _fitHandFact;
+@synthesize calibrator = _calibrator;
 
 - (id)init
 {
@@ -206,11 +208,9 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         [handsViews addObject:_leftHandView];
     if (_rightHandView)
         [handsViews addObject:_rightHandView];
+
     if ([handsViews count])
-    {
-//        [handsViews addObjectsFromArray:_handsViews];
         _handsViews = [NSArray arrayWithArray:handsViews];
-    }
 }
 
 - (void)removeMissingHands
@@ -381,7 +381,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     if (_overrideSpaceViews)
     {
         spaceView = _handsSpaceView;
-        NSLog(@"Error: space view not assigned!");
+        if (!spaceView)
+            NSLog(@"Error: space view not assigned!");
     }
     else
     {
@@ -390,7 +391,14 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         if (!spaceView)
             spaceView = _handsSpaceView;
     }
-    if (_useInteractionBox)
+    if (_calibrator)
+    {
+        NSRect convertRect;
+        convertRect.origin = [_calibrator screenPosFromLeapPos:palmPosition];
+        convertRect.size = oldRect.size;
+        oldRect = [[spaceView window] convertRectFromScreen:convertRect];
+    }
+    else if (_useInteractionBox)
         oldRect.origin = [OLKHelpers convertInteractionBoxLeapPos:palmPosition toConfinedView:spaceView forFrame:[leapHand frame] trim:_trimInteraction];
     else
         oldRect.origin = [OLKHelpers convertLeapPos:palmPosition toConfinedView:spaceView proximityOffset:_proximityOffset rangeOffset:_rangeOffset percentRangeOfMaxWidth:_percentRangeOfMaxWidth forLeapDevice:_leapDevice];

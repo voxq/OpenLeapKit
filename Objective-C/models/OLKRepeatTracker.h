@@ -13,7 +13,7 @@
 - (void)resetToDefaults;
 - (void)reset;
 - (void)initRepeatWithObject:(id)object;
-- (BOOL)detectRepeatWithObject:(id)object;
+- (BOOL)detectRepeatOfObject:(id)object;
 - (void)stopRepeatIfObject:(id)object;
 
 @property (nonatomic) BOOL isRepeating;

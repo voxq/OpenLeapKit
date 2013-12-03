@@ -34,11 +34,11 @@
 #import <Foundation/Foundation.h>
 #import "OLKSimpleVectHandView.h"
 #import "OLKHand.h"
+#import "OLKRangeCalibrator.h"
 
 @protocol OLKHandsContainerViewControllerDataSource <NSObject>
 
 - (NSView <OLKHandContainer>*)handViewForHand:(OLKHand *)hand;
-- (NSView *)pointableView:(NSRect)frame withHandedness:(OLKHandedness)handedness;
 
 @end
 
@@ -62,6 +62,7 @@
 @property (nonatomic) BOOL overrideSpaceViews;
 @property (nonatomic) NSObject <OLKHandsContainerViewControllerDataSource> *dataSource;
 @property (nonatomic) NSObject <OLKHandsContainerViewControllerDelegate> *delegate;
+@property (nonatomic, readonly) OLKHand *oldestHand;
 @property (nonatomic, readonly) OLKHand *leftHand;
 @property (nonatomic, readonly) OLKHand *rightHand;
 @property (nonatomic, readonly) NSView <OLKHandContainer> *leftHandView;
@@ -86,6 +87,6 @@
 @property (nonatomic) float proximityOffset;
 @property (nonatomic) float percentRangeOfMaxWidth;
 @property (nonatomic) NSSize fitHandFact;
-
+@property (nonatomic) OLKRangeCalibrator *calibrator;
 
 @end

@@ -14,6 +14,7 @@
 - (BOOL)handMovedTo:(NSPoint)position;
 
 @property (nonatomic) int identifier;
+@property (nonatomic) BOOL enable;
 @property (nonatomic) BOOL active;
 @property (nonatomic) BOOL activated;
 @property (nonatomic) BOOL visible;

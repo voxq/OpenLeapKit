@@ -4,10 +4,6 @@
 
 @interface OLKCircleMenuView : NSView
 
-- (NSString *)textAtAngle:(float)degree;
-- (int)indexAtAngle:(float)degree;
-- (NSString *)textAtIndex:(int)index;
-
 @property (nonatomic) OLKCircleOptionInput *circleOptionInput;
 @property (nonatomic) BOOL active;
 @property (nonatomic) NSPoint center;

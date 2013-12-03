@@ -22,6 +22,12 @@
 		2F6E36C1184B5A1700E34155 /* OLKRepeatTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F6E36BF184B5A1700E34155 /* OLKRepeatTracker.m */; };
 		2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FB65BB617D14828002E1C05 /* OLKGestureComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB65BB417D14828002E1C05 /* OLKGestureComponents.m */; };
+		2FBD089F184C912B0050494C /* OLKRangeCalibrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FBD089D184C912B0050494C /* OLKRangeCalibrator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2FBD08A0184C912B0050494C /* OLKRangeCalibrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FBD089E184C912B0050494C /* OLKRangeCalibrator.m */; };
+		2FBD08A3184CB9D00050494C /* OLKRangeCalibratorView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FBD08A1184CB9D00050494C /* OLKRangeCalibratorView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2FBD08A4184CB9D00050494C /* OLKRangeCalibratorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FBD08A2184CB9D00050494C /* OLKRangeCalibratorView.m */; };
+		2FBD08AA184CD9A60050494C /* OLKFullScreenOverlayWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FBD08A8184CD9A60050494C /* OLKFullScreenOverlayWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2FBD08AB184CD9A60050494C /* OLKFullScreenOverlayWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FBD08A9184CD9A60050494C /* OLKFullScreenOverlayWindow.m */; };
 		2FC0A44C17F450E1009B4A7D /* OLKGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC0A44A17F450E1009B4A7D /* OLKGestureRecognizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FC0A44D17F450E1009B4A7D /* OLKGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC0A44B17F450E1009B4A7D /* OLKGestureRecognizer.m */; };
 		2FC0A45217F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC0A45017F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -71,6 +77,12 @@
 		2F6E36BF184B5A1700E34155 /* OLKRepeatTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKRepeatTracker.m; sourceTree = "<group>"; };
 		2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureComponents.h; sourceTree = "<group>"; };
 		2FB65BB417D14828002E1C05 /* OLKGestureComponents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKGestureComponents.m; sourceTree = "<group>"; };
+		2FBD089D184C912B0050494C /* OLKRangeCalibrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKRangeCalibrator.h; sourceTree = "<group>"; };
+		2FBD089E184C912B0050494C /* OLKRangeCalibrator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKRangeCalibrator.m; sourceTree = "<group>"; };
+		2FBD08A1184CB9D00050494C /* OLKRangeCalibratorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKRangeCalibratorView.h; path = views/OLKRangeCalibratorView.h; sourceTree = "<group>"; };
+		2FBD08A2184CB9D00050494C /* OLKRangeCalibratorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKRangeCalibratorView.m; path = views/OLKRangeCalibratorView.m; sourceTree = "<group>"; };
+		2FBD08A8184CD9A60050494C /* OLKFullScreenOverlayWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKFullScreenOverlayWindow.h; sourceTree = "<group>"; };
+		2FBD08A9184CD9A60050494C /* OLKFullScreenOverlayWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKFullScreenOverlayWindow.m; sourceTree = "<group>"; };
 		2FC0A44A17F450E1009B4A7D /* OLKGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureRecognizer.h; sourceTree = "<group>"; };
 		2FC0A44B17F450E1009B4A7D /* OLKGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKGestureRecognizer.m; sourceTree = "<group>"; };
 		2FC0A45017F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureRecognizerDispatcher.h; sourceTree = "<group>"; };
@@ -123,6 +135,10 @@
 				2F31B04B1847509900913C6B /* OLKCircleMenuView.m */,
 				2F31B05A1847751F00913C6B /* OLKSliderControl.h */,
 				2F31B05B1847751F00913C6B /* OLKSliderControl.m */,
+				2FBD08A1184CB9D00050494C /* OLKRangeCalibratorView.h */,
+				2FBD08A2184CB9D00050494C /* OLKRangeCalibratorView.m */,
+				2FBD08A8184CD9A60050494C /* OLKFullScreenOverlayWindow.h */,
+				2FBD08A9184CD9A60050494C /* OLKFullScreenOverlayWindow.m */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -233,6 +249,8 @@
 				2FEDD73217CC97B500165DD2 /* OLKHand.m */,
 				2FC0A44A17F450E1009B4A7D /* OLKGestureRecognizer.h */,
 				2FC0A44B17F450E1009B4A7D /* OLKGestureRecognizer.m */,
+				2FBD089D184C912B0050494C /* OLKRangeCalibrator.h */,
+				2FBD089E184C912B0050494C /* OLKRangeCalibrator.m */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -256,8 +274,11 @@
 				2F23D343183E674500DF0490 /* OLKToggleButton.h in Headers */,
 				2F55EE921846739F00BD4EB8 /* OLKScratchButton.h in Headers */,
 				2F6E36C0184B5A1700E34155 /* OLKRepeatTracker.h in Headers */,
+				2FBD089F184C912B0050494C /* OLKRangeCalibrator.h in Headers */,
+				2FBD08A3184CB9D00050494C /* OLKRangeCalibratorView.h in Headers */,
 				2FC0A44C17F450E1009B4A7D /* OLKGestureRecognizer.h in Headers */,
 				2FC0A45217F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h in Headers */,
+				2FBD08AA184CD9A60050494C /* OLKFullScreenOverlayWindow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +361,9 @@
 				2F31B04D1847509900913C6B /* OLKCircleMenuView.m in Sources */,
 				2FE5C43B1849E5FF00A00517 /* OLKCircleOptionInput.m in Sources */,
 				2F6E36C1184B5A1700E34155 /* OLKRepeatTracker.m in Sources */,
+				2FBD08A0184C912B0050494C /* OLKRangeCalibrator.m in Sources */,
+				2FBD08A4184CB9D00050494C /* OLKRangeCalibratorView.m in Sources */,
+				2FBD08AB184CD9A60050494C /* OLKFullScreenOverlayWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

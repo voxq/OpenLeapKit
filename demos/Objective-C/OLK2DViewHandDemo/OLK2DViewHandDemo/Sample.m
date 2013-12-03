@@ -10,6 +10,8 @@
 #import "OLKDemoHandsOverlayViewController.h"
 #import <OpenLeapKit/OLKCircleMenuView.h>
 #import <OpenLeapKit/OLKCircleOptionInput.h>
+#import <OpenLeapKit/OLKRangeCalibratorView.h>
+#import <OpenLeapKit/OLKFullScreenOverlayWindow.h>
 #import "LeapMenuView.h"
 
 @implementation Sample
@@ -19,12 +21,17 @@
     NSView *_handsView;
     BOOL _fullScreenMode;
     NSView *_fullOverlayView;
-    NSWindow *_fullOverlayWindow;
     OLKCircleMenuView *_optionsView;
     OLKCircleOptionInput *_optionsModel;
     BOOL _showingOptions;
+    BOOL _showingCalibrate;
+    OLKFullScreenOverlayWindow *_fullScreenCalibrateOverlayWindow;
+    NSWindow *_fullScreenOverlayWindow;
+    OLKRangeCalibratorView *_calibratorView;
+    OLKRangeCalibrator *_calibrator;
     LeapMenuView *_menuView;
-    NSView *_trackingHandView;
+    NSView <OLKHandContainer> *_trackingHandView;
+    BOOL _returnToFullScreen;
 }
 
 - (void)dealloc
@@ -37,6 +44,7 @@
 {
     _handsOverlayController = [[OLKDemoHandsOverlayViewController alloc] init];
     [_handsOverlayController setHandsSpaceView:handsView];
+    [_handsOverlayController setOverrideSpaceViews:YES];
     _controller = [[LeapController alloc] init];
     [_controller addListener:self];
     _handsView = handsView;
@@ -83,8 +91,8 @@
     {
         [[_handsView window] orderFront:self];
         _fullOverlayView = nil;
-        [_fullOverlayWindow orderOut:self];
-        _fullOverlayWindow = nil;
+        [_fullScreenOverlayWindow orderOut:self];
+        _fullScreenOverlayWindow = nil;
         _fullScreenMode = NO;
         [_handsOverlayController setHandsSpaceView:_handsView];
         [_handsOverlayController updateHandsAndPointablesViews];
@@ -100,29 +108,20 @@
 	// Create a screen-sized window on the display you want to take over
 	// Note, mainDisplayRect has a non-zero origin if the key window is on a secondary display
 	mainDisplayRect = [[NSScreen mainScreen] visibleFrame];
-	_fullOverlayWindow = [[NSWindow alloc] initWithContentRect:mainDisplayRect styleMask:NSBorderlessWindowMask
-                                                          backing:NSBackingStoreBuffered defer:YES];
-	
-	[_fullOverlayWindow setBackgroundColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0]];
-	[_fullOverlayWindow setOpaque:NO];
-	
-	// Set the window level to be above the menu bar
-    [_fullOverlayWindow setLevel:NSMainMenuWindowLevel+1];
-	
+	_fullScreenOverlayWindow = [[OLKFullScreenOverlayWindow alloc] init];
+		
 	// Perform any other window configuration you desire
 
     NSRect containerViewRect;
     containerViewRect.origin = NSMakePoint(0, 0);
-    containerViewRect.size = [_fullOverlayWindow frame].size;    
+    containerViewRect.size = [_fullScreenOverlayWindow frame].size;    
     
     _fullOverlayView = [[NSView alloc] initWithFrame:containerViewRect];
         
-	[_fullOverlayWindow setContentView:_fullOverlayView];
+	[_fullScreenOverlayWindow setContentView:_fullOverlayView];
 
 	// Show the window
-	[_fullOverlayWindow makeKeyAndOrderFront:_fullOverlayWindow];
-    [_fullOverlayWindow setAcceptsMouseMovedEvents:YES];
-	[_fullOverlayWindow makeFirstResponder:_fullOverlayView];
+	[_fullScreenOverlayWindow makeFirstResponder:_fullOverlayView];
     [_handsOverlayController setHandsSpaceView:_fullOverlayView];
     [_handsOverlayController updateHandsAndPointablesViews];
     if (_showingOptions)
@@ -250,6 +249,80 @@
         [_handsOverlayController setUseInteractionBox:NO];
 }
 
+- (void)calibratedPosition:(OLKRangePositionsCalibrated)positionCalibrated
+{
+    switch (positionCalibrated)
+    {
+        case OLKRangeFirstPositionCalibrated:
+            [_calibrator setLeapPos1:[[_trackingHandView hand] palmPosition]];
+            break;
+            
+        case OLKRangeBothPositionsCalibrated:
+            [_calibrator setLeapPos2:[[_trackingHandView hand] palmPosition]];
+            [_calibrator calibrate];
+            [_handsOverlayController setCalibrator:_calibrator];
+            [_handsOverlayController updateHandsAndPointablesViews];
+            break;
+    }
+}
+
+- (void)canceledCalibration
+{
+    _calibratorView = nil;
+    _calibrator = nil;
+    _fullScreenCalibrateOverlayWindow = nil;
+
+    if (!_fullScreenMode)
+    {
+        [_handsOverlayController setHandsSpaceView:_handsView];
+        [_fullScreenCalibrateOverlayWindow orderOut:self];
+        [[_handsView window] orderFront:self];
+    }
+    else
+    {
+        [_handsOverlayController setHandsSpaceView:_fullOverlayView];
+        [_fullScreenOverlayWindow orderFront:self];
+        [_fullScreenOverlayWindow makeFirstResponder:_fullOverlayView];
+     }
+    _showingOptions = TRUE;
+    [_handsOverlayController updateHandsAndPointablesViews];
+
+}
+
+- (void)showCalibrate
+{
+    NSScreen *screen;
+    
+    if (!_fullScreenMode)
+    {
+        screen = [[_handsView window] screen];
+        [[_handsView window] orderOut:self];
+    }
+    else
+    {
+        screen = [_fullScreenOverlayWindow screen];
+        [_fullScreenOverlayWindow orderOut:self];
+    }
+    
+    _fullScreenCalibrateOverlayWindow = [[OLKFullScreenOverlayWindow alloc] init];
+    [_fullScreenCalibrateOverlayWindow setFrame:[screen frame] display:YES];
+    
+    if (!_calibrator)
+        _calibrator = [[OLKRangeCalibrator alloc] init];
+    
+    [_calibrator setScreenFrame:[screen frame]];
+    [_calibrator configScreenPositions];
+    
+    _calibratorView = [[OLKRangeCalibratorView alloc] initWithFrame:[screen frame]];
+    [_calibratorView setRangeCalibrator:_calibrator];
+    [_calibratorView setDelegate:self];
+    [_handsOverlayController setHandsSpaceView:_calibratorView];
+    [_handsOverlayController updateHandsAndPointablesViews];
+    [_fullScreenCalibrateOverlayWindow makeKeyAndOrderFront:self];
+    [_fullScreenCalibrateOverlayWindow setContentView:_calibratorView];
+    [_fullScreenCalibrateOverlayWindow makeFirstResponder:_calibratorView];
+}
+
 - (void)showOptionsViewLayout
 {
     NSView *viewForMenu;
@@ -265,7 +338,7 @@
         
         _optionsModel = [[OLKCircleOptionInput alloc] init];
         [_optionsModel setDelegate:self];
-        [_optionsModel setOptionObjects:[NSArray arrayWithObjects:@"Option 1", @"Option 2", @"exit", nil]];
+        [_optionsModel setOptionObjects:[NSArray arrayWithObjects:@"Calibrate Leap", @"Option 2", @"exit", nil]];
         
         [_optionsView setCircleOptionInput:_optionsModel];
     }
@@ -377,7 +450,12 @@
         NSLog(@"Deselected Index");
     else
     {
-        if (index == 2)
+        if (index == 0)
+        {
+            [self showCalibrate];
+            _showingOptions = FALSE;
+        }
+        else if (index == 2)
             [self exitOptionsView];
         NSLog(@"Selected Index: %d", index);
         [_optionsModel setRequiresMoveToInner:TRUE];

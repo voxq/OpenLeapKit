@@ -143,7 +143,7 @@
             
             if (_lastUpdateCursorDistance >= _thresholdForHit * _radius)
             {
-                if (![_repeatTracker detectRepeatWithObject:[NSNumber numberWithInt:index]])
+                if (![_repeatTracker detectRepeatOfObject:[NSNumber numberWithInt:index]])
                     return;
                 
                 if ([_delegate respondsToSelector:@selector(repeatTriggered:)])

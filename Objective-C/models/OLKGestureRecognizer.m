@@ -168,7 +168,7 @@
     if (![prevFrameHand isValid])
         return;
     
-    LeapVector *stabilPalmPosPrev = [prevFrameHand stabilizedPalmPosition];
+//    LeapVector *stabilPalmPosPrev = [prevFrameHand stabilizedPalmPosition];
     
     if (hand.z < 0.25 && [[deepHand fingers] count] > 3)
     {

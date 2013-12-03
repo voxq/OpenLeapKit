@@ -591,4 +591,22 @@ static OLKHand *gPrevHand=nil;
     return _handedness;
 }
 
+- (LeapVector *)palmPosition
+{
+    if (_usesStabilized)
+        return [_leapHand stabilizedPalmPosition];
+
+    return [_leapHand palmPosition];
+}
+
+- (LeapVector *)direction
+{
+    return [_leapHand direction];
+}
+
+- (LeapVector *)palmNormal
+{
+    return [_leapHand palmNormal];
+}
+
 @end

@@ -69,8 +69,11 @@ typedef enum {
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;
 + (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm;
 + (NSArray *)simpleLeftRightHandSearch:(NSArray *)hands;
-+ (OLKHandedness)handednessByThumbBasePosToPalm:(LeapHand *)hand thumbId:(int *)pThumbId;
-+ (OLKHandedness)handednessByThumbTipAndBaseCombo:(LeapHand *)hand thumbId:(int *)pThumbId;
+
++ (OLKHandedness)handednessByThumbTipDistFromPalm:(LeapHand *)hand thumb:(LeapFinger **)pThumb;
++ (OLKHandedness)handednessByThumbBasePosToPalm:(LeapHand *)hand thumb:(LeapFinger **)pThumb;
++ (OLKHandedness)handednessByThumbTipAndBaseCombo:(LeapHand *)hand thumb:(LeapFinger **)pThumb;
++ (OLKHandedness)handednessByShortestFinger:(LeapHand *)hand thumb:(LeapFinger **)pThumb;
 
 - (BOOL)isLeapHand:(LeapHand *)leapHand;
 - (void)updateLeapHand:(LeapHand *)leapHand;
@@ -81,6 +84,10 @@ typedef enum {
 - (OLKHandedness)updateHandednessByShortestFinger;
 - (OLKHandedness)updateHandednessByThumbTipAndBaseCombo;
 
+- (LeapVector *)palmPosition;
+- (LeapVector *)direction;
+- (LeapVector *)palmNormal;
+
 @property (nonatomic) LeapHand *leapHand;
 @property (nonatomic) LeapFrame *leapFrame;
 @property (nonatomic, readonly) LeapFinger *thumb;
@@ -89,4 +96,5 @@ typedef enum {
 @property (nonatomic) OLKHandedness simHandedness;
 @property (nonatomic) OLKHandednessAlgorithm handednessAlgorithm;
 @property (nonatomic) BOOL usesStabilized;
+
 @end

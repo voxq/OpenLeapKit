@@ -96,8 +96,8 @@
     NSBezierPath *highlightPath = [NSBezierPath bezierPath] ;
     [highlightPath setLineWidth: 2 ] ;
     
-    NSBezierPath *greenPath = [NSBezierPath bezierPath] ;
-    [greenPath setLineWidth: 2 ] ;
+    NSBezierPath *menuEntriesPath = [NSBezierPath bezierPath] ;
+    [menuEntriesPath setLineWidth: 2 ] ;
 
     int objectCount = [[_circleOptionInput optionObjects] count];
     float arcAngleOffset = (360.0 / (float)objectCount) / 2.0;
@@ -122,35 +122,35 @@
         {
             [_optionRingColor set] ;
             // and fill it
-            [greenPath fill] ;
+            [menuEntriesPath fill] ;
             [_optionSeparatorColor set] ;
-            [greenPath stroke] ;
-            [greenPath removeAllPoints];
+            [menuEntriesPath stroke] ;
+            [menuEntriesPath removeAllPoints];
             position = 0;
             closePath = FALSE;
             degAngle = 360.0/(float)objectCount * index + 90;
             
             // draw an arc (perc is a certain percentage ; something between 0 and 1
-            [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-            [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
-            [greenPath closePath];
+            [menuEntriesPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+            [menuEntriesPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+            [menuEntriesPath closePath];
             [_optionHighlightColor set] ;
             // and fill it
-            [greenPath fill] ;
+            [menuEntriesPath fill] ;
             [_optionSeparatorColor set] ;
-            [greenPath stroke] ;
-            [greenPath removeAllPoints];
+            [menuEntriesPath stroke] ;
+            [menuEntriesPath removeAllPoints];
             continue;
         }
         
         degAngle = 360.0/(float)objectCount * index + 90;
         
         // draw an arc (perc is a certain percentage ; something between 0 and 1
-        [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-        NSPoint nextStartPoint = [greenPath currentPoint];
-        [greenPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
-        [greenPath closePath];
-        [greenPath moveToPoint:nextStartPoint];
+        [menuEntriesPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+        NSPoint nextStartPoint = [menuEntriesPath currentPoint];
+        [menuEntriesPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+        [menuEntriesPath closePath];
+        [menuEntriesPath moveToPoint:nextStartPoint];
         position ++;
     }
 
@@ -158,9 +158,9 @@
     {
         [_optionRingColor set] ;
         // and fill it
-        [greenPath fill] ;
+        [menuEntriesPath fill] ;
         [_optionSeparatorColor set] ;
-        [greenPath stroke] ;
+        [menuEntriesPath stroke] ;
     }
     
     if (_highlightPositions && [_highlightPositions count] > 0)

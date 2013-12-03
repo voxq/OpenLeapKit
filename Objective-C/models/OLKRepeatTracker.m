@@ -62,7 +62,7 @@
         _isRepeating = NO;
 }
 
-- (BOOL)detectRepeat:(id)object
+- (BOOL)detectRepeatOfObject:(id)object
 {
     if (!_isRepeating)
         return NO;
