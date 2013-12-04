@@ -30,6 +30,7 @@
 @synthesize active = _active;
 @synthesize cursorRects = _cursorRects;
 @synthesize enableCursor = _enableCursor;
+@synthesize dontdraw = _dontdraw;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -44,6 +45,11 @@
 - (void)awakeFromNib
 {
     [self defaultConfig];
+}
+
+- (void)reset
+{
+    [self drawMenuInImage];
 }
 
 - (void)setCursorPos:(NSPoint)cursorPos cursorObject:(id)cursorObject
@@ -346,7 +352,6 @@
             [_menuImage unlockFocus];
          }
     }
-    
     NSRect menuRect;
     menuRect.origin = NSMakePoint(0, 0);
     menuRect.size = [self bounds].size;
@@ -361,6 +366,7 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
+    if (!_dontdraw)
     [self drawMenu];
     // Drawing code here.
 }

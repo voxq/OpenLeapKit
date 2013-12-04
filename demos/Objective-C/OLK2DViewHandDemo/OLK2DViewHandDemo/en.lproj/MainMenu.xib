@@ -1323,7 +1323,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 981}, {136, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="876162890"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1359,7 +1358,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 941}, {151, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="278790200"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1386,7 +1384,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 961}, {112, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="1012715833"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1413,7 +1410,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 921}, {67, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="652096676"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1440,7 +1436,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 901}, {173, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="324384496"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1467,7 +1462,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 881}, {173, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="347478271"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1494,7 +1488,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 861}, {247, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="321285052"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1521,7 +1514,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 841}, {247, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="237652920"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1548,7 +1540,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{29, 821}, {247, 18}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="877852293"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1575,7 +1566,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{25, 775}, {109, 32}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="994780578"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1600,7 +1590,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{140, 784}, {274, 17}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="661415635"/>
 							<string key="NSReuseIdentifierKey">_NS:1535</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1637,7 +1626,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{25, 742}, {75, 32}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="172309190"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1662,7 +1650,7 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{102, 751}, {128, 17}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
-							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<string key="NSReuseIdentifierKey">_NS:1535</string>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="489458542">
@@ -1680,7 +1668,6 @@
 					</array>
 					<string key="NSFrameSize">{1280, 1024}</string>
 					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="329659136"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
@@ -4805,161 +4792,7 @@
 			<nil key="sourceID"/>
 			<int key="maxID">686</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">AppDelegate</string>
-					<string key="superclassName">NSObject</string>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="handView">NSView</string>
-						<string key="sample">Sample</string>
-						<string key="window">NSWindow</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="handView">
-							<string key="name">handView</string>
-							<string key="candidateClassName">NSView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="sample">
-							<string key="name">sample</string>
-							<string key="candidateClassName">Sample</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="window">
-							<string key="name">window</string>
-							<string key="candidateClassName">NSWindow</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/AppDelegate.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSLayoutConstraint</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/NSLayoutConstraint.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">Sample</string>
-					<string key="superclassName">NSObject</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="enable3DHand:">id</string>
-						<string key="enableAutoHandSize:">id</string>
-						<string key="enableDrawPalm:">id</string>
-						<string key="enableFingerLines:">id</string>
-						<string key="enableFingerTips:">id</string>
-						<string key="enableFingersZisY:">id</string>
-						<string key="enableHandBounds:">id</string>
-						<string key="enableInteractionBox:">id</string>
-						<string key="enableStabilizedPalms:">id</string>
-						<string key="goFullScreen:">id</string>
-						<string key="resetCalibration:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="enable3DHand:">
-							<string key="name">enable3DHand:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="enableAutoHandSize:">
-							<string key="name">enableAutoHandSize:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="enableDrawPalm:">
-							<string key="name">enableDrawPalm:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="enableFingerLines:">
-							<string key="name">enableFingerLines:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="enableFingerTips:">
-							<string key="name">enableFingerTips:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="enableFingersZisY:">
-							<string key="name">enableFingersZisY:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="enableHandBounds:">
-							<string key="name">enableHandBounds:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="enableInteractionBox:">
-							<string key="name">enableInteractionBox:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="enableStabilizedPalms:">
-							<string key="name">enableStabilizedPalms:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="goFullScreen:">
-							<string key="name">goFullScreen:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="resetCalibration:">
-							<string key="name">resetCalibration:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="autoSizeButton">NSButton</string>
-						<string key="fingerDepthYButton">NSButton</string>
-						<string key="fingerLinesButton">NSButton</string>
-						<string key="fingerTipsButton">NSButton</string>
-						<string key="hand3DButton">NSButton</string>
-						<string key="handBoundsButton">NSButton</string>
-						<string key="interactionBoxButton">NSButton</string>
-						<string key="palmButton">NSButton</string>
-						<string key="stablePalmsButton">NSButton</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="autoSizeButton">
-							<string key="name">autoSizeButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fingerDepthYButton">
-							<string key="name">fingerDepthYButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fingerLinesButton">
-							<string key="name">fingerLinesButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="fingerTipsButton">
-							<string key="name">fingerTipsButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="hand3DButton">
-							<string key="name">hand3DButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="handBoundsButton">
-							<string key="name">handBoundsButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="interactionBoxButton">
-							<string key="name">interactionBoxButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="palmButton">
-							<string key="name">palmButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stablePalmsButton">
-							<string key="name">stablePalmsButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/Sample.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

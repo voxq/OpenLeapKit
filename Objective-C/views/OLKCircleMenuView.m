@@ -99,7 +99,7 @@
     NSBezierPath *menuEntriesPath = [NSBezierPath bezierPath] ;
     [menuEntriesPath setLineWidth: 2 ] ;
 
-    int objectCount = [[_circleOptionInput optionObjects] count];
+    int objectCount = (int)[[_circleOptionInput optionObjects] count];
     float arcAngleOffset = (360.0 / (float)objectCount) / 2.0;
     float degAngle;
     

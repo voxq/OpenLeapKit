@@ -10,6 +10,24 @@
 
 @implementation OLKFullScreenOverlayWindow
 
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+{
+    if (self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation])
+    {
+        [self resetToDefaultConfig];
+    }
+    return self;
+}
+
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation screen:(NSScreen *)screen
+{
+    if (self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation screen:screen])
+    {
+        [self resetToDefaultConfig];
+    }
+    return self;
+}
+
 - (id)init
 {
     if (self = [super init])
@@ -22,6 +40,7 @@
 - (void)awakeFromNib
 {
     [self resetToDefaultConfig];
+    [self moveToScreen:[self screen]];
 }
 
 - (BOOL)canBecomeKeyWindow
@@ -31,12 +50,14 @@
 
 - (void)resetToDefaultConfig
 {
+    [self setBackingType:NSBackingStoreBuffered];
 	[self setStyleMask:NSUtilityWindowMask | NSNonactivatingPanelMask];
     [self setOpaque:NO];
     [self setBackgroundColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0]];
     [self setLevel:CGShieldingWindowLevel()+1];
     [self setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary];
     [self setCanHide:NO];
+    [self setHasShadow:NO];
 }
 
 - (void)moveToScreen:(NSScreen *)screen

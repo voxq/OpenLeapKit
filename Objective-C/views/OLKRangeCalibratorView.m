@@ -130,6 +130,19 @@
     unichar c = [[event charactersIgnoringModifiers] characterAtIndex:0];
     switch (c) {
 			
+        case NSLeftArrowFunctionKey:
+            
+            break;
+            
+        case NSRightArrowFunctionKey:
+            break;
+            
+        case NSUpArrowFunctionKey:
+            break;
+            
+        case NSDownArrowFunctionKey:
+            break;
+
 			// [Esc] exits full-screen mode
         case 27:
             [_delegate canceledCalibration];

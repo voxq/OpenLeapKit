@@ -116,10 +116,9 @@
     [[_handsView window] orderOut:self];
 	// Create a screen-sized window on the display you want to take over
 	// Note, mainDisplayRect has a non-zero origin if the key window is on a secondary display
-	_fullScreenOverlayWindow = [[OLKFullScreenOverlayWindow alloc] init];
-		
+	_fullScreenOverlayWindow = [[OLKFullScreenOverlayWindow alloc] initWithContentRect:[[[_handsView window] screen] frame] styleMask:0 backing:NSBackingStoreBuffered defer:YES];
     [_fullScreenOverlayWindow moveToScreen:[[_handsView window] screen]];
-    
+
 	// Perform any other window configuration you desire
 
     NSRect containerViewRect;
@@ -131,13 +130,13 @@
 	[_fullScreenOverlayWindow setContentView:_fullOverlayView];
 
 	// Show the window
+    [_menuView removeFromSuperview];
+    [_fullOverlayView addSubview:_menuView];
 	[_fullScreenOverlayWindow makeFirstResponder:_fullOverlayView];
     [_handsOverlayController setHandsSpaceView:_fullOverlayView];
     [_handsOverlayController updateHandsAndPointablesViews];
     if (_showingOptions)
         [self showOptionsViewLayout];
-    [_menuView removeFromSuperview];
-    [_fullOverlayView addSubview:_menuView];
     [_fullScreenOverlayWindow makeKeyAndOrderFront:self];
 }
 
@@ -298,17 +297,19 @@
     _calibrator = nil;
     _fullScreenCalibrateOverlayWindow = nil;
 
+    [_fullScreenCalibrateOverlayWindow orderOut:self];
     if (!_fullScreenMode)
     {
         [_handsOverlayController setHandsSpaceView:_handsView];
-        [_fullScreenCalibrateOverlayWindow orderOut:self];
         [[_handsView window] orderFront:self];
     }
     else
     {
         [_handsOverlayController setHandsSpaceView:_fullOverlayView];
         [_fullScreenOverlayWindow orderFront:self];
+
         [_fullScreenOverlayWindow makeFirstResponder:_fullOverlayView];
+        [_fullOverlayView setNeedsDisplay:YES];
      }
     _showingOptions = TRUE;
     [_handsOverlayController updateHandsAndPointablesViews];
@@ -344,21 +345,21 @@
     [_calibratorView setDelegate:self];
     [_handsOverlayController setHandsSpaceView:_calibratorView];
     [_handsOverlayController updateHandsAndPointablesViews];
-    [_fullScreenCalibrateOverlayWindow makeKeyAndOrderFront:self];
     [_fullScreenCalibrateOverlayWindow setContentView:_calibratorView];
+    [_fullScreenCalibrateOverlayWindow makeKeyAndOrderFront:self];
     [_fullScreenCalibrateOverlayWindow makeFirstResponder:_calibratorView];
 }
 
 - (void)showOptionsViewLayout
 {
     [_menuView setActive:NO];
-    NSView *viewForMenu;
+    NSView *mainView;
     if (_fullScreenMode)
-        viewForMenu = _fullOverlayView;
+        mainView = _fullOverlayView;
     else
-        viewForMenu = _handsView;
+        mainView = _handsView;
     
-    NSRect optionsViewRect = [viewForMenu bounds];
+    NSRect optionsViewRect = [mainView bounds];
     if (!_optionsView)
     {
         _optionsView = [[OLKCircleMenuView alloc] initWithFrame:optionsViewRect];
@@ -378,7 +379,7 @@
 
     [_optionsView setFrame:NSMakeRect(optionsViewRect.origin.x+optionsViewRect.size.width/6, optionsViewRect.origin.y+optionsViewRect.size.height/6, optionsViewRect.size.width, optionsViewRect.size.height)];
     
-    [viewForMenu addSubview:_optionsView];
+    [mainView addSubview:_optionsView];
     [_optionsView setActive:YES];
     [_optionsView setNeedsDisplay:YES];
     _showingOptions = YES;
@@ -386,11 +387,10 @@
 
 - (void)exitOptionsView
 {
-    [_menuView setActive:YES];
-
     _showingOptions = NO;
     [_optionsView removeFromSuperview];
     [_optionsModel reset];
+    [_menuView setActive:YES];
 }
 
 - (void)menuItemChangedValue:(LeapMenuItem)menuItem enabled:(BOOL)enabled
@@ -492,25 +492,25 @@
 {
     NSLog(@"Moved To Center");
     
-    NSView *viewForMenu;
+    NSView *mainView;
     if (_fullScreenMode)
-        viewForMenu = _fullOverlayView;
+        mainView = _fullOverlayView;
     else
-        viewForMenu = _handsView;
+        mainView = _handsView;
     
-    [viewForMenu setNeedsDisplay:YES];
+    [mainView setNeedsDisplay:YES];
 }
 
 - (void)cursorMovedToInner:(id)sender
 {
     NSLog(@"Moved To Inner");
-    NSView *viewForMenu;
+    NSView *mainView;
     if (_fullScreenMode)
-        viewForMenu = _fullOverlayView;
+        mainView = _fullOverlayView;
     else
-        viewForMenu = _handsView;
+        mainView = _handsView;
     
-    [viewForMenu setNeedsDisplay:YES];
+    [mainView setNeedsDisplay:YES];
 }
 
 - (void)selectedIndexChanged:(int)index sender:(id)sender
@@ -533,27 +533,28 @@
             [self exitOptionsView];
         NSLog(@"Selected Index: %d", index);
         [_optionsModel setRequiresMoveToInner:TRUE];
+        [_optionsModel setSelectedIndex:OLKCircleOptionInputInvalidSelection];
     }
-    NSView *viewForMenu;
+    NSView *mainView;
     if (_fullScreenMode)
-        viewForMenu = _fullOverlayView;
+        mainView = _fullOverlayView;
     else
-        viewForMenu = _handsView;
-    
-    [viewForMenu setNeedsDisplay:YES];
+        mainView = _handsView;
+
+    [mainView setNeedsDisplay:YES];
 }
 
 - (void)hoverIndexChanged:(int)index sender:(id)sender
 {
     NSLog(@"Hover changed to Index: %d", index);
     
-    NSView *viewForMenu;
+    NSView *mainView;
     if (_fullScreenMode)
-        viewForMenu = _fullOverlayView;
+        mainView = _fullOverlayView;
     else
-        viewForMenu = _handsView;
+        mainView = _handsView;
     
-    [viewForMenu setNeedsDisplay:YES];
+    [mainView setNeedsDisplay:YES];
 }
 
 @end

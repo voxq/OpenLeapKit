@@ -32,10 +32,12 @@ typedef enum
 @interface LeapMenuView : NSView
 
 - (void)setCursorPos:(NSPoint)cursorPos cursorObject:(id)cursorObject;
+- (void)reset;
 
 @property (nonatomic) id <LeapMenuDelegate> delegate;
 @property (nonatomic) BOOL enableCursor;
 @property (nonatomic) BOOL active;
 @property (nonatomic) NSArray *cursorRects;
+@property (nonatomic) BOOL dontdraw;
 
 @end
