@@ -90,9 +90,17 @@
         leapDifX = _leapPos2.x - _leapPos1.x;
         leapDifY = _leapPos2.y - _leapPos1.y;
     }
+
+    if (leapDifX == 0)
+        _widthFactor = 0;
+    else
+        _widthFactor = screenDifX/leapDifX;
     
-    _heightFactor = screenDifY/leapDifY;
-    _widthFactor = screenDifX/leapDifX;
+    if (leapDifY == 0)
+        _heightFactor = 0;
+    else
+        _heightFactor = screenDifY/leapDifY;
+    
     if (_use3PointCalibration)
     {
         _offsetToBase = _leapPos2.y - ((_screenPos2.y-_screenFrame.origin.y)/_heightFactor);
@@ -101,7 +109,7 @@
     else
     {
         _offsetToBase = _leapPos1.y - ((_screenPos1.y-_screenFrame.origin.y)/_heightFactor);
-        _offsetFromHorizCenter = (_screenFrame.size.width/2-_screenPos1.x)/_widthFactor + _leapPos1.x;
+        _offsetFromHorizCenter = (_screenFrame.size.width/2+_screenFrame.origin.x-_screenPos1.x)/_widthFactor + _leapPos1.x;
     }
 }
 

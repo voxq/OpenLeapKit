@@ -65,4 +65,33 @@
     [self setFrame:[screen frame] display:YES];
 }
 
+- (void)moveToNextScreen
+{
+    NSArray *screens=[NSScreen screens];
+    if ([screens count] < 2)
+        return;
+    
+    BOOL grabNext = FALSE;
+    NSScreen *foundScreen=nil;
+    for (NSScreen *screen in screens)
+    {
+        if (grabNext)
+        {
+            foundScreen = screen;
+            break;
+        }
+        if ([self screen] == screen)
+        {
+            grabNext = TRUE;
+        }
+    }
+    if (!grabNext)
+        return;
+    
+    if (!foundScreen)
+        foundScreen = [screens objectAtIndex:0];
+    
+    [self moveToScreen:foundScreen];
+}
+
 @end

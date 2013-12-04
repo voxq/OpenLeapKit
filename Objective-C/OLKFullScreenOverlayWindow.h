@@ -12,5 +12,6 @@
 
 - (void)resetToDefaultConfig;
 - (void)moveToScreen:(NSScreen *)screen;
+- (void)moveToNextScreen;
 
 @end
