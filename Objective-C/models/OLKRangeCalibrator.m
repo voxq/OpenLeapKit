@@ -22,7 +22,16 @@
 @synthesize use3PointCalibration = _use3PointCalibration;
 @synthesize offsetToBase = _offsetToBase;
 @synthesize offsetFromHorizCenter = _offsetFromHorizCenter;
+@synthesize calibrated = _calibrated;
 
+- (id)init
+{
+    if (self = [super init])
+    {
+        _calibrated = NO;
+    }
+    return self;
+}
 - (void)configScreenPositionsFromWindow:(NSWindow *)window
 {
     _screenFrame = [[window screen] frame];
@@ -111,6 +120,7 @@
         _offsetToBase = _leapPos1.y - ((_screenPos1.y-_screenFrame.origin.y)/_heightFactor);
         _offsetFromHorizCenter = (_screenFrame.size.width/2+_screenFrame.origin.x-_screenPos1.x)/_widthFactor + _leapPos1.x;
     }
+    _calibrated = YES;
 }
 
 - (void)calibrate2PointWithScreenPos1:(NSPoint)screenPos1 screenPos2:(NSPoint)screenPos2 mappingLeapPos1:(LeapVector*)leapPos1 leapPos2:(LeapVector *)leapPos2

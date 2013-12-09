@@ -13,5 +13,7 @@
 - (void)resetToDefaultConfig;
 - (void)moveToScreen:(NSScreen *)screen;
 - (void)moveToNextScreen;
+- (NSSize)screenPhysicalSize;
+- (NSSize)determinePointSizeFromDesiredPhysicalSize:(NSSize)desiredPhysicalSize;
 
 @end

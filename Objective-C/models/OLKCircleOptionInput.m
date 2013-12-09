@@ -104,6 +104,24 @@
     
     _lastUpdateCursorDistance = sqrtf(_cursorPos.x*_cursorPos.x + _cursorPos.y*_cursorPos.y);
     
+    if (_repeatTracker && [_repeatTracker isRepeating])
+    {
+        if (_lastUpdateCursorDistance <= _thresholdForRepeat * _radius && _lastUpdateCursorDistance >= _thresholdForHit * _radius)
+        {
+            if (![_repeatTracker detectRepeatOfObject:[NSNumber numberWithInt:index]])
+                return;
+            
+            if ([_delegate respondsToSelector:@selector(repeatTriggered:sender:)])
+                [_delegate repeatTriggered:index sender:self];
+        }
+        else
+        {
+            [_repeatTracker setIsRepeating:NO];
+            if ([_delegate respondsToSelector:@selector(repeatEnded:sender:)])
+                [_delegate repeatEnded:index sender:self];
+        }
+    }
+    
     if (_lastUpdateCursorDistance < _thresholdForHit*_radius)
     {
         if (_requiresMoveToInner)
@@ -134,28 +152,6 @@
         }
         
         return;
-    }
-    
-    if (_repeatTracker && [_repeatTracker isRepeating])
-    {
-        if (_lastUpdateCursorDistance <= _thresholdForRepeat * _radius)
-        {
-            
-            if (_lastUpdateCursorDistance >= _thresholdForHit * _radius)
-            {
-                if (![_repeatTracker detectRepeatOfObject:[NSNumber numberWithInt:index]])
-                    return;
-                
-                if ([_delegate respondsToSelector:@selector(repeatTriggered:)])
-                    [_delegate repeatTriggered:self];
-            }
-        }
-        else
-        {
-            [_repeatTracker setIsRepeating:NO];
-            if ([_delegate respondsToSelector:@selector(repeatEnded:)])
-                [_delegate repeatEnded:self];
-        }
     }
     
     if (_requiresMoveToInner)

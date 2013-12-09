@@ -27,6 +27,30 @@
 #pragma mark -
 #pragma single hand components
 
+- (BOOL)handPointingLeft:(LeapHand *)hand directionThreshold:(float)directionThreshold
+{
+    LeapVector *handDirection = [hand direction];
+    if (handDirection.x < -directionThreshold)
+        return YES;
+    return NO;
+}
+
+- (BOOL)handPointingRight:(LeapHand *)hand directionThreshold:(float)directionThreshold
+{
+    LeapVector *handDirection = [hand direction];
+    if (handDirection.x > directionThreshold)
+        return YES;
+    return NO;
+}
+
+- (BOOL)handPointingSideway:(LeapHand *)hand directionThreshold:(float)directionThreshold
+{
+    LeapVector *handDirection = [hand direction];
+    if (handDirection.x > directionThreshold || handDirection.x < -directionThreshold)
+        return YES;
+    return NO;
+}
+
 - (BOOL)palmAimingLeft:(LeapHand *)hand normalThreshold:(float)normalThreshold
 {
     LeapVector *palmNormal = [hand palmNormal];

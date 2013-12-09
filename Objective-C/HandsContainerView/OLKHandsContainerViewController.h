@@ -40,6 +40,8 @@
 
 - (NSView <OLKHandContainer>*)handViewForHand:(OLKHand *)hand;
 
+@property (nonatomic) NSObject <OLKHandFactory> *handFactory;
+
 @end
 
 @protocol OLKHandsContainerViewControllerDelegate <NSObject>

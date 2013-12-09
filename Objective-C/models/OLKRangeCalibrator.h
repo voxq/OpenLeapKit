@@ -30,5 +30,6 @@
 @property (nonatomic) NSPoint screenPos2;
 @property (nonatomic) NSPoint screenPos3;
 @property (nonatomic) BOOL use3PointCalibration;
+@property (nonatomic) BOOL calibrated;
 
 @end

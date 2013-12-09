@@ -94,4 +94,20 @@
     [self moveToScreen:foundScreen];
 }
 
+- (NSSize)screenPhysicalSize
+{
+    NSDictionary *description = [[self screen] deviceDescription];
+    return CGDisplayScreenSize([[description objectForKey:@"NSScreenNumber"] unsignedIntValue]);
+}
+
+- (NSSize)determinePointSizeFromDesiredPhysicalSize:(NSSize)desiredPhysicalSize
+{
+    NSSize pointSize;
+    NSSize screenSize = [self screenPhysicalSize];
+    NSSize screenPointSize = [[self screen] frame].size;
+    pointSize.width = desiredPhysicalSize.width * (screenPointSize.width/screenSize.width);
+    pointSize.height = desiredPhysicalSize.height * (screenPointSize.height/screenSize.height);
+    return pointSize;
+}
+
 @end

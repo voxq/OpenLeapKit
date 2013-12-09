@@ -337,7 +337,7 @@ static OLKHand *gPrevHand=nil;
 
 }
 
-+ (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm
++ (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm factory:(NSObject<OLKHandFactory>*)factory
 {
     if (!hands || ![hands count])
         return nil;
@@ -360,7 +360,12 @@ static OLKHand *gPrevHand=nil;
         if ([ignoreHands containsObject:leapHand])
             continue;
         
-        OLKHand *hand = [[OLKHand alloc] init];
+        OLKHand *hand;
+        if (factory)
+            hand = [factory manufactureHand:leapHand];
+        else
+            hand = [[OLKHand alloc] init];
+        
         [hand setHandednessAlgorithm:handednesAlgorithm];
         [hand setLeapHand:leapHand];
         

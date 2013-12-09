@@ -16,8 +16,8 @@ static int const OLKCircleOptionInputInvalidSelection = -1;
 @optional
 - (void)hoverIndexChanged:(int)index sender:(id)sender;
 - (void)selectedIndexChanged:(int)index sender:(id)sender;
-- (void)repeatTriggered:(id)sender;
-- (void)repeatEnded:(id)sender;
+- (void)repeatTriggered:(int)index sender:(id)sender;
+- (void)repeatEnded:(int)index sender:(id)sender;
 - (void)cursorMovedToInner:(id)sender;
 - (void)cursorMovedToCenter:(id)sender;
 

@@ -17,14 +17,17 @@
 #pragma mark -
 #pragma single hand components
 
+- (BOOL)handPointingLeft:(LeapHand *)hand directionThreshold:(float)directionThreshold;
+- (BOOL)handPointingRight:(LeapHand *)hand directionThreshold:(float)directionThreshold;
+- (BOOL)handPointingSideway:(LeapHand *)hand directionThreshold:(float)directionThreshold;
 - (BOOL)palmAimingLeft:(LeapHand *)hand normalThreshold:(float)normalThreshold;
 - (BOOL)palmAimingRight:(LeapHand *)hand normalThreshold:(float)normalThreshold;
 - (BOOL)palmAimingSideway:(LeapHand *)hand normalThreshold:(float)normalThreshold;
 - (BOOL)palmAimingIn:(LeapHand *)hand normalThreshold:(float)normalThreshold;
 - (BOOL)palmAimingOut:(LeapHand *)hand normalThreshold:(float)normalThreshold;
 - (BOOL)palmAimingInOrOut:(LeapHand *)hand normalThreshold:(float)normalThreshold;
-- (BOOL)palmDown:(LeapHand *)hand normalThreshold:(float)normalThresholdl;
-- (BOOL)palmUp:(LeapHand *)hand normalThreshold:(float)normalThresholdl;
+- (BOOL)palmDown:(LeapHand *)hand normalThreshold:(float)normalThreshold;
+- (BOOL)palmUp:(LeapHand *)hand normalThreshold:(float)normalThreshold;
 - (BOOL)palmAimingUpOrDown:(LeapHand *)hand normalThreshold:(float)normalThreshold;
 - (BOOL)handBeyondThreshold:(float)threshold inDirMinus:(BOOL)inDirMinus hand:(LeapHand *)hand;
 

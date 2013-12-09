@@ -71,18 +71,19 @@
         return NO;
     
     _repeatCycles ++;
-    if (_repeatCycles >= _repeatRate-_repeatAccel)
+
+    if (_repeatCycles < _repeatRate-_repeatAccel)
+        return NO;
+    
+    //            NSLog(@"Repeating!");
+    _repeatedCount ++;
+    if (_repeatAccel > 0 && _repeatedCount>_repeatAccelOnCycles*(_repeatAccel/_repeatAccelAmt))
     {
-        //            NSLog(@"Repeating!");
-        _repeatedCount ++;
-        if (_repeatAccel > 0 && _repeatedCount>_repeatAccelOnCycles*(_repeatAccel/_repeatAccelAmt))
-        {
-            //                NSLog(@"Accelerating repeat!");
-            _repeatAccel += _repeatAccelAmt;
-            _repeatedCount = 0;
-        }
-        _repeatCycles = 0;
+        //                NSLog(@"Accelerating repeat!");
+        _repeatAccel += _repeatAccelAmt;
+        _repeatedCount = 0;
     }
+    _repeatCycles = 0;
     return YES;
 }
 

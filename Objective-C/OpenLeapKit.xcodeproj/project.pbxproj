@@ -20,6 +20,8 @@
 		2F55EE931846739F00BD4EB8 /* OLKScratchButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F55EE911846739F00BD4EB8 /* OLKScratchButton.m */; };
 		2F6E36C0184B5A1700E34155 /* OLKRepeatTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F6E36BE184B5A1700E34155 /* OLKRepeatTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F6E36C1184B5A1700E34155 /* OLKRepeatTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F6E36BF184B5A1700E34155 /* OLKRepeatTracker.m */; };
+		2FB03BCB184FAF3100BB6B40 /* OLKContextHand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB03BC9184FAF3100BB6B40 /* OLKContextHand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2FB03BCC184FAF3100BB6B40 /* OLKContextHand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB03BCA184FAF3100BB6B40 /* OLKContextHand.m */; };
 		2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FB65BB617D14828002E1C05 /* OLKGestureComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB65BB417D14828002E1C05 /* OLKGestureComponents.m */; };
 		2FBD089F184C912B0050494C /* OLKRangeCalibrator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FBD089D184C912B0050494C /* OLKRangeCalibrator.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -75,6 +77,8 @@
 		2F55EE911846739F00BD4EB8 /* OLKScratchButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKScratchButton.m; path = views/OLKScratchButton.m; sourceTree = "<group>"; };
 		2F6E36BE184B5A1700E34155 /* OLKRepeatTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKRepeatTracker.h; sourceTree = "<group>"; };
 		2F6E36BF184B5A1700E34155 /* OLKRepeatTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKRepeatTracker.m; sourceTree = "<group>"; };
+		2FB03BC9184FAF3100BB6B40 /* OLKContextHand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKContextHand.h; sourceTree = "<group>"; };
+		2FB03BCA184FAF3100BB6B40 /* OLKContextHand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKContextHand.m; sourceTree = "<group>"; };
 		2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureComponents.h; sourceTree = "<group>"; };
 		2FB65BB417D14828002E1C05 /* OLKGestureComponents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKGestureComponents.m; sourceTree = "<group>"; };
 		2FBD089D184C912B0050494C /* OLKRangeCalibrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKRangeCalibrator.h; sourceTree = "<group>"; };
@@ -246,6 +250,8 @@
 				2F6E36BE184B5A1700E34155 /* OLKRepeatTracker.h */,
 				2F6E36BF184B5A1700E34155 /* OLKRepeatTracker.m */,
 				2FEDD73117CC97B500165DD2 /* OLKHand.h */,
+				2FB03BC9184FAF3100BB6B40 /* OLKContextHand.h */,
+				2FB03BCA184FAF3100BB6B40 /* OLKContextHand.m */,
 				2FEDD73217CC97B500165DD2 /* OLKHand.m */,
 				2FC0A44A17F450E1009B4A7D /* OLKGestureRecognizer.h */,
 				2FC0A44B17F450E1009B4A7D /* OLKGestureRecognizer.m */,
@@ -279,6 +285,7 @@
 				2FC0A44C17F450E1009B4A7D /* OLKGestureRecognizer.h in Headers */,
 				2FC0A45217F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h in Headers */,
 				2FBD08AA184CD9A60050494C /* OLKFullScreenOverlayWindow.h in Headers */,
+				2FB03BCB184FAF3100BB6B40 /* OLKContextHand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,6 +371,7 @@
 				2FBD08A0184C912B0050494C /* OLKRangeCalibrator.m in Sources */,
 				2FBD08A4184CB9D00050494C /* OLKRangeCalibratorView.m in Sources */,
 				2FBD08AB184CD9A60050494C /* OLKFullScreenOverlayWindow.m in Sources */,
+				2FB03BCC184FAF3100BB6B40 /* OLKContextHand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -36,6 +36,10 @@
 
 @class OLKHand;
 
+@protocol OLKHandFactory <NSObject>
+- (OLKHand *)manufactureHand:(LeapHand *)leapHand;
+@end
+
 @protocol OLKHandContainer <NSObject>
 
 @property (nonatomic) OLKHand *hand;
@@ -67,7 +71,7 @@ typedef enum {
 @interface OLKHand : NSObject
 
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;
-+ (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm;
++ (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm factory:(NSObject<OLKHandFactory>*)factory;
 + (NSArray *)simpleLeftRightHandSearch:(NSArray *)hands;
 
 + (OLKHandedness)handednessByThumbTipDistFromPalm:(LeapHand *)hand thumb:(LeapFinger **)pThumb;

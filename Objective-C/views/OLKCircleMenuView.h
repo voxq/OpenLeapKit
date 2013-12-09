@@ -4,14 +4,17 @@
 
 @interface OLKCircleMenuView : NSView
 
-@property (nonatomic) OLKCircleOptionInput *circleOptionInput;
+- (void)redraw;
+- (NSPoint)positionRelativeToCenter:(NSPoint)position convertFromView:(NSView *)view;
+
+@property (nonatomic) NSArray *circleOptionInputs;
 @property (nonatomic) BOOL active;
 @property (nonatomic) NSPoint center;
 @property (nonatomic) CGFloat innerRadius;
+@property (nonatomic) NSImage *baseCircleImage;
 
 @property (nonatomic) float currentAlpha;
 @property (nonatomic) float inactiveAlphaMultiplier;
-@property (nonatomic) NSArray *cellStrings;
 @property (nonatomic) float textFontSize;
 @property (nonatomic) NSFont *textFont;
 @property (nonatomic) NSSet *highlightPositions;
