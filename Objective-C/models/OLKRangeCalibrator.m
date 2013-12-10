@@ -32,6 +32,7 @@
     }
     return self;
 }
+
 - (void)configScreenPositionsFromWindow:(NSWindow *)window
 {
     _screenFrame = [[window screen] frame];

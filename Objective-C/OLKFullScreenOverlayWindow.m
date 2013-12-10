@@ -8,6 +8,8 @@
 
 #import "OLKFullScreenOverlayWindow.h"
 
+static float const inchesToMM = 25.4;
+
 @implementation OLKFullScreenOverlayWindow
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
@@ -97,7 +99,15 @@
 - (NSSize)screenPhysicalSize
 {
     NSDictionary *description = [[self screen] deviceDescription];
-    return CGDisplayScreenSize([[description objectForKey:@"NSScreenNumber"] unsignedIntValue]);
+    unsigned int screenNumber = [[description objectForKey:@"NSScreenNumber"] unsignedIntValue];
+    NSSize physicalSize = CGDisplayScreenSize(screenNumber);
+    if (physicalSize.width < 300)
+    {
+        NSSize resolution = [[description objectForKey:@"NSDeviceSize"] sizeValue];
+        NSSize dpi = [[description objectForKey:@"NSDeviceResolution"] sizeValue];
+        physicalSize = NSMakeSize(resolution.width/dpi.width*inchesToMM, resolution.height/dpi.height*inchesToMM);
+    }
+    return physicalSize;
 }
 
 - (NSSize)determinePointSizeFromDesiredPhysicalSize:(NSSize)desiredPhysicalSize

@@ -45,11 +45,11 @@
 @end
 
 @protocol OLKHandsContainerViewControllerDelegate <NSObject>
-
-- (void)willAddHand:(OLKHand *)hand withHandView:(NSView *)handView;
-- (void)willRemoveHand:(OLKHand *)hand withHandView:(NSView *)handView;
-- (void)handChangedHandedness:(OLKHand *)hand withHandView:(NSView *)handView;
-- (void)handWillSimulateHandedness:(OLKHand *)hand withHandView:(NSView *)handView;
+@optional
+- (void)willAddHand:(OLKHand *)hand withHandView:(NSView <OLKHandContainer> *)handView;
+- (void)willRemoveHand:(OLKHand *)hand withHandView:(NSView <OLKHandContainer> *)handView;
+- (void)handChangedHandedness:(OLKHand *)hand withHandView:(NSView <OLKHandContainer> *)handView;
+- (void)handWillSimulateHandedness:(OLKHand *)hand withHandView:(NSView <OLKHandContainer> *)handView;
 
 @end
 

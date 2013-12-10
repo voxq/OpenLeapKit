@@ -270,7 +270,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             _leftHand = nil;
         if ([hand isEqual:_rightHand])
             _rightHand = nil;
-        if (_delegate)
+        if ([_delegate respondsToSelector:@selector(willRemoveHand:withHandView:)])
             [_delegate willRemoveHand:hand withHandView:handView];
         
         if (handView)
@@ -315,7 +315,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             leftHandedness = [_leftHand updateHandedness];
             if (leftHandDetected == OLKHandednessUnknown && leftHandedness == OLKLeftHand)
             {
-                if (_delegate)
+                if ([_delegate respondsToSelector:@selector(handChangedHandedness:withHandView:)])
                     [_delegate handChangedHandedness:_leftHand withHandView:_leftHandView];
                 return;
             }
@@ -337,7 +337,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             if ([_leftHand handedness] == OLKRightHand)
             {
                 [_leftHand setSimHandedness:OLKLeftHand];
-                if (_delegate)
+                if ([_delegate respondsToSelector:@selector(handWillSimulateHandedness:withHandView:)])
                     [_delegate handWillSimulateHandedness:_leftHand withHandView:_leftHandView];
             }
             else
@@ -350,7 +350,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             if ([_rightHand handedness] == OLKLeftHand)
             {
                 [_rightHand setSimHandedness:OLKRightHand];
-                [_delegate handWillSimulateHandedness:_rightHand withHandView:_rightHandView];
+                if ([_delegate respondsToSelector:@selector(handWillSimulateHandedness:withHandView:)])
+                    [_delegate handWillSimulateHandedness:_rightHand withHandView:_rightHandView];
             }
             else
                 [_rightHand setSimHandedness:OLKHandednessUnknown];
@@ -374,14 +375,14 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     if (_leftHand != nil)
     {
         NSLog(@"Right became left!");
-        if (_delegate)
+        if ([_delegate respondsToSelector:@selector(handChangedHandedness:withHandView:)])
             [_delegate handChangedHandedness:_leftHand withHandView:_leftHandView];
     }
     
     if (_rightHand != nil)
     {
         NSLog(@"Left became right!");
-        if (_delegate)
+        if ([_delegate respondsToSelector:@selector(handChangedHandedness:withHandView:)])
             [_delegate handChangedHandedness:_rightHand withHandView:_rightHandView];
     }
 }

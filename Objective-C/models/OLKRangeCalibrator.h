@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "LeapObjectiveC.h"
 
+typedef enum
+{
+    OLKCalibratorMethodOppositeCorners,
+    OLKCalibratorMethod3PointInversePyramid
+}OLKCalibratorMethod;
+
+
 @interface OLKRangeCalibrator : NSObject
 
 - (NSPoint)screenPosFromLeapPos:(LeapVector*)leapPos;
