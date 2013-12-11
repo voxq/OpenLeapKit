@@ -59,6 +59,8 @@
 - (NSView <OLKHandContainer> *)viewForHand:(OLKHand *)hand;
 - (void)updateHandsAndPointablesViews;
 - (void)updateHandViewForHand:(OLKHand *)hand;
+- (NSView <OLKHandContainer>*)viewForLeapHandId:(int)leapHandId;
+- (OLKHand *)handFromLeapHand:(LeapHand *)leapHand;
 
 @property (nonatomic) NSView *handsSpaceView;
 @property (nonatomic) BOOL overrideSpaceViews;

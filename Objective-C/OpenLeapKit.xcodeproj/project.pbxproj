@@ -52,6 +52,8 @@
 		2FEDD73A17CC97B500165DD2 /* OLKHand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEDD73217CC97B500165DD2 /* OLKHand.m */; };
 		2FEDD74017CC9D3600165DD2 /* OLKHandsContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEDD73F17CC9D3600165DD2 /* OLKHandsContainerViewController.m */; };
 		2FEDD74317CCA3D000165DD2 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 2FEDD74217CCA3D000165DD2 /* LICENSE */; };
+		2FFC640C1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FFC640A1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2FFC640D1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FFC640B1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -120,6 +122,8 @@
 		2FEDD73217CC97B500165DD2 /* OLKHand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKHand.m; sourceTree = "<group>"; };
 		2FEDD73F17CC9D3600165DD2 /* OLKHandsContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKHandsContainerViewController.m; sourceTree = "<group>"; };
 		2FEDD74217CCA3D000165DD2 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../../LICENSE; sourceTree = "<group>"; };
+		2FFC640A1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKCircleMultiCursorInputMultiTap.h; sourceTree = "<group>"; };
+		2FFC640B1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKCircleMultiCursorInputMultiTap.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,6 +273,8 @@
 				2FBD089E184C912B0050494C /* OLKRangeCalibrator.m */,
 				2F16EA0318576992000FB1C0 /* OLKCircleOptionMultiCursorInput.h */,
 				2F16EA0418576992000FB1C0 /* OLKCircleOptionMultiCursorInput.m */,
+				2FFC640A1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.h */,
+				2FFC640B1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -297,6 +303,7 @@
 				2FC0A44C17F450E1009B4A7D /* OLKGestureRecognizer.h in Headers */,
 				2F16EA0518576993000FB1C0 /* OLKCircleOptionMultiCursorInput.h in Headers */,
 				2FC0A45217F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h in Headers */,
+				2FFC640C1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.h in Headers */,
 				2F52478A185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.h in Headers */,
 				2FBD08AA184CD9A60050494C /* OLKFullScreenOverlayWindow.h in Headers */,
 				2FB03BCB184FAF3100BB6B40 /* OLKContextHand.h in Headers */,
@@ -388,6 +395,7 @@
 				2FB03BCC184FAF3100BB6B40 /* OLKContextHand.m in Sources */,
 				2F16EA0618576993000FB1C0 /* OLKCircleOptionMultiCursorInput.m in Sources */,
 				2F52478B185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m in Sources */,
+				2FFC640D1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

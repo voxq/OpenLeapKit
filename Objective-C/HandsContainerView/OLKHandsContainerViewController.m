@@ -109,6 +109,16 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     return nil;
 }
 
+- (NSView <OLKHandContainer>*)viewForLeapHandId:(int)leapHandId
+{
+    for (NSView <OLKHandContainer> *handView in _handsViews)
+    {
+        if ([[[handView hand] leapHand] id] == leapHandId)
+            return handView;
+    }
+    return nil;
+}
+
 - (OLKHand *)handFromLeapHand:(LeapHand *)leapHand
 {
     for (OLKHand *hand in _hands)
