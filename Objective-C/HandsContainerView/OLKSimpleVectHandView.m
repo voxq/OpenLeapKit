@@ -41,6 +41,7 @@
     NSPoint _centerPoint;
 }
 
+@synthesize enabled = _enabled;
 
 @synthesize hand = _hand;
 @synthesize spaceView = _spaceView;
@@ -72,6 +73,7 @@
         _enableScreenYAxisUsesZAxis = NO;
         _enable3DHand = NO;
         _enableStable = YES;
+        _enabled = YES;
     }
     
     return self;
@@ -356,6 +358,9 @@
     _centerPoint.x = (_bounds.origin.x + _bounds.size.width)/2;
     _centerPoint.y = (_bounds.origin.y + _bounds.size.height)/2;
 
+    if (!_enabled)
+        return;
+    
     if (_enableDrawPalm || _enableDrawHandBoundingCircle)
         [self drawPalm];
     

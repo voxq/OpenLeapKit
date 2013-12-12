@@ -28,6 +28,7 @@ typedef enum {
 @interface OLKCircleMultiCursorInputMultiTap : OLKCircleOptionMultiCursorInput
 
 - (OLKIntentStrikeCheckState)intentionalStrikeState:(id)cursorContext;
+- (void)resetWithAllIntentStrikeChecksSetTo:(OLKIntentStrikeCheckState)state;
 
 @property (nonatomic) NSObject <OLKCircleMultiCursorInputMultiTapDelegate> *multiTapDelegate;
 @property (nonatomic) NSTimeInterval intentStrikeTimeThreshold; // How long without reentry before it is certain a strike was not intended

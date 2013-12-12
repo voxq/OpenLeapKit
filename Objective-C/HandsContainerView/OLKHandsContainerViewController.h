@@ -62,6 +62,7 @@
 - (NSView <OLKHandContainer>*)viewForLeapHandId:(int)leapHandId;
 - (OLKHand *)handFromLeapHand:(LeapHand *)leapHand;
 
+@property (nonatomic) BOOL drawHands;
 @property (nonatomic) NSView *handsSpaceView;
 @property (nonatomic) BOOL overrideSpaceViews;
 @property (nonatomic) NSObject <OLKHandsContainerViewControllerDataSource> *dataSource;

@@ -202,7 +202,7 @@
     [self createButtonImages];
     if (!_outerHotZoneSet)
     {
-        _outerHotZone.width = 10;
+        _outerHotZone.width = 30;
         _outerHotZone.height = 15;
     }
     if (!_escapeZoneSet)
@@ -432,6 +432,9 @@
 
 - (BOOL)handMovedTo:(NSPoint)position
 {
+    if (!_active)
+        return FALSE;
+    
     if (_requiresReset)
     {
         if ([self detectReset:position])

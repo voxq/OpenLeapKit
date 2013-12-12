@@ -233,7 +233,8 @@
 
 - (BOOL)handMovedTo:(NSPoint)position
 {
-    
+    if (!_active)
+        return FALSE;
     if (!_sliding && !_requiresReset && (position.x < _location.x || position.x > _size.width+_location.x || position.y < _location.y || position.y > _location.y + _size.height))
     {
         _sliding = NO;

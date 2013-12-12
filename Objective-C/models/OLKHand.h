@@ -44,6 +44,7 @@
 
 @property (nonatomic) OLKHand *hand;
 @property (nonatomic) NSView *spaceView;
+@property (nonatomic) BOOL enabled;
 
 @end
 

@@ -52,6 +52,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     float _longestTimeHandVis;
 }
 
+@synthesize drawHands = _drawHands;
 @synthesize handsSpaceView = _handsSpaceView;
 @synthesize overrideSpaceViews = _overrideSpaceViews;
 @synthesize dataSource = _dataSource;
@@ -81,6 +82,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 {
     if (self = [super init])
     {
+        _drawHands = TRUE;
         _resetAutoFitOnNewHand = FALSE;
         _overrideSpaceViews = FALSE;
         _longestTimeHandVis = 0;
@@ -408,6 +410,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         _fitHandFact = [(OLKSimpleVectHandView *)handView fitHandFact];
         _longestTimeHandVis = [[hand leapHand] timeVisible];
     }
+    
     NSRect oldRect = [handView frame];
     LeapHand *leapHand = [hand leapHand];
     LeapVector *palmPosition;
@@ -444,6 +447,14 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
     oldRect.origin.x -= [handView frame].size.width/2;
     oldRect.origin.y -= [handView frame].size.height/2;
+
+    if (_drawHands)
+    {
+        if (![handView enabled])
+            [handView setEnabled:YES];
+    }
+    else if ([handView enabled])
+        [handView setEnabled:NO];
     
     [handView setFrame:oldRect];
 //    NSLog(@"hand x=%f, y=%f", [handView frame].origin.x, [handView frame].origin.y);

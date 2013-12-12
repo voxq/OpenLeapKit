@@ -92,6 +92,36 @@
         [_multiTapDelegate strikeNotIntended:self cursorContext:cursorContext];
 }
 
+- (void)resetWithAllIntentStrikeChecksSetTo:(OLKIntentStrikeCheckState)state
+{
+    if (!_multiTapDelegate)
+    {
+        [self reset];
+        return;
+    }
+    
+    NSEnumerator *enumerator = [_intentionalStrikeChecks keyEnumerator];
+    id key = [enumerator nextObject];
+    while (key)
+    {
+        OLKIntentStrikeCheck *intentStrikeCheck = [_intentionalStrikeChecks objectForKey:key];
+        if (state == OLKIntentStrikeCheckStateNonIntended)
+        {
+            [intentStrikeCheck setState:OLKIntentStrikeCheckStateNonIntended];
+            if ([_multiTapDelegate respondsToSelector:@selector(strikeNotIntended:cursorContext:)])
+                [_multiTapDelegate strikeNotIntended:self cursorContext:key];
+        }
+        else if (state == OLKIntentStrikeCheckStateConfirmed)
+        {
+            [intentStrikeCheck setState:OLKIntentStrikeCheckStateConfirmed];
+            if ([_multiTapDelegate respondsToSelector:@selector(strikeConfirmed:cursorContext:)])
+                [_multiTapDelegate strikeConfirmed:self cursorContext:key];
+        }
+        key = [enumerator nextObject];
+    }
+    [self reset];
+}
+
 - (void)startIntentionalStrikeCheck:(NSPoint)cursorPos cursorContext:(id)cursorContext
 {
     float curDist = sqrtf(cursorPos.x*cursorPos.x + cursorPos.y*cursorPos.y);
@@ -113,7 +143,13 @@
 - (void)removeCursorContext:(id)cursorContext
 {
     [super removeCursorContext:cursorContext];
+    if (![_intentionalStrikeChecks count])
+        return;
+    
     OLKIntentStrikeCheck *intentStrikeCheck = [_intentionalStrikeChecks objectForKey:cursorContext];
+    if (!intentStrikeCheck)
+        return;
+    
     [self removeIntentStrikeCheck:cursorContext];
     if ([intentStrikeCheck state] == OLKIntentStrikeCheckStateNonIntended || [intentStrikeCheck state] == OLKIntentStrikeCheckStateConfirmed)
         return;
