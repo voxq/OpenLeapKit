@@ -481,6 +481,15 @@ static OLKHand *gPrevHand=nil;
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    return self;
+}
+
+- (NSUInteger)hash
+{
+    return [_leapHand id];
+}
+
 - (BOOL)isEqual:(id)object
 {
     if (![_leapHand isValid] || !object)

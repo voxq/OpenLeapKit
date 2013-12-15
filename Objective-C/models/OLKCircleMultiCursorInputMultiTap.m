@@ -96,7 +96,7 @@
 {
     if (!_multiTapDelegate)
     {
-        [self reset];
+        [self removeAllCursorTracking];
         return;
     }
     
@@ -119,7 +119,7 @@
         }
         key = [enumerator nextObject];
     }
-    [self reset];
+    [self removeAllCursorTracking];
 }
 
 - (void)startIntentionalStrikeCheck:(NSPoint)cursorPos cursorContext:(id)cursorContext

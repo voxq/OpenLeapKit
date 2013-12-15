@@ -8,28 +8,24 @@
 
 #import <Foundation/Foundation.h>
 #import "OLKButton.h"
+#import <OpenLeapKit/OLKNIControl.h>
 
-@interface OLKScratchButton : NSObject <OLKButton>
+@interface OLKScratchButton : OLKNIControl
 
-- (BOOL)handMovedTo:(NSPoint)position;
 - (void)clear;
 
-@property (nonatomic) int identifier;
-@property (nonatomic) BOOL enable;
-@property (nonatomic) BOOL active;
+@property (nonatomic) NSView <OLKHandContainer> *controllingHandView;
 @property (nonatomic) BOOL activated;
-@property (nonatomic) BOOL visible;
-@property (nonatomic) NSSize size;
 @property (nonatomic) float alpha;
 @property (nonatomic) float switcherPosition;
-@property (weak) id target;
-@property (nonatomic) SEL action;
-@property (nonatomic) NSView *parentView;
-@property (nonatomic) NSString *label;
-@property (nonatomic) NSPoint drawLocation;
 @property (nonatomic) NSSize escapeZone;
 @property (nonatomic) NSSize outerHotZone;
 @property (nonatomic) NSSize resetEscapeZone;
 @property (nonatomic) float innerHotZone;
+@property (nonatomic) NSColor *onColor;
+@property (nonatomic) NSColor *offColor;
+@property (nonatomic) NSColor *halfColor;
+@property (nonatomic) BOOL initiateBothSides;
+@property (nonatomic) BOOL verticalOrient;
 
 @end

@@ -67,6 +67,7 @@
 @synthesize delegate = _delegate;
 
 @synthesize radius = _radius;
+@synthesize thresholdForReenter = _thresholdForReenter;
 @synthesize thresholdForHit = _thresholdForHit;
 @synthesize thresholdForRepeat = _thresholdForRepeat;
 @synthesize thresholdForCenter = _thresholdForCenter;
@@ -80,7 +81,6 @@
     if (self = [super init])
     {
         [self resetToDefaults];
-        [self reset];
         _enableRepeatTracking = FALSE;
         _cursorContexts = [[NSDictionary alloc] init];
     }
@@ -91,6 +91,7 @@
 {
     _thresholdForRepeat = 1;
     _thresholdForHit = 6.0/7.0;
+    _thresholdForReenter = 15;
     _thresholdForCenter = 1.0/3.0;
     _radius = 1;
 }
@@ -155,7 +156,7 @@
         _cursorContexts = [NSDictionary dictionaryWithDictionary:newDict];
 }
 
-- (void)reset
+- (void)resetCurrentCursorTracking
 {
     NSEnumerator *enumer = [_cursorContexts keyEnumerator];
     id key = [enumer nextObject];
@@ -167,6 +168,11 @@
         [cursorTracking setSelectedIndex:OLKCircleOptionMultiInputInvalidSelection];
         key = [enumer nextObject];
     }
+}
+
+- (void)removeAllCursorTracking
+{
+    _cursorContexts = nil;
 }
 
 - (void)setEnableRepeatTracking:(BOOL)enableRepeatTracking
@@ -257,7 +263,7 @@
     
     if (lastDist < _thresholdForHit*_radius)
     {
-        if (requiresMoveToInner)
+        if (requiresMoveToInner && lastDist <= _thresholdForHit*_radius - _thresholdForReenter)
         {
             [cursorTracking setRequiresMoveToInner:NO];
             if ([_delegate respondsToSelector:@selector(cursorMovedToInner:cursorContext:)])

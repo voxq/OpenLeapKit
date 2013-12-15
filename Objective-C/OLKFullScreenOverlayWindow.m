@@ -96,6 +96,23 @@ static float const inchesToMM = 25.4;
     [self moveToScreen:foundScreen];
 }
 
+- (void)moveToScreenNumber:(NSNumber *)screenNumber
+{
+    NSArray *screens=[NSScreen screens];
+    if ([screens count] < 2)
+        return;
+    
+    for (NSScreen *screen in screens)
+    {
+        NSNumber *foundScreenNumber = [[screen deviceDescription] objectForKey:@"NSScreenNumber"];
+        if (foundScreenNumber == screenNumber)
+        {
+            [self moveToScreen:screen];
+            return;
+        }
+    }
+}
+
 - (NSSize)screenPhysicalSize
 {
     NSDictionary *description = [[self screen] deviceDescription];

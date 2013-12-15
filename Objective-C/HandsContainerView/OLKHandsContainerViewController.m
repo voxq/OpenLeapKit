@@ -457,7 +457,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         [handView setEnabled:NO];
     
     [handView setFrame:oldRect];
-//    NSLog(@"hand x=%f, y=%f", [handView frame].origin.x, [handView frame].origin.y);
+//    NSLog(@"hand x=%f, y=%f, width=%f, height=%f", [handView frame].origin.x, [handView frame].origin.y,[handView frame].size.width, [handView frame].size.height);
 }
 
 - (void)updateHandsAndPointablesViews

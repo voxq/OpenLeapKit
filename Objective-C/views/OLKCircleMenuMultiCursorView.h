@@ -8,11 +8,18 @@
 
 #import <Cocoa/Cocoa.h>
 #import "OLKCircleOptionMultiCursorInput.h"
+#import "OLKHandCursorResponder.h"
 
-@interface OLKCircleMenuMultiCursorView : NSView
+@interface OLKCircleMenuMultiCursorView : NSView <OLKHandCursorResponder>
 
 - (void)redraw;
 - (NSPoint)positionRelativeToCenter:(NSPoint)position convertFromView:(NSView *)view;
+- (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer> *)handView;
+- (void)removeFromSuperHandCursorResponder;
+- (void)removeCursorTracking:(NSView <OLKHandContainer> *)handView;
+- (void)removeAllCursorTracking;
+
+@property (nonatomic) NSObject <OLKHandCursorResponderParent> *superHandCursorResponder;
 
 @property (nonatomic) OLKCircleOptionMultiCursorInput *circleInput;
 @property (nonatomic) BOOL active;

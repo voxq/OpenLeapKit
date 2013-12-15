@@ -40,7 +40,7 @@
 - (OLKHand *)manufactureHand:(LeapHand *)leapHand;
 @end
 
-@protocol OLKHandContainer <NSObject>
+@protocol OLKHandContainer <NSObject, NSCopying>
 
 @property (nonatomic) OLKHand *hand;
 @property (nonatomic) NSView *spaceView;
@@ -69,7 +69,7 @@ typedef enum {
 }OLKHandedness;
 
 
-@interface OLKHand : NSObject
+@interface OLKHand : NSObject <NSCopying>
 
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;
 + (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm factory:(NSObject<OLKHandFactory>*)factory;

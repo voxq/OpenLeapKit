@@ -79,6 +79,34 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    return self;
+}
+
+- (NSUInteger)hash
+{
+    return (NSUInteger)[[_hand leapHand] id];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (object == self)
+        return YES;
+    
+    if (!_hand || ![[_hand leapHand] isValid] || !object)
+        return NO;
+    
+    if (![object isKindOfClass:[OLKSimpleVectHandView class]])
+        return NO;
+    
+    LeapHand *otherHand = [[(OLKSimpleVectHandView *)object hand] leapHand];
+    if ([otherHand isValid] && [[_hand leapHand] id] == [otherHand id])
+        return YES;
+    
+    return NO;
+}
+
+
 - (void)setHand:(OLKHand *)hand
 {
     _hand = hand;

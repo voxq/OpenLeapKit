@@ -38,6 +38,7 @@ static int const OLKCircleOptionInputInvalidSelection = -1;
 
 @property (nonatomic) CGFloat radius;
 @property (nonatomic) float lastUpdateCursorDistance;
+@property (nonatomic) float thresholdForReenter;
 @property (nonatomic) float thresholdForHit;
 @property (nonatomic) float thresholdForRepeat;
 @property (nonatomic) float thresholdForCenter;

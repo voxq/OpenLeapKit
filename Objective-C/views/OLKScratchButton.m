@@ -8,6 +8,14 @@
 
 #import "OLKScratchButton.h"
 
+static float const OLKScratchButtonDefaultOuterHotZoneWidth = 30;
+static float const OLKScratchButtonDefaultOuterHotZoneHeight = 15;
+static float const OLKScratchButtonDefaultEscapeZoneWidth = 100;
+static float const OLKScratchButtonDefaultEscapeZoneHeight = 60;
+static float const OLKScratchButtonDefaultResetEscapeZoneWidth = 100;
+static float const OLKScratchButtonDefaultResetEscapeZoneHeight = 40;
+static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
+
 @implementation OLKScratchButton
 {
     NSImage *_catcherOnImg;
@@ -29,34 +37,33 @@
     BOOL _resetEscapeZoneSet;
 }
 
-@synthesize identifier = _identifier;
-@synthesize active = _active;
+@synthesize controllingHandView = _controllingHandView;
+@synthesize superHandCursorResponder = _superHandCursorResponder;
 @synthesize activated = _activated;
-@synthesize visible = _visible;
-@synthesize size = _size;
 @synthesize alpha = _alpha;
 @synthesize switcherPosition = _switcherPosition;
-@synthesize target = _target;
-@synthesize action = _action;
-@synthesize parentView = _parentView;
-@synthesize enable = _enable;
-@synthesize label = _label;
-@synthesize drawLocation = _drawLocation;
 @synthesize outerHotZone = _outerHotZone;
 @synthesize escapeZone = _escapeZone;
 @synthesize innerHotZone = _innerHotZone;
 @synthesize resetEscapeZone = _resetEscapeZone;
+@synthesize onColor = _onColor;
+@synthesize offColor = _offColor;
+@synthesize halfColor = _halfColor;
+@synthesize initiateBothSides = _initiateBothSides;
+@synthesize verticalOrient = _verticalOrient;
 
 - (id)init
 {
     if (self = [super init])
     {
+        _offColor = [NSColor colorWithCalibratedRed:0.8 green:0.4 blue:0.4 alpha:1];
+        _onColor = [NSColor colorWithCalibratedRed:0.4 green:0.8 blue:0.4 alpha:1];
+        _halfColor = [NSColor colorWithCalibratedRed:0.8 green:0.8 blue:0.4 alpha:1];
+        
         _pauseActivateFrames = 0;
         _activateAlpha = 0;
         _alpha = 1.0;
         _switcherPosition = 0;
-        _visible = YES;
-        _active = YES;
         _sliding = NO;
         _activated = NO;
         _halfway = NO;
@@ -84,54 +91,52 @@
         _pauseActivateFrames --;
     else
     {
-        _activateAlpha -= 0.1;
+        _activateAlpha -= OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle;
         if (_activateAlpha <= 0)
         {
             _activated = NO;
             [timer invalidate];
         }
         
-        if (_parentView)
-            [_parentView setNeedsDisplay:YES];
+        if (self.parentView)
+            [self.parentView setNeedsDisplay:YES];
     }
 }
 
 - (void)createButtonImages
 {
-    NSColor *offColor = [NSColor colorWithCalibratedRed:0.8 green:0.4 blue:0.4 alpha:1];
-    NSColor *onColor = [NSColor colorWithCalibratedRed:0.4 green:0.8 blue:0.4 alpha:1];
-    NSColor *halfColor = [NSColor colorWithCalibratedRed:0.8 green:0.8 blue:0.4 alpha:1];
+    NSSize size = [self size];
     NSBezierPath *switcher = [[NSBezierPath alloc] init];
     NSRect switcherRect;
     switcherRect.origin = NSMakePoint(0, 0);
-    switcherRect.size.height = _size.height/1.4;
+    switcherRect.size.height = size.height/1.4;
     switcherRect.size.width = switcherRect.size.height;
     
     _switcherOnImg = [[NSImage alloc] initWithSize:switcherRect.size];
     [_switcherOnImg lockFocus];
     
     [switcher appendBezierPathWithOvalInRect:switcherRect];
-    [onColor set] ;
+    [_onColor set] ;
     [switcher fill];
     [_switcherOnImg unlockFocus];
     
     _switcherOffImg = [[NSImage alloc] initWithSize:switcherRect.size];
     [_switcherOffImg lockFocus];
     
-    [offColor set] ;
+    [_offColor set] ;
     [switcher fill];
     [_switcherOffImg unlockFocus];
     
     _switcherHalfImg = [[NSImage alloc] initWithSize:switcherRect.size];
     [_switcherHalfImg lockFocus];
     
-    [halfColor set] ;
+    [_halfColor set] ;
     [switcher fill];
     [_switcherHalfImg unlockFocus];
     
     NSSize catcherSize;
-    catcherSize.height = _size.height;
-    catcherSize.width = _size.height;
+    catcherSize.height = size.height;
+    catcherSize.width = size.height;
     
     _catcherOnImg = [[NSImage alloc] initWithSize:catcherSize];
     [_catcherOnImg lockFocus];
@@ -144,7 +149,7 @@
     pathRect.origin.x = 2;
     pathRect.origin.y = 2;
     [path appendBezierPathWithOvalInRect:pathRect];
-    [onColor set] ;
+    [_onColor set] ;
     [path setLineWidth:4];
     [path stroke];
     [_catcherOnImg unlockFocus];
@@ -152,14 +157,14 @@
     _catcherOffImg = [[NSImage alloc] initWithSize:catcherSize];
     [_catcherOffImg lockFocus];
     
-    [offColor set] ;
+    [_offColor set] ;
     [path stroke];
     [_catcherOffImg unlockFocus];
     
     _catcherHalfImg = [[NSImage alloc] initWithSize:catcherSize];
     [_catcherHalfImg lockFocus];
     
-    [halfColor set] ;
+    [_halfColor set] ;
     [path stroke];
     [_catcherHalfImg unlockFocus];
 }
@@ -198,31 +203,27 @@
 
 - (void)setSize:(NSSize)size
 {
-    _size = size;
+    [super setSize:size];
+    
     [self createButtonImages];
     if (!_outerHotZoneSet)
     {
-        _outerHotZone.width = 30;
-        _outerHotZone.height = 15;
+        _outerHotZone.width = OLKScratchButtonDefaultOuterHotZoneWidth;
+        _outerHotZone.height = OLKScratchButtonDefaultOuterHotZoneHeight;
     }
     if (!_escapeZoneSet)
     {
-        _escapeZone.width = 100;
-        _escapeZone.height = 60;
+        _escapeZone.width = OLKScratchButtonDefaultEscapeZoneWidth;
+        _escapeZone.height = OLKScratchButtonDefaultEscapeZoneHeight;
     }
     if (!_resetEscapeZoneSet)
     {
-        _resetEscapeZone.width = 100;
-        _resetEscapeZone.height = 40;
+        _resetEscapeZone.width = OLKScratchButtonDefaultResetEscapeZoneWidth;
+        _resetEscapeZone.height = OLKScratchButtonDefaultResetEscapeZoneHeight;
     }
     if (!_innerHotZoneSet)
         _innerHotZone = [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width*2;
 
-}
-
-- (void)onFrame:(NSNotification *)notification
-{
-    
 }
 
 - (float)switcherOnRestOffsetXPos
@@ -232,35 +233,40 @@
 
 - (float)switcherOffRestOffsetXPos
 {
-    return _size.width - _size.width/4;
+    return self.size.width - self.size.width/4;
 }
 
 - (float)switcherRestYOffsetPos
 {
-    return _size.height*0.15;
+    return self.size.height*0.15;
 }
 
 - (void)clear
 {
     [[NSColor clearColor] set];
-    NSRectFill(NSMakeRect(_drawLocation.x, _drawLocation.y, _size.width, _size.height));
+    NSRectFill(NSMakeRect(self.drawLocation.x, self.drawLocation.y, self.size.width, self.size.height));
+}
+
+- (void)drawLabel
+{
+    
 }
 
 - (void)draw
 {
-    if (!_visible)
+    if (!self.visible)
         return;
     
     float currentAlpha = _alpha;
     
-    if (!_active)
+    if (!self.active)
         currentAlpha /= 2;
     
     NSRect buttonRect;
     buttonRect.origin = NSMakePoint(0, 0);
     buttonRect.size = [_catcherOnImg size];
     
-    NSPoint elementDrawLocation = _drawLocation;
+    NSPoint elementDrawLocation = self.drawLocation;
     [_catcherHalfImg drawAtPoint:elementDrawLocation fromRect:buttonRect operation:NSCompositeSourceOver fraction:currentAlpha];
     
     NSRect switcherRect;
@@ -320,30 +326,49 @@
         else if (_halfway)
             [_catcherOnImg drawAtPoint:savePos fromRect:buttonRect operation:NSCompositeSourceOver fraction:currentAlpha];
     }
-
     
     elementDrawLocation.x += switcherRect.origin.x + switcherRect.size.width + switcherRect.size.width/4;
-    elementDrawLocation.y += _size.height/25;
+    elementDrawLocation.y += self.size.height/25;
     
     NSRect labelRect;
     labelRect.size.width = 500;
     labelRect.size.height = 35;
-    labelRect.origin.x = _drawLocation.x - 20 - labelRect.size.width;
+    labelRect.origin.x = self.drawLocation.x - 20 - labelRect.size.width;
     labelRect.origin.y = elementDrawLocation.y;
     NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [style setAlignment:NSRightTextAlignment];
     
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Helvetica Neue" size:25], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, nil];
-    [_label drawInRect:labelRect withAttributes:attributes];
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Helvetica Neue" size:25], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, [NSNumber numberWithFloat:-18.0], NSStrokeWidthAttributeName, [NSColor whiteColor], NSStrokeColorAttributeName, nil];
+    [self.label drawInRect:labelRect withAttributes:attributes];
+    attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Helvetica Neue" size:25], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, nil];
+    [self.label drawInRect:labelRect withAttributes:attributes];
+    self.needsRedraw = FALSE;
+}
+
+- (void)reset
+{
+    if (_activated)
+    {
+        _activated = NO;
+        [_animateTimer invalidate];
+        _animateTimer = nil;
+    }
+    _requiresReset = NO;
+    _halfway = NO;
+    _activated = NO;
+    _activatedTime = nil;
+    _sliding = NO;
+    _switcherPosition = [self switcherOffRestOffsetXPos];
+    _controllingHandView = nil;
 }
 
 - (BOOL)detectReset:(NSPoint)position
 {
-    if (position.x > _drawLocation.x + [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width + _resetEscapeZone.width)
+    if (position.x > self.drawLocation.x + [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width + _resetEscapeZone.width)
         return TRUE;
-    if (position.x < _drawLocation.x - _resetEscapeZone.width)
+    if (position.x < self.drawLocation.x - _resetEscapeZone.width)
         return TRUE;
-    if (position.y < _drawLocation.y-_resetEscapeZone.height || position.y > _drawLocation.y+_size.height+_resetEscapeZone.height)
+    if (position.y < self.drawLocation.y-_resetEscapeZone.height || position.y > self.drawLocation.y+self.size.height+_resetEscapeZone.height)
         return TRUE;
     
     return FALSE;
@@ -351,7 +376,7 @@
 
 - (BOOL)escapeInY:(NSPoint)position
 {
-    if (position.y < _drawLocation.y-_escapeZone.height || position.y > _drawLocation.y+_size.height+_escapeZone.height)
+    if (position.y < self.drawLocation.y-_escapeZone.height || position.y > self.drawLocation.y+self.size.height+_escapeZone.height)
         return TRUE;
     
     return FALSE;
@@ -359,16 +384,16 @@
 
 - (BOOL)inHotZoneX:(NSPoint)position
 {
-    if (position.x <= _drawLocation.x + _size.width + _outerHotZone.width && position.x > _drawLocation.x + [self switcherOffRestOffsetXPos] - _innerHotZone)
+    if (position.x <= self.drawLocation.x + self.size.width + _outerHotZone.width && position.x > self.drawLocation.x + [self switcherOffRestOffsetXPos] - _innerHotZone)
         return YES;
     return NO;
 }
 
 - (BOOL)inSlideInitiateZone:(NSPoint)position
 {
-    if (position.x < _drawLocation.x + [self switcherOffRestOffsetXPos] - _outerHotZone.width)
+    if (position.x < self.drawLocation.x + [self switcherOffRestOffsetXPos] - _outerHotZone.width)
         return NO;
-    if (position.x > _drawLocation.x + _size.width + _outerHotZone.width)
+    if (position.x > self.drawLocation.x + self.size.width + _outerHotZone.width)
         return NO;
     
     return YES;
@@ -376,16 +401,16 @@
 
 - (BOOL)inHotZone:(NSPoint)position
 {
-    if (position.x < _drawLocation.x - _outerHotZone.width)
+    if (position.x < self.drawLocation.x - _outerHotZone.width)
         return NO;
     
-    if (position.x > _size.width+_drawLocation.x+_outerHotZone.width)
+    if (position.x > self.size.width+self.drawLocation.x+_outerHotZone.width)
         return NO;
     
-    if (position.y < _drawLocation.y-_outerHotZone.height)
+    if (position.y < self.drawLocation.y-_outerHotZone.height)
         return NO;
     
-    if (position.y > _drawLocation.y + _size.height+_outerHotZone.height)
+    if (position.y > self.drawLocation.y + self.size.height+_outerHotZone.height)
         return NO;
     
     return YES;
@@ -393,16 +418,16 @@
 
 - (BOOL)escapedResetZone:(NSPoint)position
 {
-    if (position.x < _drawLocation.x - _resetEscapeZone.width)
+    if (position.x < self.drawLocation.x - _resetEscapeZone.width)
         return YES;
     
-    if (position.x > _size.width+_drawLocation.x+_resetEscapeZone.width)
+    if (position.x > self.size.width+self.drawLocation.x+_resetEscapeZone.width)
         return YES;
     
-    if (position.y < _drawLocation.y-_resetEscapeZone.height)
+    if (position.y < self.drawLocation.y-_resetEscapeZone.height)
         return YES;
     
-    if (position.y > _drawLocation.y + _size.height+_resetEscapeZone.height)
+    if (position.y > self.drawLocation.y + self.size.height+_resetEscapeZone.height)
         return YES;
     
     return NO;
@@ -410,16 +435,16 @@
 
 - (BOOL)escapedHotZone:(NSPoint)position
 {
-    if (position.x < _drawLocation.x - _escapeZone.width)
+    if (position.x < self.drawLocation.x - _escapeZone.width)
         return YES;
     
-    if (position.x > _size.width+_drawLocation.x+_escapeZone.width)
+    if (position.x > self.size.width+self.drawLocation.x+_escapeZone.width)
         return YES;
     
-    if (position.y < _drawLocation.y-_escapeZone.height)
+    if (position.y < self.drawLocation.y-_escapeZone.height)
         return YES;
     
-    if (position.y > _drawLocation.y + _size.height+_escapeZone.height)
+    if (position.y > self.drawLocation.y + self.size.height+_escapeZone.height)
         return YES;
     
     return NO;
@@ -427,12 +452,14 @@
 
 - (float)rightBoundForPos
 {
-    return _drawLocation.x + [self switcherOffRestOffsetXPos] + [_switcherOffImg size].width/2;
+    return self.drawLocation.x + [self switcherOffRestOffsetXPos] + [_switcherOffImg size].width/2;
 }
 
+// Returns whether the hand context relating to the position is in control of the control, allowing us
+// to stop other hands from affecting the control until it is otherwise so.
 - (BOOL)handMovedTo:(NSPoint)position
 {
-    if (!_active)
+    if (!self.active)
         return FALSE;
     
     if (_requiresReset)
@@ -453,35 +480,32 @@
             _switcherPosition = [self switcherOffRestOffsetXPos];
             _sliding = NO;
             _halfway = NO;
-            if (_parentView)
-                [_parentView setNeedsDisplay:YES];
+            if (self.parentView)
+                [self.parentView setNeedsDisplay:YES];
             return TRUE;
         }
         if (_halfway)
         {
-            if (position.x > _drawLocation.x + _size.width-_innerHotZone)
+            if (position.x > self.drawLocation.x + self.size.width-_innerHotZone)
             {
-                _requiresReset = YES;
-                _halfway = NO;
+                [self reset];
                 _activated = YES;
                 _activatedTime = [NSDate date];
-                _sliding = NO;
-                _switcherPosition = [self switcherOffRestOffsetXPos];
                 [self initAnimateOnActivate];
-                if (_target)
-                    [[NSApplication sharedApplication] sendAction:_action to:_target from:self];
-                return TRUE;
+                if (self.target)
+                    [[NSApplication sharedApplication] sendAction:self.action to:self.target from:self];
+                return FALSE;
             }
-            else if (position.x < _drawLocation.x+[self switcherOnRestOffsetXPos] + [_switcherOnImg size].width/2)
-                position.x = _drawLocation.x + [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width/2;
+            else if (position.x < self.drawLocation.x+[self switcherOnRestOffsetXPos] + [_switcherOnImg size].width/2)
+                position.x = self.drawLocation.x + [self switcherOnRestOffsetXPos] + [_switcherOnImg size].width/2;
         }
         else
         {
-            if (position.x < _drawLocation.x + _innerHotZone)
+            if (position.x < self.drawLocation.x + _innerHotZone)
             {
                 _halfway = YES;
-                if (_parentView)
-                    [_parentView setNeedsDisplay:YES];
+                if (self.parentView)
+                    [self.parentView setNeedsDisplay:YES];
             }
             else if (position.x > [self rightBoundForPos])
                 position.x = [self rightBoundForPos];
@@ -499,5 +523,44 @@
     return TRUE;
 }
 
+- (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
+{
+    [super setCursorTracking:cursorPos withHandView:handView];
+
+    if (_controllingHandView && _controllingHandView != handView)
+        return;
+    
+    if (![self handMovedTo:cursorPos])
+    {
+        if (_controllingHandView)
+            _controllingHandView = nil;
+        return;
+    }
+    if (!_controllingHandView)
+        _controllingHandView = handView;
+    
+    self.needsRedraw = TRUE;
+    NSRect buttonRect;
+    buttonRect.size = [self size];
+    buttonRect.origin = cursorPos;
+    [self.parentView setNeedsDisplayInRect:buttonRect];
+}
+
+- (void)removeCursorTracking:(NSView <OLKHandContainer> *)handView
+{
+    [super removeCursorTracking:handView];
+    
+    if (_controllingHandView && _controllingHandView == handView)
+    {
+        _controllingHandView = nil;
+        [self reset];
+    }
+}
+
+- (void)removeAllCursorTracking
+{
+    _controllingHandView = nil;
+    [self reset];
+}
 
 @end

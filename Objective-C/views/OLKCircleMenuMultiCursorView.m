@@ -16,6 +16,8 @@
     NSRect _imageDrawRect;
 }
 
+@synthesize superHandCursorResponder = _superHandCursorResponder;
+
 @synthesize circleInput = _circleInput;
 
 @synthesize innerRadius = _innerRadius;
@@ -49,9 +51,26 @@
     return self;
 }
 
-- (void)setNeedsDisplay:(BOOL)flag
+- (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
 {
-    [super setNeedsDisplay:flag];
+    NSPoint cursorPosRelativeToCircleCenter = [self positionRelativeToCenter:cursorPos convertFromView:[handView superview]];
+    [_circleInput setCursorPos:cursorPosRelativeToCircleCenter cursorContext:handView];
+}
+
+- (void)removeCursorTracking:(NSView<OLKHandContainer> *)handView
+{
+    [_circleInput removeCursorContext:handView];
+}
+
+- (void)removeAllCursorTracking
+{
+    [_circleInput removeAllCursorTracking];
+}
+
+- (void)removeFromSuperHandCursorResponder
+{
+    if (_superHandCursorResponder)
+        [_superHandCursorResponder removeHandCursorResponder:self];
 }
 
 - (NSPoint)positionRelativeToCenter:(NSPoint)position convertFromView:(NSView *)view
@@ -276,7 +295,7 @@
         textRect.origin.x += (textRect.origin.x - offsetCenter.x)/distance*5;
         
         textRect.origin.y = offsetCenter.y + distance * sin(radAngle) - _textFontSize/2;
-        textRect.origin.y -= (distance - ((textRect.origin.y - offsetCenter.y) + distance))/(distance/10);
+//        textRect.origin.y -= (distance - ((textRect.origin.y - offsetCenter.y) + distance))/(distance/2);
         textRect.size.width = 400;
         textRect.size.height = _textFontSize*1.2;
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -316,11 +335,10 @@
 
     
     NSDictionary *selectedIndexesDict = [_circleInput selectedIndexes];
-    NSEnumerator *enumer = [selectedIndexesDict keyEnumerator];
-    id key = [enumer nextObject];
-    while (key)
+    NSEnumerator *enumer = [selectedIndexesDict objectEnumerator];
+    NSNumber *selectedIndexNum = [enumer nextObject];
+    while (selectedIndexNum)
     {
-        NSNumber *selectedIndexNum = [selectedIndexesDict objectForKey:key];
         int selectedIndex = [selectedIndexNum intValue];
         if (selectedIndex < objectCount && selectedIndex >= 0)
         {
@@ -346,16 +364,15 @@
             // and fill it
             [selPath fill] ;
         }
-        key = [enumer nextObject];
+        selectedIndexNum = [enumer nextObject];
     }
         //    NSLog(@"drawing rect: %f, %f, %f, %f",rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     NSDictionary *hoverIndexesDict = [_circleInput hoverIndexes];
-    enumer = [hoverIndexesDict keyEnumerator];
-    key = [enumer nextObject];
-    while (key)
+    enumer = [hoverIndexesDict objectEnumerator];
+    selectedIndexNum = [enumer nextObject];
+    while (selectedIndexNum)
     {
-        NSNumber *hoverIndexNum = [hoverIndexesDict objectForKey:key];
-        int hoverIndex = [hoverIndexNum intValue];
+        int hoverIndex = [selectedIndexNum intValue];
 
         degAngle = 360 - (float)arcAngleOffset*2 * (hoverIndex) + 90;
         
@@ -379,7 +396,7 @@
         [aimedLetterHighlightPath fill];
         [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
         [aimedLetterHighlightPath stroke];
-        key = [enumer nextObject];
+        selectedIndexNum = [enumer nextObject];
     }
     
     if (_baseCircleImage)

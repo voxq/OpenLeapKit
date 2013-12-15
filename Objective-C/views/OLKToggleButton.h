@@ -7,22 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "OLKButton.h"
+#import "OLKNIControl.h"
 
-@interface OLKToggleButton : NSObject <OLKButton>
+@interface OLKToggleButton : OLKNIControl
 
-- (BOOL)handMovedTo:(NSPoint)position;
-
-@property (nonatomic) int identifier;
-@property (nonatomic) BOOL enable;
-@property (nonatomic) BOOL active;
-@property (nonatomic) BOOL visible;
-@property (nonatomic) NSSize size;
+@property (nonatomic) NSView <OLKHandContainer> *controllingHandView;
 @property (nonatomic) float alpha;
 @property (nonatomic) float switcherPosition;
-@property (weak) id target;
-@property (nonatomic) SEL action;
-@property (nonatomic) NSString *label;
-@property (nonatomic) NSPoint drawLocation;
+@property (nonatomic) BOOL on;
 
 @end

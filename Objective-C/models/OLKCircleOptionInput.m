@@ -19,6 +19,7 @@
 @synthesize thresholdForHit = _thresholdForHit;
 @synthesize thresholdForRepeat = _thresholdForRepeat;
 @synthesize thresholdForCenter = _thresholdForCenter;
+@synthesize thresholdForReenter = _thresholdForReenter;
 
 @synthesize repeatTracker = _repeatTracker;
 @synthesize enableRepeatTracking = _enableRepeatTracking;
@@ -43,6 +44,7 @@
 
 - (void)resetToDefaults
 {
+    _thresholdForReenter = 15;
     _thresholdForRepeat = 1;
     _thresholdForHit = 6.0/7.0;
     _thresholdForCenter = 1.0/3.0;
@@ -124,7 +126,7 @@
     
     if (_lastUpdateCursorDistance < _thresholdForHit*_radius)
     {
-        if (_requiresMoveToInner)
+        if (_requiresMoveToInner && _lastUpdateCursorDistance  <= _thresholdForHit*_radius - _thresholdForReenter)
         {
             _requiresMoveToInner = FALSE;
             if ([_delegate respondsToSelector:@selector(cursorMovedToInner:)])

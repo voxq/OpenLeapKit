@@ -27,7 +27,8 @@ static int const OLKCircleOptionMultiInputInvalidSelection = -1;
 
 @interface OLKCircleOptionMultiCursorInput : NSObject
 
-- (void)reset;
+- (void)resetCurrentCursorTracking;
+- (void)removeAllCursorTracking;
 - (id)objectAtAngle:(float)degree;
 - (int)indexAtAngle:(float)degree;
 - (id)objectAtIndex:(int)index;
@@ -45,6 +46,7 @@ static int const OLKCircleOptionMultiInputInvalidSelection = -1;
 @property (nonatomic) NSArray *optionObjects;
 
 @property (nonatomic) CGFloat radius;
+@property (nonatomic) float thresholdForReenter;
 @property (nonatomic) float thresholdForHit;
 @property (nonatomic) float thresholdForRepeat;
 @property (nonatomic) float thresholdForCenter;

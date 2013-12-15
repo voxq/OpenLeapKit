@@ -22,8 +22,15 @@
 		2F52478B185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F524789185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m */; };
 		2F55EE921846739F00BD4EB8 /* OLKScratchButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F55EE901846739F00BD4EB8 /* OLKScratchButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F55EE931846739F00BD4EB8 /* OLKScratchButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F55EE911846739F00BD4EB8 /* OLKScratchButton.m */; };
+		2F683202185BA3EE0064E5B2 /* OLKNIControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F683200185BA3EE0064E5B2 /* OLKNIControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F683203185BA3EE0064E5B2 /* OLKNIControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F683201185BA3EE0064E5B2 /* OLKNIControl.m */; };
 		2F6E36C0184B5A1700E34155 /* OLKRepeatTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F6E36BE184B5A1700E34155 /* OLKRepeatTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F6E36C1184B5A1700E34155 /* OLKRepeatTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F6E36BF184B5A1700E34155 /* OLKRepeatTracker.m */; };
+		2F71AD53185B289100D63859 /* OLKNIControlsContainerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F71AD51185B289100D63859 /* OLKNIControlsContainerView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F71AD54185B289100D63859 /* OLKNIControlsContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F71AD52185B289100D63859 /* OLKNIControlsContainerView.m */; };
+		2F71AD5B185B809F00D63859 /* OLKHandCursorResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F71AD59185B809F00D63859 /* OLKHandCursorResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F71AD5F185B8A9000D63859 /* OLKHandCursorResponderController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F71AD5D185B8A9000D63859 /* OLKHandCursorResponderController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F71AD60185B8A9000D63859 /* OLKHandCursorResponderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F71AD5E185B8A9000D63859 /* OLKHandCursorResponderController.m */; };
 		2FB03BCB184FAF3100BB6B40 /* OLKContextHand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB03BC9184FAF3100BB6B40 /* OLKContextHand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FB03BCC184FAF3100BB6B40 /* OLKContextHand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB03BCA184FAF3100BB6B40 /* OLKContextHand.m */; };
 		2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,6 +45,8 @@
 		2FC0A44D17F450E1009B4A7D /* OLKGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC0A44B17F450E1009B4A7D /* OLKGestureRecognizer.m */; };
 		2FC0A45217F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC0A45017F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FC0A45317F45F67009B4A7D /* OLKGestureRecognizerDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC0A45117F45F67009B4A7D /* OLKGestureRecognizerDispatcher.m */; };
+		2FE3CC26185C7A7D0002876F /* OLKMultiCursorTrackingController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FE3CC24185C7A7D0002876F /* OLKMultiCursorTrackingController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2FE3CC27185C7A7D0002876F /* OLKMultiCursorTrackingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE3CC25185C7A7D0002876F /* OLKMultiCursorTrackingController.m */; };
 		2FE5C43A1849E5FF00A00517 /* OLKCircleOptionInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FE5C4381849E5FF00A00517 /* OLKCircleOptionInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FE5C43B1849E5FF00A00517 /* OLKCircleOptionInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5C4391849E5FF00A00517 /* OLKCircleOptionInput.m */; };
 		2FEDD70C17CC970600165DD2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FEDD70B17CC970600165DD2 /* Cocoa.framework */; };
@@ -85,8 +94,15 @@
 		2F524789185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKCircleMenuMultiCursorView.m; path = views/OLKCircleMenuMultiCursorView.m; sourceTree = "<group>"; };
 		2F55EE901846739F00BD4EB8 /* OLKScratchButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKScratchButton.h; path = views/OLKScratchButton.h; sourceTree = "<group>"; };
 		2F55EE911846739F00BD4EB8 /* OLKScratchButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKScratchButton.m; path = views/OLKScratchButton.m; sourceTree = "<group>"; };
+		2F683200185BA3EE0064E5B2 /* OLKNIControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKNIControl.h; path = views/OLKNIControl.h; sourceTree = "<group>"; };
+		2F683201185BA3EE0064E5B2 /* OLKNIControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKNIControl.m; path = views/OLKNIControl.m; sourceTree = "<group>"; };
 		2F6E36BE184B5A1700E34155 /* OLKRepeatTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKRepeatTracker.h; sourceTree = "<group>"; };
 		2F6E36BF184B5A1700E34155 /* OLKRepeatTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKRepeatTracker.m; sourceTree = "<group>"; };
+		2F71AD51185B289100D63859 /* OLKNIControlsContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKNIControlsContainerView.h; path = views/OLKNIControlsContainerView.h; sourceTree = "<group>"; };
+		2F71AD52185B289100D63859 /* OLKNIControlsContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKNIControlsContainerView.m; path = views/OLKNIControlsContainerView.m; sourceTree = "<group>"; };
+		2F71AD59185B809F00D63859 /* OLKHandCursorResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKHandCursorResponder.h; path = ../views/OLKHandCursorResponder.h; sourceTree = "<group>"; };
+		2F71AD5D185B8A9000D63859 /* OLKHandCursorResponderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKHandCursorResponderController.h; sourceTree = "<group>"; };
+		2F71AD5E185B8A9000D63859 /* OLKHandCursorResponderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKHandCursorResponderController.m; sourceTree = "<group>"; };
 		2FB03BC9184FAF3100BB6B40 /* OLKContextHand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKContextHand.h; sourceTree = "<group>"; };
 		2FB03BCA184FAF3100BB6B40 /* OLKContextHand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKContextHand.m; sourceTree = "<group>"; };
 		2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureComponents.h; sourceTree = "<group>"; };
@@ -101,6 +117,8 @@
 		2FC0A44B17F450E1009B4A7D /* OLKGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKGestureRecognizer.m; sourceTree = "<group>"; };
 		2FC0A45017F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureRecognizerDispatcher.h; sourceTree = "<group>"; };
 		2FC0A45117F45F67009B4A7D /* OLKGestureRecognizerDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKGestureRecognizerDispatcher.m; sourceTree = "<group>"; };
+		2FE3CC24185C7A7D0002876F /* OLKMultiCursorTrackingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKMultiCursorTrackingController.h; sourceTree = "<group>"; };
+		2FE3CC25185C7A7D0002876F /* OLKMultiCursorTrackingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKMultiCursorTrackingController.m; sourceTree = "<group>"; };
 		2FE5C4381849E5FF00A00517 /* OLKCircleOptionInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKCircleOptionInput.h; sourceTree = "<group>"; };
 		2FE5C4391849E5FF00A00517 /* OLKCircleOptionInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKCircleOptionInput.m; sourceTree = "<group>"; };
 		2FEDD70817CC970600165DD2 /* OpenLeapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenLeapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -145,8 +163,12 @@
 				2F524788185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.h */,
 				2F524789185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m */,
 				2F23D33C183E655E00DF0490 /* OLKButton.h */,
+				2F683200185BA3EE0064E5B2 /* OLKNIControl.h */,
+				2F683201185BA3EE0064E5B2 /* OLKNIControl.m */,
 				2F23D341183E674500DF0490 /* OLKToggleButton.h */,
 				2F23D342183E674500DF0490 /* OLKToggleButton.m */,
+				2F71AD51185B289100D63859 /* OLKNIControlsContainerView.h */,
+				2F71AD52185B289100D63859 /* OLKNIControlsContainerView.m */,
 				2F55EE901846739F00BD4EB8 /* OLKScratchButton.h */,
 				2F55EE911846739F00BD4EB8 /* OLKScratchButton.m */,
 				2F31B04A1847509900913C6B /* OLKCircleMenuView.h */,
@@ -164,8 +186,12 @@
 		2FC0A44F17F45F4F009B4A7D /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2FE3CC24185C7A7D0002876F /* OLKMultiCursorTrackingController.h */,
+				2FE3CC25185C7A7D0002876F /* OLKMultiCursorTrackingController.m */,
 				2FC0A45017F45F67009B4A7D /* OLKGestureRecognizerDispatcher.h */,
 				2FC0A45117F45F67009B4A7D /* OLKGestureRecognizerDispatcher.m */,
+				2F71AD5D185B8A9000D63859 /* OLKHandCursorResponderController.h */,
+				2F71AD5E185B8A9000D63859 /* OLKHandCursorResponderController.m */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -259,6 +285,7 @@
 		2FEDD73017CC97B500165DD2 /* models */ = {
 			isa = PBXGroup;
 			children = (
+				2F71AD59185B809F00D63859 /* OLKHandCursorResponder.h */,
 				2FE5C4381849E5FF00A00517 /* OLKCircleOptionInput.h */,
 				2FE5C4391849E5FF00A00517 /* OLKCircleOptionInput.m */,
 				2F6E36BE184B5A1700E34155 /* OLKRepeatTracker.h */,
@@ -307,6 +334,11 @@
 				2F52478A185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.h in Headers */,
 				2FBD08AA184CD9A60050494C /* OLKFullScreenOverlayWindow.h in Headers */,
 				2FB03BCB184FAF3100BB6B40 /* OLKContextHand.h in Headers */,
+				2F71AD53185B289100D63859 /* OLKNIControlsContainerView.h in Headers */,
+				2F71AD5B185B809F00D63859 /* OLKHandCursorResponder.h in Headers */,
+				2F71AD5F185B8A9000D63859 /* OLKHandCursorResponderController.h in Headers */,
+				2F683202185BA3EE0064E5B2 /* OLKNIControl.h in Headers */,
+				2FE3CC26185C7A7D0002876F /* OLKMultiCursorTrackingController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +428,10 @@
 				2F16EA0618576993000FB1C0 /* OLKCircleOptionMultiCursorInput.m in Sources */,
 				2F52478B185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m in Sources */,
 				2FFC640D1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m in Sources */,
+				2F71AD54185B289100D63859 /* OLKNIControlsContainerView.m in Sources */,
+				2F71AD60185B8A9000D63859 /* OLKHandCursorResponderController.m in Sources */,
+				2F683203185BA3EE0064E5B2 /* OLKNIControl.m in Sources */,
+				2FE3CC27185C7A7D0002876F /* OLKMultiCursorTrackingController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
