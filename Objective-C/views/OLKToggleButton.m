@@ -304,10 +304,10 @@
 
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
 {
-    [super setCursorTracking:cursorPos withHandView:handView];
-    
     if (_controllingHandView && _controllingHandView != handView)
         return;
+    
+    cursorPos = [self convertCusorPos:cursorPos fromHandView:handView];
     
     if (![self handMovedTo:cursorPos])
     {
@@ -327,8 +327,6 @@
 
 - (void)removeCursorTracking:(NSView <OLKHandContainer> *)handView
 {
-    [super removeCursorTracking:handView];
-    
     if (_controllingHandView && _controllingHandView == handView)
     {
         _controllingHandView = nil;

@@ -20,18 +20,18 @@
 @interface OLKNIControlsContainerView : NSView <OLKHandCursorResponderParent>
 
 - (void)addControl:(OLKNIControl *)control;
+- (void)addControlsForLabels:(NSArray *)controlLabels withTemplate:(OLKNIControl *)controlTemplate;
+- (NSRect)layoutControlsEvenly:(NSRect)containRect forControls:(NSRange)controlRange;
 - (void)removeControl:(OLKNIControl *)control;
 - (void)reset;
 
-- (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer> *)handView;
 - (void)removeFromSuperHandCursorResponder;
-
 - (void)addHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder;
 - (void)removeHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder;
 
 @property (nonatomic) NSObject <OLKHandCursorResponderParent> *superHandCursorResponder;
 @property (nonatomic, readonly) NSArray *subHandCursorResponders;
-
+@property (nonatomic) NSArray *controls;
 @property (nonatomic) NSObject <OLKNIControlsContainerViewDelegate> * delegate;
 @property (nonatomic) BOOL enabled;
 @property (nonatomic) BOOL active;

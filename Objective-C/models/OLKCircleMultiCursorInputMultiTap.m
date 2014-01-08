@@ -105,17 +105,20 @@
     while (key)
     {
         OLKIntentStrikeCheck *intentStrikeCheck = [_intentionalStrikeChecks objectForKey:key];
-        if (state == OLKIntentStrikeCheckStateNonIntended)
+        if (intentStrikeCheck.state != OLKIntentStrikeCheckStateNonIntended && intentStrikeCheck.state != OLKIntentStrikeCheckStateConfirmed)
         {
-            [intentStrikeCheck setState:OLKIntentStrikeCheckStateNonIntended];
-            if ([_multiTapDelegate respondsToSelector:@selector(strikeNotIntended:cursorContext:)])
-                [_multiTapDelegate strikeNotIntended:self cursorContext:key];
-        }
-        else if (state == OLKIntentStrikeCheckStateConfirmed)
-        {
-            [intentStrikeCheck setState:OLKIntentStrikeCheckStateConfirmed];
-            if ([_multiTapDelegate respondsToSelector:@selector(strikeConfirmed:cursorContext:)])
-                [_multiTapDelegate strikeConfirmed:self cursorContext:key];
+            if (state == OLKIntentStrikeCheckStateNonIntended)
+            {
+                [intentStrikeCheck setState:OLKIntentStrikeCheckStateNonIntended];
+                if ([_multiTapDelegate respondsToSelector:@selector(strikeNotIntended:cursorContext:)])
+                    [_multiTapDelegate strikeNotIntended:self cursorContext:key];
+            }
+            else if (state == OLKIntentStrikeCheckStateConfirmed)
+            {
+                [intentStrikeCheck setState:OLKIntentStrikeCheckStateConfirmed];
+                if ([_multiTapDelegate respondsToSelector:@selector(strikeConfirmed:cursorContext:)])
+                    [_multiTapDelegate strikeConfirmed:self cursorContext:key];
+            }
         }
         key = [enumerator nextObject];
     }

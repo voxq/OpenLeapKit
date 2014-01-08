@@ -7,11 +7,13 @@
 //
 
 #import "OLKNIControlsContainerView.h"
-#import "OLKScratchButton.h"
+
 @implementation OLKNIControlsContainerView
 
 @synthesize superHandCursorResponder = _superHandCursorResponder;
 @synthesize subHandCursorResponders = _subHandCursorResponders;
+@synthesize controls = _controls;
+
 @synthesize active = _active;
 @synthesize delegate = _delegate;
 @synthesize enabled = _enabled;
@@ -20,7 +22,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code here.
+        _controls = [[NSArray alloc] init];
     }
     
     return self;
@@ -33,10 +35,8 @@
 
 - (void)addControl:(OLKNIControl *)control
 {
-    if (!_subHandCursorResponders)
-        _subHandCursorResponders = [NSArray arrayWithObject:control];
-    else
-        _subHandCursorResponders = [_subHandCursorResponders arrayByAddingObject:control];
+    [self addHandCursorResponder:control];
+    _controls = [_controls arrayByAddingObject:control];
     
     if (![control parentView])
         control.parentView = self;
@@ -50,6 +50,14 @@
 
 - (void)removeControl:(OLKNIControl *)control
 {
+    if (_controls && [_controls count])
+    {
+        NSMutableArray *newArray = [NSMutableArray arrayWithArray:_controls];
+        [newArray removeObject:control];
+        if ([_controls count] != [newArray count])
+            _controls = [NSArray arrayWithArray:newArray];
+    }
+    
     if (!_subHandCursorResponders || ![_subHandCursorResponders count])
         return;
     
@@ -57,10 +65,6 @@
     [newArray removeObject:control];
     if ([_subHandCursorResponders count] != [newArray count])
         _subHandCursorResponders = [NSArray arrayWithArray:newArray];
-}
-
-- (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
-{
 }
 
 - (void)addHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder
@@ -86,6 +90,72 @@
         [_superHandCursorResponder removeHandCursorResponder:self];
 }
 
+- (void)addControlsForLabels:(NSArray *)controlLabels withTemplate:(OLKNIControl *)controlTemplate
+{
+    if (![controlLabels count])
+        return;
+    
+    for (NSString *suggestion in controlLabels)
+    {
+        OLKNIControl *control = [controlTemplate copy];
+        [control setLabel:suggestion];
+        [self addControl:control];
+    }
+}
+
+- (NSRect)layoutControlsEvenly:(NSRect)containRect forControls:(NSRange)controlRange
+{
+    if (![_controls count] || controlRange.location >= [_controls count])
+        return NSZeroRect;
+    
+    NSArray *rangeOfControls = [_controls subarrayWithRange:controlRange];
+    if (![rangeOfControls count])
+        return NSZeroRect;
+    
+    OLKNIControl *templateControl = [rangeOfControls objectAtIndex:0];
+    
+    float controlWidth = templateControl.size.width;
+    float controlHeight = templateControl.size.height;
+    float controlSpacing = 40;
+
+    int maxRows = (containRect.size.height-templateControl.size.height)/((controlHeight*2) - controlHeight);
+    int columns = (int)(controlRange.length-1)/maxRows + 1;
+    
+    int rows = controlRange.length;
+    if (rows > maxRows)
+        rows = maxRows;
+    
+    float midPointX = containRect.origin.x+containRect.size.width/2;
+    
+    NSPoint controlPos;
+    float usedSpaceWidth = (controlWidth+controlSpacing)*columns - controlSpacing;
+    float usedSpaceHeight = (controlHeight*2)*rows - controlHeight;
+    float top = containRect.origin.y + containRect.size.height - (containRect.size.height - usedSpaceHeight)/2;
+
+    containRect.origin.x = midPointX - usedSpaceWidth/2;
+    containRect.origin.y = top - usedSpaceHeight;
+    containRect.size.height = usedSpaceHeight;
+    containRect.size.width = usedSpaceWidth;
+
+    top -= controlHeight;
+    controlPos.x = containRect.origin.x;
+    controlPos.y = top;
+    
+    int controlCount = 0;
+    for (OLKNIControl *control in rangeOfControls)
+    {
+        [control setDrawLocation:controlPos];
+        [control setNeedsRedraw:YES];
+        controlPos.y -= templateControl.size.height*2;
+        controlCount ++;
+        if (!(controlCount % rows))
+        {
+            controlPos.y = top;
+            controlPos.x += controlWidth + controlSpacing;
+        }
+    }
+    return containRect;
+}
 
 - (void)reset
 {
@@ -94,32 +164,11 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-//    NSMutableSet *controlsToRedraw = [[NSMutableSet alloc] init];
     for (OLKNIControl *control in _subHandCursorResponders)
     {
         if ([control needsRedraw] || [self needsToDrawRect:[control frame]])
-            [control draw];
+            [control draw]; 
     }
-//    if (![controlsToRedraw count])
-//        return;
-//
-//    [_containerImage lockFocus];
-//    for (OLKNIControl *control in controlsToRedraw)
-//    {
-//        [control draw];
-//    }
-//    [_containerImage unlockFocus];
-//    
-//    NSRect menuRect;
-//    menuRect.origin = NSMakePoint(0, 0);
-//    menuRect.size = [self bounds].size;
-//    
-//    float currentAlpha;
-//    if (_active)
-//        currentAlpha = 1;
-//    else
-//        currentAlpha = 0.3;
-//    [_menuImage drawAtPoint:[self bounds].origin fromRect:menuRect operation:NSCompositeSourceOver fraction:currentAlpha];
 }
 
 @end

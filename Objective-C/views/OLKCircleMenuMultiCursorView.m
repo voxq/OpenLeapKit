@@ -11,6 +11,7 @@
 @implementation OLKCircleMenuMultiCursorView
 
 {
+    NSArray *_hoverImages;
     NSImage *_image;
     NSImage *_textImage;
     NSRect _imageDrawRect;
@@ -34,6 +35,8 @@
 @synthesize optionInnerHighlightColor = _optionInnerHighlightColor;
 @synthesize optionSelectColor = _optionSelectColor;
 @synthesize baseCircleImage = _baseCircleImage;
+@synthesize hoverImage = _hoverImage;
+@synthesize fillCenterColor = _fillCenterColor;
 
 // Many of the methods here are similar to those in the simpler DotView example.
 // See that example for detailed explanations; here we will discuss those
@@ -73,6 +76,72 @@
         [_superHandCursorResponder removeHandCursorResponder:self];
 }
 
+- (void)setHoverImage:(NSImage *)hoverImage
+{
+    if (hoverImage == nil)
+    {
+        _hoverImages = nil;
+        return;
+    }
+    _hoverImage = hoverImage;
+    [self generateHoverImages];
+}
+
+- (NSImage*)hoverImageRotatedByDegrees:(CGFloat)degrees
+{
+    NSImage *hoverImage = [self scaledHoverImage];
+    NSSize rotatedSize = NSMakeSize(hoverImage.size.height, hoverImage.size.width) ;
+    NSImage* rotatedImage = [[NSImage alloc] initWithSize:rotatedSize] ;
+    
+    NSAffineTransform* transform = [NSAffineTransform transform] ;
+
+//    [transform scaleBy:_circleInput.radius/_hoverImage.size.width];
+    // In order to avoid clipping the image, translate
+    // the coordinate system to its center
+    [transform translateXBy:+hoverImage.size.width/2
+                        yBy:+hoverImage.size.height/2] ;
+    // then rotate
+    [transform rotateByDegrees:degrees] ;
+    // Then translate the origin system back to
+    // the bottom left
+    [transform translateXBy:-rotatedSize.width/2
+                        yBy:-rotatedSize.height/2] ;
+    
+    [rotatedImage lockFocus] ;
+    [transform concat] ;
+    [hoverImage drawAtPoint:NSMakePoint(0,0)
+             fromRect:NSZeroRect
+            operation:NSCompositeCopy
+             fraction:1.0] ;
+    [rotatedImage unlockFocus] ;
+    
+    return rotatedImage;
+}
+
+- (NSImage *)scaledHoverImage
+{
+    NSImage *hoverImage = [[NSImage alloc] initWithSize:NSMakeSize([_circleInput radius]*2, [_circleInput radius]*2)];
+    [hoverImage lockFocus];
+    [_hoverImage drawInRect:NSMakeRect(0, 0, _circleInput.radius*2, _circleInput.radius*2) fromRect:NSMakeRect(0, 0, _hoverImage.size.width, _hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
+    [hoverImage unlockFocus];
+    return hoverImage;
+}
+
+
+- (void)generateHoverImages
+{
+    int objectCount = (int)[[_circleInput optionObjects] count];
+    NSMutableArray *hoverImages = [[NSMutableArray alloc] initWithCapacity:objectCount];
+    float angleInc = 360.0/(float)objectCount;
+    float degAngle = 0;
+    for (int i=0; i < objectCount; i++)
+    {
+        [hoverImages addObject:[self hoverImageRotatedByDegrees:degAngle]];
+        degAngle += angleInc;
+    }
+    _hoverImages = [NSArray arrayWithArray:hoverImages];
+}
+
 - (NSPoint)positionRelativeToCenter:(NSPoint)position convertFromView:(NSView *)view
 {
     if (view)
@@ -105,6 +174,7 @@
     _optionInnerHighlightColor = [NSColor colorWithCalibratedRed:0.3 green:0.8 blue:0.8 alpha:0.5];
     _optionSelectColor = [NSColor colorWithCalibratedRed:1 green:0.3 blue:0.3 alpha:0.5];
     _optionHoverColor = [NSColor colorWithCalibratedRed:0.5 green:0.75 blue:0.95 alpha:1];
+    _fillCenterColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:0.75];
     
     _currentAlpha = 1.0;
     _innerRadius = [_circleInput  radius] * [_circleInput  thresholdForHit];
@@ -159,6 +229,16 @@
     }
     _image = [[NSImage alloc] initWithSize:_imageDrawRect.size];
     [_image lockFocus];
+    
+    NSBezierPath *innerFill = [NSBezierPath bezierPath];
+    NSRect innerFillRectCircle;
+    innerFillRectCircle.origin.x = offsetCenter.x - _innerRadius;
+    innerFillRectCircle.origin.y = offsetCenter.y - _innerRadius;
+    innerFillRectCircle.size.width = _innerRadius*2;
+    innerFillRectCircle.size.height = _innerRadius*2;
+    [innerFill appendBezierPathWithOvalInRect:innerFillRectCircle];
+    [_fillCenterColor set];
+    [innerFill fill];
     
     NSBezierPath *highlightPath = [NSBezierPath bezierPath] ;
     [highlightPath setLineWidth: 2 ] ;
@@ -306,6 +386,8 @@
     }
     
     [_textImage unlockFocus];
+    if (_hoverImage)
+        [self generateHoverImages];
 }
 
 - (void)drawRect:(NSRect)rect {
@@ -374,6 +456,21 @@
     {
         int hoverIndex = [selectedIndexNum intValue];
 
+        if (hoverIndex == OLKCircleOptionMultiInputInvalidSelection)
+        {
+            selectedIndexNum = [enumer nextObject];
+            continue;
+        }
+        if (_hoverImage)
+        {
+            int highlightCheck = objectCount-hoverIndex;
+            if (highlightCheck == objectCount)
+                highlightCheck = 0;
+            NSImage *hoverImage = [_hoverImages objectAtIndex:highlightCheck];
+            [hoverImage drawAtPoint:_imageDrawRect.origin fromRect:NSMakeRect(0,0, hoverImage.size.width, hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
+            selectedIndexNum = [enumer nextObject];
+            continue;
+        }
         degAngle = 360 - (float)arcAngleOffset*2 * (hoverIndex) + 90;
         
         NSBezierPath *aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
@@ -412,21 +509,6 @@
     return NO;
 }
 
-// DotView changes location on mouse up, but here we choose to do so
-// on mouse down and mouse drags, so the text will follow the mouse.
-
-- (void)mouseDown:(NSEvent *)event {
-    NSPoint eventLocation = [event locationInWindow];
-    _center = [self convertPoint:eventLocation fromView:nil];
-    [self setNeedsDisplay:YES];
-}
-
-- (void)mouseDragged:(NSEvent *)event {
-    NSPoint eventLocation = [event locationInWindow];
-    _center = [self convertPoint:eventLocation fromView:nil];
-    [self setNeedsDisplay:YES];
-    NSLog(@"center = %f, %f", _center.x, _center.y);
-}
 
 
 @end

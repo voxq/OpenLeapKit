@@ -372,21 +372,6 @@
     return NO;
 }
 
-// DotView changes location on mouse up, but here we choose to do so
-// on mouse down and mouse drags, so the text will follow the mouse.
-
-- (void)mouseDown:(NSEvent *)event {
-    NSPoint eventLocation = [event locationInWindow];
-    _center = [self convertPoint:eventLocation fromView:nil];
-    [self setNeedsDisplay:YES];
-}
-
-- (void)mouseDragged:(NSEvent *)event {
-    NSPoint eventLocation = [event locationInWindow];
-    _center = [self convertPoint:eventLocation fromView:nil];
-    [self setNeedsDisplay:YES];
-    NSLog(@"center = %f, %f", _center.x, _center.y);
-}
 
 @end
 

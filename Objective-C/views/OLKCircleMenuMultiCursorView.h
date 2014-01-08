@@ -26,6 +26,7 @@
 @property (nonatomic) NSPoint center;
 @property (nonatomic) CGFloat innerRadius;
 @property (nonatomic) NSImage *baseCircleImage;
+@property (nonatomic) NSImage *hoverImage;
 
 @property (nonatomic) float currentAlpha;
 @property (nonatomic) float inactiveAlphaMultiplier;
@@ -39,5 +40,6 @@
 @property (nonatomic) NSColor *optionHighlightColor;
 @property (nonatomic) NSColor *optionInnerHighlightColor;
 @property (nonatomic) NSColor *optionSelectColor;
+@property (nonatomic) NSColor *fillCenterColor;
 
 @end

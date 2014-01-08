@@ -24,11 +24,13 @@
 
 @end
 
-@protocol OLKHandCursorResponderParent <OLKHandCursorResponder>
+@protocol OLKHandCursorResponderParent <NSObject>
 
 - (void)addHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder;
 - (void)removeHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder;
+- (void)removeFromSuperHandCursorResponder;
 
+@property (nonatomic) NSObject <OLKHandCursorResponderParent> *superHandCursorResponder;
 @property (nonatomic, readonly) NSArray *subHandCursorResponders;
 
 @end
