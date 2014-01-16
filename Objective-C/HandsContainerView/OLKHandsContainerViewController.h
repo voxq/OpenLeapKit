@@ -36,6 +36,12 @@
 #import "OLKHand.h"
 #import "OLKRangeCalibrator.h"
 
+@protocol OLKHandsContainerView <NSObject>
+
+- (void)addHandView:(NSView <OLKHandContainer> *)handView;
+
+@end
+
 @protocol OLKHandsContainerViewControllerDataSource <NSObject>
 
 - (NSView <OLKHandContainer>*)handViewForHand:(OLKHand *)hand;
@@ -63,7 +69,7 @@
 - (OLKHand *)handFromLeapHand:(LeapHand *)leapHand;
 
 @property (nonatomic) BOOL drawHands;
-@property (nonatomic) NSView *handsSpaceView;
+@property (nonatomic) NSView <OLKHandsContainerView> *handsSpaceView;
 @property (nonatomic) BOOL overrideSpaceViews;
 @property (nonatomic) NSObject <OLKHandsContainerViewControllerDataSource> *dataSource;
 @property (nonatomic) NSObject <OLKHandsContainerViewControllerDelegate> *delegate;

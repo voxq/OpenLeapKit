@@ -42,6 +42,12 @@
      [self drawIntoImage];
 }
 
+- (void)addHandView:(NSView <OLKHandContainer> *)handView
+{
+    [self addSubview:handView];
+}
+
+
 - (void)setSelectPointSize:(NSSize)selectPointSize
 {
     _selectPointSize = selectPointSize;

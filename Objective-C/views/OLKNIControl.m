@@ -7,9 +7,11 @@
 //
 
 #import "OLKNIControl.h"
+#import "OLKNIControlsContainerView.h"
 
 @implementation OLKNIControl
 
+@synthesize context = _context;
 @synthesize needsRedraw = _needsRedraw;
 @synthesize active = _active;
 @synthesize visible = _visible;
@@ -44,6 +46,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     OLKNIControl *copyOfSelf = [[[self class] allocWithZone:zone] init];
+    copyOfSelf.context = _context;
     copyOfSelf.target = _target;
     copyOfSelf.action = _action;
     copyOfSelf.active = _active;
@@ -52,8 +55,8 @@
     copyOfSelf.visible = _visible;
     copyOfSelf.enable = _enable;
     copyOfSelf.needsRedraw = _needsRedraw;
-    copyOfSelf.labelAttributes = _labelAttributes;
-    copyOfSelf.labelBackAttributes = _labelBackAttributes;
+    copyOfSelf.labelAttributes = self.labelAttributes;
+    copyOfSelf.labelBackAttributes = self.labelBackAttributes;
     copyOfSelf.labelFontSize = _labelFontSize;
     copyOfSelf.autoFontSize = _autoFontSize;
     copyOfSelf.autoCalcLabelRect = _autoCalcLabelRect;
@@ -62,7 +65,12 @@
         copyOfSelf.labelRectBounds = _labelRectBounds;
     copyOfSelf.parentView = _parentView;
     if (self.superHandCursorResponder)
-        [self.superHandCursorResponder addHandCursorResponder:copyOfSelf];
+    {
+        if ([self.superHandCursorResponder isKindOfClass:[OLKNIControlsContainerView class]])
+             [(OLKNIControlsContainerView *)self.superHandCursorResponder addControl:copyOfSelf];
+        else
+             [self.superHandCursorResponder addHandCursorResponder:copyOfSelf];
+    }
     
     return copyOfSelf;
 }
@@ -83,6 +91,7 @@
         return;
     }
     _labelAttributes = nil;
+    _labelBackAttributes = nil;
     NSDictionary *labelAttributes = self.labelBackAttributes;
     
     _autoFontSize = NO;
@@ -178,6 +187,7 @@
         _labelFontSize = 0;
         float tmp = self.labelFontSize;
         _labelAttributes = nil;
+        _labelBackAttributes = nil;
         NSDictionary *labelAttributes = self.labelBackAttributes;
     }
     

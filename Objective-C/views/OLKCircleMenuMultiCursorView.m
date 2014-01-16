@@ -57,7 +57,8 @@
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
 {
     NSPoint cursorPosRelativeToCircleCenter = [self positionRelativeToCenter:cursorPos convertFromView:[handView superview]];
-    [_circleInput setCursorPos:cursorPosRelativeToCircleCenter cursorContext:handView];
+    if (_active)
+        [_circleInput setCursorPos:cursorPosRelativeToCircleCenter cursorContext:handView];
 }
 
 - (void)removeCursorTracking:(NSView<OLKHandContainer> *)handView
@@ -142,6 +143,51 @@
     _hoverImages = [NSArray arrayWithArray:hoverImages];
 }
 
+- (void)drawChangedHover:(NSView <OLKHandContainer> *)handView
+{
+    int hoverIndex = [_circleInput hoverIndex:handView];
+    int prevHoverIndex = [_circleInput prevHoverIndex:handView];
+/*
+        if (hoverIndex == OLKCircleOptionMultiInputInvalidSelection)
+        {
+            selectedIndexNum = [enumer nextObject];
+            continue;
+        }
+        if (_hoverImage)
+        {
+            int highlightCheck = objectCount-hoverIndex;
+            if (highlightCheck == objectCount)
+                highlightCheck = 0;
+            NSImage *hoverImage = [_hoverImages objectAtIndex:highlightCheck];
+            [hoverImage drawAtPoint:_imageDrawRect.origin fromRect:NSMakeRect(0,0, hoverImage.size.width, hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
+            selectedIndexNum = [enumer nextObject];
+            continue;
+        }
+        degAngle = 360 - (float)arcAngleOffset*2 * (hoverIndex) + 90;
+        
+        NSBezierPath *aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
+        [aimedLetterHighlightPath setLineWidth:2] ;
+        
+        // draw an arc (perc is a certain percentage ; something between 0 and 1
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover + (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover - (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+        [aimedLetterHighlightPath closePath];
+        [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
+        [aimedLetterHighlightPath fill];
+        [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
+        [aimedLetterHighlightPath stroke];
+        aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
+        [aimedLetterHighlightPath setLineWidth:1] ;
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+        [aimedLetterHighlightPath closePath];
+        [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
+        [aimedLetterHighlightPath fill];
+        [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
+        [aimedLetterHighlightPath stroke];
+        selectedIndexNum = [enumer nextObject];*/
+}
+
 - (NSPoint)positionRelativeToCenter:(NSPoint)position convertFromView:(NSView *)view
 {
     if (view)
@@ -158,7 +204,7 @@
     [super setFrame:frameRect];
     NSRect boundsRect = [super bounds];
     _innerRadius = [_circleInput radius] * [_circleInput thresholdForHit];
-    _textFontSize = ([_circleInput  radius] - _innerRadius)/2;
+    _textFontSize = ([_circleInput radius] - _innerRadius)/2;
     _textFont = [NSFont fontWithName:@"Helvetica Neue" size:_textFontSize];
     _center = boundsRect.origin;
     _center.x += boundsRect.size.width/2;
@@ -195,6 +241,7 @@
 - (void)redraw
 {
     [self drawIntoImage];
+    [self generateHoverImages];
 }
 
 - (void)drawIntoImage
@@ -224,7 +271,7 @@
     }
     if (_baseCircleImage)
     {
-        [_baseCircleImage setSize:NSMakeSize(radius, radius)];
+        [_baseCircleImage setSize:_imageDrawRect.size];
         return;
     }
     _image = [[NSImage alloc] initWithSize:_imageDrawRect.size];

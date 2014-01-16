@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F1A12AF1881744000B1452C /* ConfigMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F1A12AD1881741F00B1452C /* ConfigMenuView.m */; };
 		2F30E31717CF6B8200F14438 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F30E31617CF6B8200F14438 /* Cocoa.framework */; };
 		2F30E32117CF6B8200F14438 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2F30E31F17CF6B8200F14438 /* InfoPlist.strings */; };
 		2F30E32317CF6B8200F14438 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F30E32217CF6B8200F14438 /* main.m */; };
@@ -57,6 +58,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2F1A12AC1881741F00B1452C /* ConfigMenuView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigMenuView.h; sourceTree = "<group>"; };
+		2F1A12AD1881741F00B1452C /* ConfigMenuView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigMenuView.m; sourceTree = "<group>"; };
+		2F1A12B01881777700B1452C /* CalibratorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalibratorController.h; sourceTree = "<group>"; };
+		2F1A12B11881777700B1452C /* CalibratorController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CalibratorController.m; sourceTree = "<group>"; };
 		2F30E31317CF6B8200F14438 /* OLK2DViewHandDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OLK2DViewHandDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F30E31617CF6B8200F14438 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		2F30E31917CF6B8200F14438 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -136,10 +141,14 @@
 		2F30E31C17CF6B8200F14438 /* OLK2DViewHandDemo */ = {
 			isa = PBXGroup;
 			children = (
+				2F1A12B01881777700B1452C /* CalibratorController.h */,
+				2F1A12B11881777700B1452C /* CalibratorController.m */,
 				2F30E32817CF6B8200F14438 /* AppDelegate.h */,
 				2F30E32917CF6B8200F14438 /* AppDelegate.m */,
 				2F30E33317CF6BB800F14438 /* Sample.h */,
 				2F30E33417CF6BB800F14438 /* Sample.m */,
+				2F1A12AC1881741F00B1452C /* ConfigMenuView.h */,
+				2F1A12AD1881741F00B1452C /* ConfigMenuView.m */,
 				2F30E34217CF706000F14438 /* OLKDemoHandsOverlayViewController.h */,
 				2F30E34317CF706000F14438 /* OLKDemoHandsOverlayViewController.m */,
 				2F31B0511847552200913C6B /* LeapMenuView.h */,
@@ -254,6 +263,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F1A12AF1881744000B1452C /* ConfigMenuView.m in Sources */,
 				2F31B0541847553E00913C6B /* LeapMenuView.m in Sources */,
 				2F30E34517CF708400F14438 /* OLKDemoHandsOverlayViewController.m in Sources */,
 				2F30E32317CF6B8200F14438 /* main.m in Sources */,

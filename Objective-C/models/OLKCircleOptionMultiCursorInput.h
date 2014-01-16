@@ -38,6 +38,8 @@ static int const OLKCircleOptionMultiInputInvalidSelection = -1;
 - (void)setRequiresMoveToCenter:(BOOL)requiresMoveToCenter cursorContext:(id)cursorContext;
 - (int)selectedIndex:(id)cursorContext;
 - (int)hoverIndex:(id)cursorContext;
+- (int)prevSelectedIndex:(id)cursorContext;
+- (int)prevHoverIndex:(id)cursorContext;
 - (NSDictionary *)selectedIndexes;
 - (NSDictionary *)hoverIndexes;
 - (void)removeCursorContext:(id)cursorContext;

@@ -18,6 +18,7 @@
 - (void)removeFromSuperHandCursorResponder;
 - (void)removeCursorTracking:(NSView <OLKHandContainer> *)handView;
 - (void)removeAllCursorTracking;
+- (void)drawChangedHover:(NSView <OLKHandContainer> *)handView;
 
 @property (nonatomic) NSObject <OLKHandCursorResponderParent> *superHandCursorResponder;
 

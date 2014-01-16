@@ -9,10 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "LeapObjectiveC.h"
 #import "LeapMenuView.h"
+#import "CalibratorController.h"
+#import <OpenLeapKit/OLKNIControlsContainerView.h>
 #import <OpenLeapKit/OLKCircleOptionInput.h>
 #import <OpenLeapKit/OLKRangeCalibratorView.h>
 
-@interface Sample : NSObject<LeapListener,LeapMenuDelegate, OLKCircleOptionInputDelegate, OLKRangeCalibratorViewDelegate>
+@interface Sample : NSObject<LeapListener, OLKCircleOptionInputDelegate, OLKRangeCalibratorViewDelegate, OLKNIControlsContainerViewDelegate, CalibratorControllerDelegate>
 
 -(void)run:(NSView *)handView;
 

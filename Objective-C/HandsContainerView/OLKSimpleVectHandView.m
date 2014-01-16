@@ -316,7 +316,6 @@
     else
         handDirY = -[[_hand leapHand] direction].y;
     
-
     NSBezierPath *palmDirectionPath = [NSBezierPath bezierPath];
     float palmCircleRadius = _bounds.size.width / 3;
     NSRect palmCircleBounds;
@@ -333,6 +332,14 @@
             palmCircleBounds.size.height = 0.1;
         palmCircleBounds.origin.y += (1-fabs([[_hand leapHand] palmNormal].z))*40;
     }
+//    else
+//    {
+//        NSBezierPath *sphereCenter = [NSBezierPath bezierPath];
+//        [sphereCenter moveToPoint:NSMakePoint(palmCircleBounds.origin.x, palmCircleBounds.origin.y + palmCircleBounds.size.height/2 + [[_hand leapHand] sphereCenter].z*_fitHandFact.height)];
+//        [sphereCenter lineToPoint:NSMakePoint(palmCircleBounds.origin.x+palmCircleBounds.size.width, palmCircleBounds.origin.y + palmCircleBounds.size.height/2 + [[_hand leapHand] sphereCenter].z*_fitHandFact.height)];
+//        [sphereCenter setLineWidth:3];
+//        [sphereCenter stroke];
+//    }
     [palmDirectionPath appendBezierPathWithOvalInRect:palmCircleBounds];
     NSPoint palmVector;
     palmVector.x = _centerPoint.x + [[_hand leapHand] direction].x*palmCircleRadius;

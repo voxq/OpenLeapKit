@@ -6,38 +6,23 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <OpenLeapKit/OLKNIControlsContainerView.h>
 
-typedef enum
-{
-    LeapMenuItemBoundedHand,
-    LeapMenuItemFingerTips,
-    LeapMenuItemFingerLines,
-    LeapMenuItemPalm,
-    LeapMenuItemFingerDepthY,
-    LeapMenuItem3DHand,
-    LeapMenuItemAutoSizeHandToBounds,
-    LeapMenuItemUseInteractionBox,
-    LeapMenuItemUseStablePalm,
-    LeapMenuItemGoFullScreen,
-    LeapMenuItemCalibrate
-}LeapMenuItem;
+@class OLKHorizScratchButton;
+@class OLKToggleButton;
 
-@protocol LeapMenuDelegate <NSObject>
+@interface LeapMenuView : OLKNIControlsContainerView
 
-- (void)menuItemChangedValue:(LeapMenuItem)menuItem enabled:(BOOL)enabled;
-- (BOOL)enabledMenuItem:(LeapMenuItem)item;
-
-@end
-
-@interface LeapMenuView : NSView
-
-- (void)setCursorPos:(NSPoint)cursorPos cursorObject:(id)cursorObject;
-- (void)reset;
-
-@property (nonatomic) id <LeapMenuDelegate> delegate;
-@property (nonatomic) BOOL enableCursor;
-@property (nonatomic) BOOL active;
-@property (nonatomic) NSArray *cursorRects;
-@property (nonatomic) BOOL dontdraw;
+@property (nonatomic) OLKHorizScratchButton *calibrateButton;
+@property (nonatomic) OLKHorizScratchButton *goFullScreenButton;
+@property (nonatomic) OLKToggleButton *boundedHandButton;
+@property (nonatomic) OLKToggleButton *fingerTipsButton;
+@property (nonatomic) OLKToggleButton *fingerLinesButton;
+@property (nonatomic) OLKToggleButton *fingerDepthYButton;
+@property (nonatomic) OLKToggleButton *palmButton;
+@property (nonatomic) OLKToggleButton *hand3DButton;
+@property (nonatomic) OLKToggleButton *autoSizeButton;
+@property (nonatomic) OLKToggleButton *stablePalmsButton;
+@property (nonatomic) OLKToggleButton *interactionBoxButton;
 
 @end

@@ -24,6 +24,7 @@
 
 - (void)autoCalculateLabelRectBounds;
 
+@property (nonatomic) id <NSObject> context;
 @property (nonatomic) NSImage *labelImage;
 @property (nonatomic) NSDictionary *labelAttributes;
 @property (nonatomic) NSDictionary *labelBackAttributes;

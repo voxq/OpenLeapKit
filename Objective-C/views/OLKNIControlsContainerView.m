@@ -67,6 +67,22 @@
         _subHandCursorResponders = [NSArray arrayWithArray:newArray];
 }
 
+- (void)removeAllControls
+{
+    if (_subHandCursorResponders && [_subHandCursorResponders count])
+    {
+        NSMutableArray *newArray = [NSMutableArray arrayWithArray:_subHandCursorResponders];
+        for (OLKNIControl *control in _controls)
+        {
+            [newArray removeObject:control];
+        }
+        if ([_subHandCursorResponders count] != [newArray count])
+            _subHandCursorResponders = [NSArray arrayWithArray:newArray];
+    }
+    
+    _controls = [[NSArray alloc] init];
+}
+
 - (void)addHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder
 {
     if (!_subHandCursorResponders)

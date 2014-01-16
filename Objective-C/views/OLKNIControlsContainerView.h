@@ -23,6 +23,7 @@
 - (void)addControlsForLabels:(NSArray *)controlLabels withTemplate:(OLKNIControl *)controlTemplate;
 - (NSRect)layoutControlsEvenly:(NSRect)containRect forControls:(NSRange)controlRange;
 - (void)removeControl:(OLKNIControl *)control;
+- (void)removeAllControls;
 - (void)reset;
 
 - (void)removeFromSuperHandCursorResponder;

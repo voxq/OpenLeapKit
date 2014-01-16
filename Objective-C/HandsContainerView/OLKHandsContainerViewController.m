@@ -130,7 +130,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     return nil;
 }
 
-- (void)setHandsSpaceView:(NSView *)handsSpaceView
+- (void)setHandsSpaceView:(NSView <OLKHandsContainerView> *)handsSpaceView
 {
     _handsSpaceView = handsSpaceView;
     for (NSView <OLKHandContainer> *handView in _handsViews)
@@ -139,7 +139,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             continue;
         
         [handView removeFromSuperview];
-        [_handsSpaceView addSubview:handView];
+        [_handsSpaceView addHandView:handView];
     }
 }
 

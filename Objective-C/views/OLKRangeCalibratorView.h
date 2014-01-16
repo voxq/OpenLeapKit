@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OLKHandsContainerViewController.h"
 #import "OLKRangeCalibrator.h"
 
 typedef enum
@@ -24,7 +25,7 @@ typedef enum
 
 @end
 
-@interface OLKRangeCalibratorView : NSView
+@interface OLKRangeCalibratorView : NSView <OLKHandsContainerView>
 
 - (void)reset;
 

@@ -18,7 +18,9 @@
 @property (nonatomic) float lastUpdateCursorDistance;
 @property (nonatomic) NSPoint cursorPos;
 
+@property (nonatomic) int prevSelectedIndex;
 @property (nonatomic) int selectedIndex;
+@property (nonatomic) int prevHoverIndex;
 @property (nonatomic) int hoverIndex;
 
 @property (nonatomic) OLKRepeatTracker *repeatTracker;
@@ -36,6 +38,8 @@
 @synthesize requiresMoveToInner = _requiresMoveToInner;
 @synthesize selectedIndex = _selectedIndex;
 @synthesize hoverIndex = _hoverIndex;
+@synthesize prevSelectedIndex = _prevSelectedIndex;
+@synthesize prevHoverIndex = _prevHoverIndex;
 @synthesize repeatTracker = _repeatTracker;
 @synthesize enableRepeatTracking = _enableRepeatTracking;
 @synthesize lastUpdateCursorDistance = _lastUpdateCursorDistance;
@@ -47,9 +51,12 @@
         _requiresMoveToInner = YES;
         _hoverIndex = OLKCircleOptionMultiInputInvalidSelection;
         _selectedIndex = OLKCircleOptionMultiInputInvalidSelection;
+        _prevHoverIndex = OLKCircleOptionMultiInputInvalidSelection;
+        _prevSelectedIndex = OLKCircleOptionMultiInputInvalidSelection;
     }
     return self;
 }
+
 - (void)setEnableRepeatTracking:(BOOL)enableRepeatTracking
 {
     _enableRepeatTracking = enableRepeatTracking;
@@ -145,10 +152,22 @@
     return [cursorTracking selectedIndex];
 }
 
+- (int)prevSelectedIndex:(id)cursorContext
+{
+    OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
+    return [cursorTracking prevSelectedIndex];
+}
+
 - (int)hoverIndex:(id)cursorContext
 {
     OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
     return [cursorTracking hoverIndex];
+}
+
+- (int)prevHoverIndex:(id)cursorContext
+{
+    OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
+    return [cursorTracking prevHoverIndex];
 }
 
 - (NSDictionary *)selectedIndexes
@@ -195,7 +214,9 @@
     {
         OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:key];
         [cursorTracking setRequiresMoveToInner:TRUE];
+        [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
         [cursorTracking setHoverIndex:OLKCircleOptionMultiInputInvalidSelection];
+        [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
         [cursorTracking setSelectedIndex:OLKCircleOptionMultiInputInvalidSelection];
         key = [enumer nextObject];
     }
@@ -391,12 +412,14 @@
         
         if ([cursorTracking hoverIndex] != index)
         {
+            [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
             [cursorTracking setHoverIndex:index];
             if ([_delegate respondsToSelector:@selector(hoverIndexChanged:sender:cursorContext:)])
                 [_delegate hoverIndexChanged:index sender:self cursorContext:cursorContext];
         }
         if ([cursorTracking selectedIndex] != OLKCircleOptionMultiInputInvalidSelection)
         {
+            [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
             [cursorTracking setSelectedIndex:OLKCircleOptionMultiInputInvalidSelection];
             if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:cursorContext:)])
                 [_delegate selectedIndexChanged:OLKCircleOptionMultiInputInvalidSelection sender:self cursorContext:cursorContext];
@@ -409,6 +432,7 @@
         return;
     
     [cursorTracking setRequiresMoveToInner:YES];
+    [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
     [cursorTracking setSelectedIndex:index];
     
     if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:cursorContext:)])
