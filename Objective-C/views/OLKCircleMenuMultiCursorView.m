@@ -131,6 +131,8 @@
 
 - (void)generateHoverImages
 {
+    if (!_hoverImage)
+        return;
     int objectCount = (int)[[_circleInput optionObjects] count];
     NSMutableArray *hoverImages = [[NSMutableArray alloc] initWithCapacity:objectCount];
     float angleInc = 360.0/(float)objectCount;
@@ -141,51 +143,6 @@
         degAngle += angleInc;
     }
     _hoverImages = [NSArray arrayWithArray:hoverImages];
-}
-
-- (void)drawChangedHover:(NSView <OLKHandContainer> *)handView
-{
-    int hoverIndex = [_circleInput hoverIndex:handView];
-    int prevHoverIndex = [_circleInput prevHoverIndex:handView];
-/*
-        if (hoverIndex == OLKCircleOptionMultiInputInvalidSelection)
-        {
-            selectedIndexNum = [enumer nextObject];
-            continue;
-        }
-        if (_hoverImage)
-        {
-            int highlightCheck = objectCount-hoverIndex;
-            if (highlightCheck == objectCount)
-                highlightCheck = 0;
-            NSImage *hoverImage = [_hoverImages objectAtIndex:highlightCheck];
-            [hoverImage drawAtPoint:_imageDrawRect.origin fromRect:NSMakeRect(0,0, hoverImage.size.width, hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
-            selectedIndexNum = [enumer nextObject];
-            continue;
-        }
-        degAngle = 360 - (float)arcAngleOffset*2 * (hoverIndex) + 90;
-        
-        NSBezierPath *aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
-        [aimedLetterHighlightPath setLineWidth:2] ;
-        
-        // draw an arc (perc is a certain percentage ; something between 0 and 1
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover + (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover - (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
-        [aimedLetterHighlightPath closePath];
-        [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
-        [aimedLetterHighlightPath fill];
-        [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
-        [aimedLetterHighlightPath stroke];
-        aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
-        [aimedLetterHighlightPath setLineWidth:1] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
-        [aimedLetterHighlightPath closePath];
-        [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
-        [aimedLetterHighlightPath fill];
-        [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
-        [aimedLetterHighlightPath stroke];
-        selectedIndexNum = [enumer nextObject];*/
 }
 
 - (NSPoint)positionRelativeToCenter:(NSPoint)position convertFromView:(NSView *)view
@@ -226,7 +183,7 @@
     _innerRadius = [_circleInput  radius] * [_circleInput  thresholdForHit];
     _textFontSize = ([_circleInput  radius] - _innerRadius)/2;
     _textFont = [NSFont fontWithName:@"Helvetica Neue" size:_textFontSize];
-    [self drawIntoImage];
+    [self redraw];
 }
 
 - (void)awakeFromNib
@@ -242,6 +199,7 @@
 {
     [self drawIntoImage];
     [self generateHoverImages];
+    self.needsDisplay = YES;
 }
 
 - (void)drawIntoImage
