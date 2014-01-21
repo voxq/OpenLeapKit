@@ -23,7 +23,7 @@
             if (cursorResponderPotentials)
                 [self walkHandCursorResponders:[NSArray arrayWithArray:cursorResponderPotentials] settingCursorPos:cursorPos forHandView:handView];
         }
-        if ([subResponder conformsToProtocol:@protocol(OLKHandCursorResponder)])
+        if ([subResponder respondsToSelector:@selector(setCursorTracking:withHandView:)])
             [subResponder setCursorTracking:cursorPos withHandView:handView];
     }
 }

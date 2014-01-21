@@ -22,21 +22,24 @@
     LeapController *_controller;
     OLKDemoHandsOverlayViewController *_handsOverlayController;
     OLKHandCursorResponderController *_handCursorResponderController;
-    CalibratorController *_calibratorController;
-    NSView *_displayingView;
-    NSView *_handsView;
+    MainOverlayView *_displayingView;
+    MainOverlayView *_handsView;
     BOOL _fullScreenMode;
-    NSView *_fullOverlayView;
+    MainOverlayView *_fullOverlayView;
     OLKCircleMenuMultiCursorView *_optionsView;
     OLKCircleOptionMultiCursorInput *_optionsModel;
     BOOL _showingOptions;
     BOOL _showingCalibrate;
     OLKFullScreenOverlayWindow *_fullScreenOverlayWindow;
+    OLKFullScreenOverlayWindow *_fullScreenCalibrateOverlayWindow;
     OLKRangeCalibratorView *_calibratorView;
     OLKRangeCalibrator *_calibrator;
-    ConfigMenuView *_menuView;
+    LeapMenuView *_mainMenuView;
+    NSView *_compoundMenu;
     NSView <OLKHandContainer> *_trackingHandView;
     BOOL _returnToFullScreen;
+    BOOL _isFist;
+    BOOL _prevNoHands;
 }
 
 @synthesize handBoundsButton = _handBoundsButton;
@@ -49,36 +52,43 @@
 @synthesize stablePalmsButton = _stablePalmsButton;
 @synthesize interactionBoxButton = _interactionBoxButton;
 
+- (void)terminate
+{
+    [_controller removeListener:self];
+}
+
+
 - (void)dealloc
 {
     _controller = nil;
     _handsOverlayController = nil;
 }
 
--(void)run:(NSView *)handsView;
+-(void)run:(MainOverlayView *)handsView;
 {
     _handsOverlayController = [[OLKDemoHandsOverlayViewController alloc] init];
     [_handsOverlayController setHandsSpaceView:handsView];
     [_handsOverlayController setOverrideSpaceViews:YES];
+    _handsOverlayController.delegate = self;
+    _handsOverlayController.handsOverlayControllerDelegate = self;
     _controller = [[LeapController alloc] init];
     [_controller addListener:self];
     _handsView = handsView;
+    _prevNoHands = YES;
+    
+    _displayingView = _handsView;
     NSLog(@"running");
     
-    [self initCalibratorController];
-    [_calibratorController loadFromDefaults];
-    [_calibratorController changeToScreen:[[_displayingView window] screen]];
-
     _handCursorResponderController = [[OLKHandCursorResponderController alloc] init];
     [_handCursorResponderController addHandCursorResponder:_displayingView];
-}
 
-- (void)initCalibratorController
-{
-    _calibratorController = [[CalibratorController alloc] init];
-    [_calibratorController setMenuParentView:_displayingView];
-    [_calibratorController setHandsOverlayController:_handsOverlayController];
-    [_calibratorController setDelegate:self];
+    _mainMenuView = [[LeapMenuView alloc] initWithFrame:[_handsView bounds]];
+    _handsView.menuView = _mainMenuView;
+    _mainMenuView.frame = _displayingView.frame;
+    [_mainMenuView setDelegate:self];
+
+    [_displayingView addSubview:_handsOverlayController.handsConfigMenu];
+    _handsOverlayController.handsConfigMenu.frame = _displayingView.frame;
 }
 
 
@@ -91,10 +101,6 @@
 
 - (void)onConnect:(NSNotification *)notification
 {
-    _menuView = [[ConfigMenuView alloc] initWithFrame:[_handsView bounds]];
-    [_handsView addSubview:_menuView];
-    [_menuView setDelegate:self];
-
     NSLog(@"Connected");
     LeapController *aController = (LeapController *)[notification object];
 //    [aController enableGesture:LEAP_GESTURE_TYPE_CIRCLE enable:YES];
@@ -117,6 +123,7 @@
 
 - (IBAction)goFullScreen:(id)sender
 {
+    [_handCursorResponderController removeHandCursorResponder:_displayingView];
     if (_fullScreenMode)
     {
         _displayingView = _handsView;
@@ -129,7 +136,9 @@
         [_handsOverlayController updateHandsAndPointablesViews];
         if (_showingOptions)
             [self showOptionsViewLayout];
-        [_handsView addSubview:_menuView];
+        [_handsView addSubview:_mainMenuView];
+        [_handsView addSubview:_handsOverlayController.handsConfigMenu];
+        [_handCursorResponderController addHandCursorResponder:_displayingView];
         return;
     }
     _fullScreenMode = YES;
@@ -146,19 +155,22 @@
     containerViewRect.origin = NSMakePoint(0, 0);
     containerViewRect.size = [_fullScreenOverlayWindow frame].size;    
     
-    _fullOverlayView = [[NSView alloc] initWithFrame:containerViewRect];
+    _fullOverlayView = [[MainOverlayView alloc] initWithFrame:containerViewRect];
     _displayingView = _fullOverlayView;
 	[_fullScreenOverlayWindow setContentView:_fullOverlayView];
 
 	// Show the window
-    [_menuView removeFromSuperview];
-    [_fullOverlayView addSubview:_menuView];
+    [_mainMenuView removeFromSuperview];
+    [_handsOverlayController.handsConfigMenu removeFromSuperview];
+    [_fullOverlayView addSubview:_mainMenuView];
+    [_fullOverlayView addSubview:_handsOverlayController.handsConfigMenu];
 	[_fullScreenOverlayWindow makeFirstResponder:_fullOverlayView];
     [_handsOverlayController setHandsSpaceView:_fullOverlayView];
     [_handsOverlayController updateHandsAndPointablesViews];
     if (_showingOptions)
         [self showOptionsViewLayout];
     [_fullScreenOverlayWindow makeKeyAndOrderFront:self];
+    [_handCursorResponderController addHandCursorResponder:_displayingView];
 }
 
 - (NSPoint)cursorPosRelativeToCenter
@@ -178,9 +190,9 @@
 
 - (void)onFrame:(NSNotification *)notification
 {
-    [self typingPointableToScreenPos];
     [_handsOverlayController onFrame:notification];
-    return;
+    if (!_showingCalibrate)
+        [self updateWithHands];
 }
 
 - (void)onFocusGained:(NSNotification *)notification
@@ -268,9 +280,9 @@
 - (IBAction)enableStabilizedPalms:(id)sender
 {
     if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setEnableStablePalms:YES];
+        [_handsOverlayController setUseStabilized:YES];
     else
-        [_handsOverlayController setEnableStablePalms:NO];
+        [_handsOverlayController setUseStabilized:NO];
 }
 
 - (IBAction)enableInteractionBox:(id)sender
@@ -289,6 +301,7 @@
 
 - (void)calibratedPosition:(OLKRangePositionsCalibrated)positionCalibrated
 {
+    _trackingHandView = [[_handsOverlayController handsViews] objectAtIndex:0];
     switch (positionCalibrated)
     {
         case OLKRangeFirstPositionCalibrated:
@@ -314,6 +327,7 @@
 
 - (void)canceledCalibration
 {
+    _showingCalibrate = NO;
     _calibratorView = nil;
     _calibrator = nil;
     _fullScreenCalibrateOverlayWindow = nil;
@@ -339,6 +353,7 @@
 
 - (void)showCalibrate:(BOOL)threePoint
 {
+    _showingCalibrate = YES;
     NSScreen *screen;
     
     if (!_fullScreenMode)
@@ -373,24 +388,19 @@
 
 - (void)showOptionsViewLayout
 {
-    [_menuView setActive:NO];
-    NSView *mainView;
-    if (_fullScreenMode)
-        mainView = _fullOverlayView;
-    else
-        mainView = _handsView;
+    [_mainMenuView setActive:NO];
+    [_handsOverlayController.handsConfigMenu setActive:NO];
     
-    NSRect optionsViewRect = [mainView bounds];
+    NSRect optionsViewRect = [_displayingView bounds];
     if (!_optionsView)
     {
-        _optionsView = [[OLKCircleMenuView alloc] initWithFrame:optionsViewRect];
+        _optionsView = [[OLKCircleMenuMultiCursorView alloc] initWithFrame:optionsViewRect];
         
-        _optionsModel = [[OLKCircleOptionInput alloc] init];
+        _optionsModel = [[OLKCircleOptionMultiCursorInput alloc] init];
         [_optionsModel setDelegate:self];
         [_optionsModel setOptionObjects:[NSArray arrayWithObjects:@"2 Point Calibrate", @"3 Point Calibrate", @"exit", nil]];
-        [_optionsView setCircleOptionInput:_optionsModel];
+        [_optionsView setCircleInput:_optionsModel];
     }
-    [_optionsModel setRequiresMoveToInner:YES];
     optionsViewRect.size.width /= 1.5;
     optionsViewRect.size.height /= 1.5;
     if (optionsViewRect.size.width < optionsViewRect.size.height)
@@ -400,7 +410,7 @@
 
     [_optionsView setFrame:NSMakeRect(optionsViewRect.origin.x+optionsViewRect.size.width/6, optionsViewRect.origin.y+optionsViewRect.size.height/6, optionsViewRect.size.width, optionsViewRect.size.height)];
     
-    [mainView addSubview:_optionsView];
+    [_displayingView addSubview:_optionsView];
     [_optionsView setActive:YES];
     [_optionsView setNeedsDisplay:YES];
     _showingOptions = YES;
@@ -410,204 +420,34 @@
 {
     _showingOptions = NO;
     [_optionsView removeFromSuperview];
-    [_optionsModel reset];
-    [_menuView setActive:YES];
+    [_optionsModel removeAllCursorTracking];
+    [_handsOverlayController.handsConfigMenu setActive:YES];
+    [_mainMenuView setActive:YES];
 }
 
 - (void)controlChangedValue:(id)sender control:(OLKNIControl *)control
 {
-    BOOL enabled;
-    if ([control isKindOfClass:[OLKScratchButtonShell class]])
-        enabled = [(OLKScratchButtonShell *)control on];
-    
-    NSString *propertyKey=nil;
-    NSString *resetPropertyKey=nil;
-    
-    if (control == (OLKNIControl *)_handsConfigMenu.fingerTipsButton)
-    {
-        _enableDrawFingerTips = enabled;
-        propertyKey = WLHandsDrawFingerTips;
-        resetPropertyKey = @"enableDrawFingerTips";
-    }
-    else if (control == (OLKNIControl *)_handsConfigMenu.fingerLinesButton)
-    {
-        _enableDrawFingers = enabled;
-        propertyKey = WLHandsDrawFingers;
-        resetPropertyKey = @"enableDrawFingers";
-    }
-    else if (control == (OLKNIControl *)_handsConfigMenu.boundedHandButton)
-    {
-        _enableDrawHandsBoundingCircle = enabled;
-        propertyKey = WLHandsDrawBoundingCircle;
-        resetPropertyKey = @"enableDrawHandsBoundingCircle";
-    }
-    else if (control == (OLKNIControl *)_handsConfigMenu.palmButton)
-    {
-        _enableDrawPalms = enabled;
-        propertyKey = WLHandsDrawPalms;
-        resetPropertyKey = @"enableDrawPalms";
-    }
-    else if (control == (OLKNIControl *)_handsConfigMenu.useSimpleCursorButton)
-    {
-        _usingSimpleCursor = enabled;
-        propertyKey = WLHandsUseSimpleCursor;
-        resetPropertyKey = @"usingSimpleCursor";
-    }
-    if (![self displayingHandInSomeForm] && resetPropertyKey)
-    {
-        [self setValue:@YES forKey:resetPropertyKey];
-        [(OLKScratchButtonShell *)control setOn:YES];
-        [_handsConfigMenu setNeedsDisplay:YES];
-        return;
-    }
-    if (!resetPropertyKey)
-    {
-        if (control == (OLKNIControl *)_handsConfigMenu.fingerDepthYButton)
-        {
-            _enableScreenYAxisUsesZAxis = enabled;
-            propertyKey = WLHandsUseZForY;
-        }
-        else if (control == (OLKNIControl *)_handsConfigMenu.hand3DButton)
-        {
-            _enable3DHand = enabled;
-            propertyKey = WLHands3DPerspective;
-        }
-        else if (control == (OLKNIControl *)_handsConfigMenu.autoSizeButton)
-        {
-            _enableAutoFitHands = enabled;
-            propertyKey = WLHandsAutoSizeHand;
-        }
-        else if (control == (OLKNIControl *)_handsConfigMenu.interactionBoxButton)
-        {
-            [self setUseInteractionBox:enabled];
-            propertyKey = WLHandsUseInteractionBox;
-        }
-        else if (control == (OLKNIControl *)_handsConfigMenu.stablePalmsButton)
-        {
-            [self setUseStabilized:enabled];
-            propertyKey = WLHandsUseStabilizedPos;
-        }
-        else if (control == (OLKNIControl *)_handsConfigMenu.useOnlySimpleCursorButton)
-        {
-            _usingOnlySimpleCursor = enabled;
-            propertyKey = WLHandsUseOnlySimpleCursor;
-            [_handsConfigMenu setOnlySimpleCursor:enabled];
-            if (enabled)
-            {
-                if (!_usingSimpleCursor && [_handsOverlayControllerDelegate respondsToSelector:@selector(simpleCursorNeedsShowing)])
-                    [_handsOverlayControllerDelegate simpleCursorNeedsShowing];
-                
-                [super setDrawHands:NO];
-            }
-            else
-                [super setDrawHands:YES];
-            [_handsConfigMenu setNeedsDisplay:YES];
-        }
-        else if (control == (OLKNIControl *)_handsConfigMenu.resetToDefaultsButton)
-        {
-            [WordLeapHandsOverlayViewController resetDefaults];
-        }
-        else if (control == (OLKNIControl *)_handsConfigMenu.exitButton)
-        {
-            if ([_handsOverlayControllerDelegate respondsToSelector:@selector(exitedWordLeapHandsConfigMenu)])
-                [_handsOverlayControllerDelegate exitedWordLeapHandsConfigMenu];
-        }
-    }
-    if (propertyKey)
-    {
-        if (enabled)
-            [[NSUserDefaults standardUserDefaults] setObject:@"YES" forKey:propertyKey];
-        else
-            [[NSUserDefaults standardUserDefaults] setObject:@"NO" forKey:propertyKey];
-    }
+    if (control == _mainMenuView.goFullScreenButton)
+        [self goFullScreen:self];
+    else if (control == _mainMenuView.calibrateButton)
+        [self showOptionsViewLayout];
 }
 
-- (void)menuItemChangedValue:(LeapMenuItem)menuItem enabled:(BOOL)enabled
-{
-    NSButton *button = nil;
-    switch (menuItem)
-    {
-        case LeapMenuItemFingerTips:
-            button = _fingerTipsButton;
-            break;
-            
-        case LeapMenuItemFingerLines:
-            button = _fingerLinesButton;
-            break;
-            
-        case LeapMenuItemBoundedHand:
-            button = _handBoundsButton;
-            break;
-            
-        case LeapMenuItemPalm:
-            button = _palmButton;
-            break;
-            
-        case LeapMenuItemFingerDepthY:
-            button = _fingerDepthYButton;
-            break;
-            
-        case LeapMenuItem3DHand:
-            button = _hand3DButton;
-            break;
-            
-        case LeapMenuItemAutoSizeHandToBounds:
-            button = _autoSizeButton;
-            break;
-            
-        case LeapMenuItemUseInteractionBox:
-            button = _interactionBoxButton;
-            break;
-            
-        case LeapMenuItemUseStablePalm:
-            button = _stablePalmsButton;
-            break;
-            
-        case LeapMenuItemGoFullScreen:
-            [self goFullScreen:self];
-            return;
-            break;
-            
-        case LeapMenuItemCalibrate:
-            [_calibratorController showCalibrationMenu];
-//            [self showOptionsViewLayout];
-            return;
-            break;
-            
-
-        default:
-            return;
-            break;
-    }
-    if (enabled)
-        [button setState:NSOnState];
-    else
-        [button setState:NSOffState];
-    [button sendAction:[button action] to:self];
-}
 
 - (void)updateWithHand:(NSView <OLKHandContainer> *)handView
 {
     NSPoint cursorPos;
-    OLKHand *hand = [handView hand];
-    if (_typingMode == WLHandMode || [[[hand leapHand] fingers] count] > 2)
-    {
-        NSRect handRect = [handView frame];
-        cursorPos.x = handRect.origin.x + handRect.size.width/2;
-        cursorPos.y = handRect.origin.y + handRect.size.height/2;
-    }
+    NSRect handRect = [handView frame];
+    cursorPos.x = handRect.origin.x + handRect.size.width/2;
+    cursorPos.y = handRect.origin.y + handRect.size.height/2;
+
     [_handCursorResponderController setCursorTracking:cursorPos withHandView:handView];
-    
-    if ([_calibratorController showingCalibrationMenu])
-        [_calibratorController setCursorPos:cursorPos cursorContext:handView];
 }
 
 - (void)willRemoveHand:(OLKHand *)hand withHandView:(NSView<OLKHandContainer> *)handView
 {
     [_handCursorResponderController removeCursorTracking:handView];
     
-    if ([_calibratorController showingCalibrationMenu])
-        [_calibratorController removeCursorContext:handView];
 }
 
 - (void)simpleCursorNeedsShowing
@@ -628,15 +468,11 @@
         if ([_displayingView enableCursor])
             [_displayingView setEnableCursor:NO];
         
-        if ([_displayingView active])
-            [_displayingView setActive:NO];
-        
         return;
     }
     if (_prevNoHands)
     {
         _prevNoHands = NO;
-        [_displayingView setActive:YES];
         if ([_handsOverlayController usingSimpleCursor] || [_handsOverlayController usingOnlySimpleCursor])
             [_displayingView setEnableCursor:YES];
         else if ([_displayingView enableCursor])
@@ -644,44 +480,23 @@
     }
     
     NSView <OLKHandContainer>*handView;
-    for (handView in [_handsOverlayController handsViews])
+    for (handView in handsViews)
         [self updateWithHand:handView];
+    
+    if ([[(OLKSimpleVectHandView *)[handsViews objectAtIndex:0] hand] isFist] && !_isFist)
+    {
+        _isFist = YES;
+        _mainMenuView.fistLabel.label = @"Hand is Fist";
+        [_mainMenuView setNeedsDisplayInRect:_mainMenuView.fistLabel.frame];
+    }
+    else if (![[(OLKSimpleVectHandView *)[handsViews objectAtIndex:0] hand] isFist] && _isFist)
+    {
+        _isFist = NO;
+        _mainMenuView.fistLabel.label = @"Hand is Open";
+        [_mainMenuView setNeedsDisplayInRect:_mainMenuView.fistLabel.frame];
+    }
 }
 
-
-- (void)typingPointableToScreenPos
-{
-    NSPoint cursorPos;
-    OLKHand *hand = [_handsOverlayController rightHand];
-    if (hand)
-    {
-        _trackingHandView = [_handsOverlayController rightHandView];
-    }
-    else
-    {
-        hand = [_handsOverlayController leftHand];
-        if (hand)
-        {
-            _trackingHandView = [_handsOverlayController leftHandView];
-        }
-        else
-        {
-            _trackingHandView = nil;
-            return;
-        }
-    }
-    NSRect handRect = [_trackingHandView frame];
-    cursorPos.x = handRect.origin.x + handRect.size.width/2;
-    cursorPos.y = handRect.origin.y + handRect.size.height/2;
-    if (_showingOptions)
-        [_optionsModel setCursorPos:[self cursorPosRelativeToCenter]];
-    else
-        [_menuView setCursorPos:cursorPos cursorObject:hand];
-
-    if ([_calibratorController showingCalibrationMenu])
-        [_calibratorController setCursorPos:cursorPos cursorContext:_trackingHandView];
-
-}
 
 - (void)cursorMovedToCenter:(id)sender
 {
@@ -708,9 +523,9 @@
     [mainView setNeedsDisplay:YES];
 }
 
-- (void)selectedIndexChanged:(int)index sender:(id)sender
+- (void)selectedIndexChanged:(int)index sender:(id)sender cursorContext:(id)cursorContext
 {
-    if (index == OLKCircleOptionInputInvalidSelection)
+    if (index == OLKCircleOptionMultiInputInvalidSelection)
         NSLog(@"Deselected Index");
     else
     {
@@ -727,19 +542,11 @@
         else if (index == 2)
             [self exitOptionsView];
         NSLog(@"Selected Index: %d", index);
-        [_optionsModel setRequiresMoveToInner:TRUE];
-        [_optionsModel setSelectedIndex:OLKCircleOptionInputInvalidSelection];
     }
-    NSView *mainView;
-    if (_fullScreenMode)
-        mainView = _fullOverlayView;
-    else
-        mainView = _handsView;
-
-    [mainView setNeedsDisplay:YES];
+    [_displayingView setNeedsDisplay:YES];
 }
 
-- (void)hoverIndexChanged:(int)index sender:(id)sender
+- (void)hoverIndexChanged:(int)index sender:(id)sender cursorContext:(id)cursorContext
 {
     NSLog(@"Hover changed to Index: %d", index);
     

@@ -9,14 +9,16 @@
 #import <Foundation/Foundation.h>
 #import "LeapObjectiveC.h"
 #import "LeapMenuView.h"
-#import "CalibratorController.h"
 #import <OpenLeapKit/OLKNIControlsContainerView.h>
-#import <OpenLeapKit/OLKCircleOptionInput.h>
+#import <OpenLeapKit/OLKCircleOptionMultiCursorInput.h>
 #import <OpenLeapKit/OLKRangeCalibratorView.h>
+#import "OLKDemoHandsOverlayViewController.h"
+#import "MainOverlayView.h"
 
-@interface Sample : NSObject<LeapListener, OLKCircleOptionInputDelegate, OLKRangeCalibratorViewDelegate, OLKNIControlsContainerViewDelegate, CalibratorControllerDelegate>
+@interface Sample : NSObject<LeapListener, OLKDemoHandsOverlayViewControllerDelegate, OLKHandsContainerViewControllerDelegate, OLKCircleOptionMultiCursorInputDelegate, OLKRangeCalibratorViewDelegate, OLKNIControlsContainerViewDelegate, OLKNIControlsContainerViewDelegate>
 
--(void)run:(NSView *)handView;
+- (void)terminate;
+-(void)run:(MainOverlayView *)handView;
 
 - (IBAction)goFullScreen:(id)sender;
 - (IBAction)resetCalibration:(id)sender;

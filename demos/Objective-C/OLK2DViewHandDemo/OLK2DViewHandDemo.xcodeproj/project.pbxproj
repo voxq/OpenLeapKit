@@ -22,6 +22,8 @@
 		2F30E34917CF747800F14438 /* OpenLeapKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2F30E33D17CF6FAE00F14438 /* OpenLeapKit.framework */; };
 		2F30E34B17CF778200F14438 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 2F30E34A17CF778200F14438 /* LICENSE */; };
 		2F31B0541847553E00913C6B /* LeapMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F31B0521847552200913C6B /* LeapMenuView.m */; };
+		2FCA3C3C188D594900E3EA16 /* MainOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FCA3C38188D582500E3EA16 /* MainOverlayView.m */; };
+		2FCA3C3D188D59B400E3EA16 /* CursorsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FCA3C3B188D58EA00E3EA16 /* CursorsView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,8 +62,6 @@
 /* Begin PBXFileReference section */
 		2F1A12AC1881741F00B1452C /* ConfigMenuView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigMenuView.h; sourceTree = "<group>"; };
 		2F1A12AD1881741F00B1452C /* ConfigMenuView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigMenuView.m; sourceTree = "<group>"; };
-		2F1A12B01881777700B1452C /* CalibratorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalibratorController.h; sourceTree = "<group>"; };
-		2F1A12B11881777700B1452C /* CalibratorController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CalibratorController.m; sourceTree = "<group>"; };
 		2F30E31317CF6B8200F14438 /* OLK2DViewHandDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OLK2DViewHandDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F30E31617CF6B8200F14438 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		2F30E31917CF6B8200F14438 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -84,6 +84,10 @@
 		2F30E34A17CF778200F14438 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		2F31B0511847552200913C6B /* LeapMenuView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeapMenuView.h; sourceTree = "<group>"; };
 		2F31B0521847552200913C6B /* LeapMenuView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LeapMenuView.m; sourceTree = "<group>"; };
+		2FCA3C37188D582500E3EA16 /* MainOverlayView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainOverlayView.h; sourceTree = "<group>"; };
+		2FCA3C38188D582500E3EA16 /* MainOverlayView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainOverlayView.m; sourceTree = "<group>"; };
+		2FCA3C3A188D58EA00E3EA16 /* CursorsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CursorsView.h; sourceTree = "<group>"; };
+		2FCA3C3B188D58EA00E3EA16 /* CursorsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CursorsView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,16 +145,18 @@
 		2F30E31C17CF6B8200F14438 /* OLK2DViewHandDemo */ = {
 			isa = PBXGroup;
 			children = (
-				2F1A12B01881777700B1452C /* CalibratorController.h */,
-				2F1A12B11881777700B1452C /* CalibratorController.m */,
 				2F30E32817CF6B8200F14438 /* AppDelegate.h */,
 				2F30E32917CF6B8200F14438 /* AppDelegate.m */,
 				2F30E33317CF6BB800F14438 /* Sample.h */,
 				2F30E33417CF6BB800F14438 /* Sample.m */,
+				2FCA3C3A188D58EA00E3EA16 /* CursorsView.h */,
+				2FCA3C3B188D58EA00E3EA16 /* CursorsView.m */,
 				2F1A12AC1881741F00B1452C /* ConfigMenuView.h */,
 				2F1A12AD1881741F00B1452C /* ConfigMenuView.m */,
 				2F30E34217CF706000F14438 /* OLKDemoHandsOverlayViewController.h */,
 				2F30E34317CF706000F14438 /* OLKDemoHandsOverlayViewController.m */,
+				2FCA3C37188D582500E3EA16 /* MainOverlayView.h */,
+				2FCA3C38188D582500E3EA16 /* MainOverlayView.m */,
 				2F31B0511847552200913C6B /* LeapMenuView.h */,
 				2F31B0521847552200913C6B /* LeapMenuView.m */,
 				2F30E32B17CF6B8300F14438 /* MainMenu.xib */,
@@ -263,6 +269,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FCA3C3D188D59B400E3EA16 /* CursorsView.m in Sources */,
+				2FCA3C3C188D594900E3EA16 /* MainOverlayView.m in Sources */,
 				2F1A12AF1881744000B1452C /* ConfigMenuView.m in Sources */,
 				2F31B0541847553E00913C6B /* LeapMenuView.m in Sources */,
 				2F30E34517CF708400F14438 /* OLKDemoHandsOverlayViewController.m in Sources */,

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "OLKHandCursorResponder.h"
 
-@interface OLKHandCursorResponderController : NSObject <OLKHandCursorResponderParent, OLKHandCursorResponder>
+@interface OLKHandCursorResponderController : NSObject <OLKHandCursorResponderParent>
 
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer> *)handView;
 - (void)addHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder;

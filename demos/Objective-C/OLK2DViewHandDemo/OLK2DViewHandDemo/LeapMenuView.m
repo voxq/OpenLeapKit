@@ -11,17 +11,9 @@
 
 @implementation LeapMenuView
 
-@synthesize fingerTipsButton = _fingerTipsButton;
-@synthesize fingerLinesButton = _fingerLinesButton;
 @synthesize calibrateButton = _calibrateButton;
-@synthesize boundedHandButton = _boundedHandButton;
 @synthesize goFullScreenButton = _goFullScreenButton;
-@synthesize fingerDepthYButton = _fingerDepthYButton;
-@synthesize palmButton = _palmButton;
-@synthesize hand3DButton = _hand3DButton;
-@synthesize autoSizeButton = _autoSizeButton;
-@synthesize stablePalmsButton = _stablePalmsButton;
-@synthesize interactionBoxButton = _interactionBoxButton;
+@synthesize fistLabel = _fistLabel;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -46,54 +38,35 @@
 
 - (void)defaultConfig
 {
+    _fistLabel = [[OLKNIControl alloc] init];
+    _fistLabel.size = NSMakeSize(340,50);
+    _fistLabel.labelFontSize = 30;
+    [self addControl:_fistLabel];
+    
     _calibrateButton = [[OLKHorizScratchButton alloc] init];
     [_calibrateButton setSize:NSMakeSize(240, 50)];
+    _calibrateButton.expandsOnInit = YES;
     [self addControl:_calibrateButton];
     
     _goFullScreenButton = [_calibrateButton copy];
+    _goFullScreenButton.rightInit = YES;
     
-    _boundedHandButton = [[OLKToggleButton alloc] init];
-    [_boundedHandButton setSize:NSMakeSize(120, 50)];
-    [self addControl:_boundedHandButton];
-    
-    _fingerTipsButton = [_boundedHandButton copy];
-    _fingerLinesButton = [_boundedHandButton copy];
-    _fingerDepthYButton = [_boundedHandButton copy];
-    _palmButton = [_boundedHandButton copy];
-    _hand3DButton = [_boundedHandButton copy];
-    _autoSizeButton = [_boundedHandButton copy];
-    _stablePalmsButton = [_boundedHandButton copy];
-    _interactionBoxButton = [_boundedHandButton copy];
-
-    [_boundedHandButton setLabel:@"Bounded Hand"];
-    [_fingerLinesButton setLabel:@"Finger Lines"];
-    [_fingerTipsButton setLabel:@"Finger Tips"];
-    [_palmButton setLabel:@"Draw Palms"];
-    [_fingerDepthYButton setLabel:@"Finger Depth on Y Axis"];
-    [_hand3DButton setLabel:@"Use 3D Perspective Hand"];
-    [_autoSizeButton setLabel:@"Auto Size Hand to Bounds"];
-    [_stablePalmsButton setLabel:@"Use Stabilized Palms"];
-    [_interactionBoxButton setLabel:@"Use Interaction Box"];
     [_calibrateButton setLabel:@"Screen Calibrate"];
     [_goFullScreenButton setLabel:@"Full Screen"];
+    _fistLabel.label = @"Fist State";
 }
 
 
 - (void)layoutMenu
 {
     NSRect bounds = [self bounds];
-    
-    [_boundedHandButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16))];
-    [_fingerLinesButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-70)];
-    [_fingerTipsButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-140)];
-    [_palmButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-210)];
-    [_fingerDepthYButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-280)];
-    [_hand3DButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-350)];
-    [_autoSizeButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-420)];
-    [_stablePalmsButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-490)];
-    [_interactionBoxButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-560)];
-    [_calibrateButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-700)];
-    [_goFullScreenButton setDrawLocation:NSMakePoint(bounds.origin.x+bounds.size.width/2, bounds.size.height-(bounds.size.width/16)-800)];
+    float midPointXOffset = bounds.origin.x+bounds.size.width/2;
+    float xOffsetLeft = midPointXOffset - _calibrateButton.size.width-20;
+    float xOffsetRight = bounds.origin.x+midPointXOffset+20;
+    float yOffsetFromTop = bounds.size.height-(bounds.size.width/16);
+    [_goFullScreenButton setDrawLocation:NSMakePoint(xOffsetLeft, yOffsetFromTop-600)];
+    [_calibrateButton setDrawLocation:NSMakePoint(xOffsetRight, yOffsetFromTop-600)];
+    [_fistLabel setDrawLocation:NSMakePoint(midPointXOffset - _fistLabel.size.width, yOffsetFromTop-700)];
 }
 
 @end

@@ -55,18 +55,43 @@ static OLKHand *gPrevHand=nil;
         gPrevHand = [[OLKHand alloc] init];
 }
 
++ (LeapMatrix *)transformForHandReference:(LeapHand *)hand
+{
+    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
+    LeapVector *handYBasis = [[hand palmNormal] negate];
+    LeapVector *handZBasis = [[hand direction] negate];
+    LeapVector *handOrigin =  [hand palmPosition];
+    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
+    return [handTransform rigidInverse];
+}
+
++ (BOOL)isLeapHandFist:(LeapHand *)leapHand
+{
+    if (leapHand.fingers.count > 1)
+        return NO;
+    
+    LeapMatrix *handTransform = [OLKHand transformForHandReference:leapHand];
+    LeapVector *transformedPosition = [handTransform transformPoint:leapHand.sphereCenter];
+ 
+    float sphereCenterOffset = transformedPosition.z;
+    if (sphereCenterOffset > 0 || (leapHand.sphereRadius < 90 && sphereCenterOffset > -26 && sphereCenterOffset <= -21) || (leapHand.sphereRadius < 75 && sphereCenterOffset > -21 && sphereCenterOffset <= -15) || (leapHand.sphereRadius < 87 && sphereCenterOffset > -15 && sphereCenterOffset <= -10) || (leapHand.sphereRadius < 110 && sphereCenterOffset > -10))
+    {
+        //        NSLog(@"Closed Fist - sphereOffset=%f - sphereRadius=%f", sphereCenterOffset, leapHand.sphereRadius);
+        return YES;
+    }
+    else
+        NSLog(@"Open Hand - sphereOffset=%f - sphereRadius=%f", sphereCenterOffset, leapHand.sphereRadius);
+    return NO;
+}
+
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand
 {
     NSArray *pointables = [hand pointables];
     if ([pointables count] == 0)
         return nil;
     
-    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
-    LeapVector *handYBasis = [[hand palmNormal] negate];
-    LeapVector *handZBasis = [[hand direction] negate];
+    LeapMatrix *handTransform = [self transformForHandReference:hand];
     LeapVector *handOrigin =  [hand palmPosition];
-    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
-    handTransform = [handTransform rigidInverse];
     float furthestTipDist = 0;
     LeapPointable *furthestPointable;
     for (LeapPointable *pointable in pointables)
@@ -87,12 +112,7 @@ static OLKHand *gPrevHand=nil;
     if ([[hand fingers] count] == 0)
         return OLKHandednessUnknown;
     
-    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
-    LeapVector *handYBasis = [[hand palmNormal] negate];
-    LeapVector *handZBasis = [[hand direction] negate];
-    LeapVector *handOrigin =  [hand palmPosition];
-    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
-    handTransform = [handTransform rigidInverse];
+    LeapMatrix *handTransform = [self transformForHandReference:hand];
     float avgDist = 0;
     NSUInteger fingerCount = 0;
     
@@ -147,12 +167,7 @@ static OLKHand *gPrevHand=nil;
     if ([[hand fingers] count] == 0)
         return OLKHandednessUnknown;
     
-    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
-    LeapVector *handYBasis = [[hand palmNormal] negate];
-    LeapVector *handZBasis = [[hand direction] negate];
-    LeapVector *handOrigin =  [hand palmPosition];
-    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
-    handTransform = [handTransform rigidInverse];
+    LeapMatrix *handTransform = [self transformForHandReference:hand];
     LeapFinger *finger;
     BOOL foundThumb = false;
     LeapVector *transformedPosition;
@@ -191,12 +206,7 @@ static OLKHand *gPrevHand=nil;
     if ([[hand fingers] count] == 0)
         return OLKHandednessUnknown;
     
-    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
-    LeapVector *handYBasis = [[hand palmNormal] negate];
-    LeapVector *handZBasis = [[hand direction] negate];
-    LeapVector *handOrigin =  [hand palmPosition];
-    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
-    handTransform = [handTransform rigidInverse];
+    LeapMatrix *handTransform = [self transformForHandReference:hand];
     LeapFinger *finger;
     BOOL foundThumb = false;
     LeapVector *transformedPosition;
@@ -288,12 +298,7 @@ static OLKHand *gPrevHand=nil;
 
 + (OLKHandedness)handednessByShortestFinger:(LeapHand *)hand thumb:(LeapFinger **)pThumb
 {
-    LeapVector *handXBasis =  [[[hand palmNormal] cross:[hand direction] ] normalized];
-    LeapVector *handYBasis = [[hand palmNormal] negate];
-    LeapVector *handZBasis = [[hand direction] negate];
-    LeapVector *handOrigin =  [hand palmPosition];
-    LeapMatrix *handTransform = [[LeapMatrix alloc] initWithXBasis:handXBasis yBasis:handYBasis zBasis:handZBasis origin:handOrigin];
-    handTransform = [handTransform rigidInverse];
+    LeapMatrix *handTransform = [self transformForHandReference:hand];
     LeapFinger *finger;
     LeapVector *transformedPosition;
     LeapVector *rightmostTransformedPosition;
@@ -525,6 +530,11 @@ static OLKHand *gPrevHand=nil;
     _numFramesExist ++;
     _leapHand = leapHand;
     _leapFrame = [leapHand frame];
+}
+
+- (BOOL)isFist
+{
+    return [OLKHand isLeapHandFist:_leapHand];
 }
 
 - (OLKHandedness)updateHandednessByThumbTipDistFromPalm

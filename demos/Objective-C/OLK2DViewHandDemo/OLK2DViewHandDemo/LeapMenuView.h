@@ -11,18 +11,16 @@
 @class OLKHorizScratchButton;
 @class OLKToggleButton;
 
+typedef enum
+{
+    LeapMenuItemGoFullScreen,
+    LeapMenuItemCalibrate
+}LeapMenuItem;
+
 @interface LeapMenuView : OLKNIControlsContainerView
 
 @property (nonatomic) OLKHorizScratchButton *calibrateButton;
 @property (nonatomic) OLKHorizScratchButton *goFullScreenButton;
-@property (nonatomic) OLKToggleButton *boundedHandButton;
-@property (nonatomic) OLKToggleButton *fingerTipsButton;
-@property (nonatomic) OLKToggleButton *fingerLinesButton;
-@property (nonatomic) OLKToggleButton *fingerDepthYButton;
-@property (nonatomic) OLKToggleButton *palmButton;
-@property (nonatomic) OLKToggleButton *hand3DButton;
-@property (nonatomic) OLKToggleButton *autoSizeButton;
-@property (nonatomic) OLKToggleButton *stablePalmsButton;
-@property (nonatomic) OLKToggleButton *interactionBoxButton;
+@property (nonatomic) OLKNIControl *fistLabel;
 
 @end

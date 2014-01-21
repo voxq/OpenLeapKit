@@ -77,6 +77,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 @synthesize percentRangeOfMaxWidth = _percentRangeOfMaxWidth;
 @synthesize fitHandFact = _fitHandFact;
 @synthesize calibrator = _calibrator;
+@synthesize findRightLeft = _findRightLeft;
 
 - (id)init
 {
@@ -92,6 +93,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         _useStabilized = TRUE;
         _useInteractionBox = TRUE;
         _allowAllHands = TRUE;
+        _findRightLeft = YES;
         _showPointables = TRUE;
         _rangeOffset = -80;
         _proximityOffset = 0;
@@ -154,14 +156,11 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 {
     NSMutableArray *handsViews = [[NSMutableArray alloc] init];
     if (!hands || ![hands count])
-    {
         return handsViews;
-    }
-    NSMutableArray *newHands = [[NSMutableArray alloc] init];
+
     for (OLKHand *hand in hands)
     {
         NSView <OLKHandContainer> *handView = [self viewForHand:hand];
-        [newHands addObject:hand];
         if (!handView)
         {
             [hand setUsesStabilized:_useStabilized];
@@ -170,16 +169,12 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         }
         [handsViews addObject:handView];
     }
-    _hands = [NSArray arrayWithArray:newHands];
     
     return handsViews;
 }
 
-- (void)assignHands
+- (NSMutableArray *)assignLeftRightHands
 {
-    if ([_hands count] == [[_leapFrame hands] count])
-        return;
-    
     NSMutableSet *ignoreLeapHands=[[NSMutableSet alloc] init];
     NSMutableSet *ignoreHands=[[NSMutableSet alloc] init];
     
@@ -196,7 +191,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     NSObject <OLKHandFactory>*factory = nil;
     if (_dataSource && [_dataSource handFactory])
         factory = [_dataSource handFactory];
-        
+    
     NSDictionary *handsHandednessDict = [OLKHand leftRightHandSearch:[_leapFrame hands] ignoreHands:ignoreLeapHands handednessAlgorithm:_handednessAlgorithm factory:factory];
     
     OLKHand *bestGuessHand = [handsHandednessDict objectForKey:OLKHandBestLeftGuessKey];
@@ -217,38 +212,65 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         [_leftHand setSimHandedness:OLKLeftHand];
     if ([_rightHand handedness] == OLKHandednessUnknown)
         [_rightHand setSimHandedness:OLKRightHand];
-
+    
     NSMutableArray *allHands = [[NSMutableArray alloc] init];
+
     NSArray *hands = [handsHandednessDict objectForKey:OLKHandLeftHandsKey];
     if (hands)
         [allHands addObjectsFromArray:hands];
+    
     hands = [handsHandednessDict objectForKey:OLKHandRightHandsKey];
     if (hands)
         [allHands addObjectsFromArray:hands];
+    
     hands = [handsHandednessDict objectForKey:OLKHandUnknownHandednessKey];
     if (hands)
         [allHands addObjectsFromArray:hands];
+    
     if ([ignoreLeapHands count])
         [allHands addObjectsFromArray:[ignoreHands allObjects]];
     
     NSMutableArray *handsViews = [self createHandViews:allHands];
+    _hands = [NSArray arrayWithArray:allHands];
+
     if (_leftHandView)
         [handsViews addObject:_leftHandView];
     if (_rightHandView)
         [handsViews addObject:_rightHandView];
+    
+    return handsViews;
+}
 
+- (void)assignHands
+{
+    if ([_hands count] == [[_leapFrame hands] count])
+        return;
+    
+    NSMutableArray *handsViews;
+    if (_findRightLeft)
+        handsViews = [self assignLeftRightHands];
+    else
+        handsViews = [self createHandViews:[_leapFrame hands]];
+    
+    if (_findRightLeft)
+    {
+        if (_leftHandView)
+            [handsViews addObject:_leftHandView];
+        if (_rightHandView)
+            [handsViews addObject:_rightHandView];
+    }
     if ([handsViews count])
     {
-        if ([handsViews count] > 2)
-        {
-            NSLog(@"%u hand views!", [handsViews count]);
-            int i=0;
-            for (NSView <OLKHandContainer> *handView in handsViews)
-            {
-                i++;
-                NSLog(@"hand %u %@!", i, handView);
-            }
-        }
+//        if ([handsViews count] > 2)
+//        {
+//            NSLog(@"%u hand views!", [handsViews count]);
+//            int i=0;
+//            for (NSView <OLKHandContainer> *handView in handsViews)
+//            {
+//                i++;
+//                NSLog(@"hand %u %@!", i, handView);
+//            }
+//        }
         _handsViews = [NSArray arrayWithArray:handsViews];
     }
 }
@@ -497,7 +519,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     
     if ([[_leapFrame hands] count])
     {
-        [self updateHandedness];
+        if (_findRightLeft)
+            [self updateHandedness];
         [self assignHands];
         [self updateHandsAndPointablesViews];
     }

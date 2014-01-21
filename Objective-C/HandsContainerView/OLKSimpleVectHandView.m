@@ -56,6 +56,7 @@
 @synthesize enable3DHand = _enable3DHand;
 @synthesize enableStable = _enableStable;
 @synthesize palmColor = _palmColor;
+@synthesize enableSphere = _enableSphere;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -74,6 +75,7 @@
         _enable3DHand = NO;
         _enableStable = YES;
         _enabled = YES;
+        _enableSphere = YES;
     }
     
     return self;
@@ -285,6 +287,43 @@
     }
 }
 
+- (void)drawSphereData
+{
+    float palmCircleRadius = _bounds.size.width / 3;
+    NSRect palmCircleBounds;
+    palmCircleBounds.size.width = palmCircleRadius;
+    palmCircleBounds.size.height = palmCircleRadius;
+    palmCircleRadius /= 2;
+    palmCircleBounds.origin = _centerPoint;
+    palmCircleBounds.origin.x -= palmCircleRadius;
+    palmCircleBounds.origin.y -= palmCircleRadius;
+
+    LeapHand *leapHand = [_hand leapHand];
+    LeapVector *palmPosition;
+    if (_enableStable)
+        palmPosition = [leapHand stabilizedPalmPosition];
+    else
+        palmPosition = [leapHand palmPosition];
+    
+    LeapMatrix *handTransform = [OLKHand transformForHandReference:leapHand];
+    LeapVector *transformedPosition = [handTransform transformPoint:leapHand.sphereCenter];
+
+    NSBezierPath *sphereCenter = [NSBezierPath bezierPath];
+    float lineWidthHalf = palmCircleBounds.size.width*(leapHand.sphereRadius/150)/2;
+    
+    float sphereCenterOffset = transformedPosition.z;
+    [sphereCenter moveToPoint:NSMakePoint(palmCircleBounds.origin.x + lineWidthHalf, palmCircleBounds.origin.y + palmCircleBounds.size.height/2 - sphereCenterOffset*_fitHandFact.height)];
+    
+//    if ([_hand isFist])
+//        NSLog(@"Closed Fist - sphereOffset=%f - sphereRadius=%f", sphereCenterOffset, leapHand.sphereRadius);
+//    else
+//        NSLog(@"Open Hand - sphereOffset=%f - sphereRadius=%f", sphereCenterOffset, leapHand.sphereRadius);
+//    NSLog(@"difference between palm center (%@) and sphere center (%@) differences(%f, %f, %f) transformed (%@) radius(%f) = %f", palmPosition, leapHand.sphereCenter, palmPosition.x - leapHand.sphereCenter.x, palmPosition.y - leapHand.sphereCenter.y, palmPosition.z - leapHand.sphereCenter.z, transformedPosition, leapHand.sphereRadius, sphereCenterOffset);
+    [sphereCenter lineToPoint:NSMakePoint(palmCircleBounds.origin.x+palmCircleBounds.size.width - lineWidthHalf, palmCircleBounds.origin.y + palmCircleBounds.size.height/2 - sphereCenterOffset*_fitHandFact.height)];
+    [sphereCenter setLineWidth:3];
+    [sphereCenter stroke];
+}
+
 - (void)drawPalm
 {
     [[NSColor grayColor] setStroke];
@@ -332,14 +371,7 @@
             palmCircleBounds.size.height = 0.1;
         palmCircleBounds.origin.y += (1-fabs([[_hand leapHand] palmNormal].z))*40;
     }
-//    else
-//    {
-//        NSBezierPath *sphereCenter = [NSBezierPath bezierPath];
-//        [sphereCenter moveToPoint:NSMakePoint(palmCircleBounds.origin.x, palmCircleBounds.origin.y + palmCircleBounds.size.height/2 + [[_hand leapHand] sphereCenter].z*_fitHandFact.height)];
-//        [sphereCenter lineToPoint:NSMakePoint(palmCircleBounds.origin.x+palmCircleBounds.size.width, palmCircleBounds.origin.y + palmCircleBounds.size.height/2 + [[_hand leapHand] sphereCenter].z*_fitHandFact.height)];
-//        [sphereCenter setLineWidth:3];
-//        [sphereCenter stroke];
-//    }
+
     [palmDirectionPath appendBezierPathWithOvalInRect:palmCircleBounds];
     NSPoint palmVector;
     palmVector.x = _centerPoint.x + [[_hand leapHand] direction].x*palmCircleRadius;
@@ -398,6 +430,9 @@
     
     if (_enableDrawPalm || _enableDrawHandBoundingCircle)
         [self drawPalm];
+    
+    if ( _enableSphere)
+        [self drawSphereData];
     
     if (_enableDrawFingers || _enableDrawFingerTips)
         [self drawFingers];

@@ -4566,6 +4566,7 @@
 				<string key="371.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="371.IBWindowTemplateEditedContentRect">{{380, 496}, {480, 360}}</string>
 				<integer value="1" key="371.NSWindowTemplate.visibleAtLaunch"/>
+				<string key="372.CustomClassName">MainOverlayView</string>
 				<array key="372.IBNSViewMetadataConstraints">
 					<reference ref="1016542311"/>
 					<reference ref="123820685"/>

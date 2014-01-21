@@ -71,6 +71,9 @@ typedef enum {
 
 @interface OLKHand : NSObject <NSCopying>
 
++ (BOOL)isLeapHandFist:(LeapHand *)leapHand;
++ (LeapMatrix *)transformForHandReference:(LeapHand *)hand;
+
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;
 + (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm factory:(NSObject<OLKHandFactory>*)factory;
 + (NSArray *)simpleLeftRightHandSearch:(NSArray *)hands;
@@ -83,6 +86,8 @@ typedef enum {
 - (BOOL)isLeapHand:(LeapHand *)leapHand;
 - (void)updateLeapHand:(LeapHand *)leapHand;
 - (OLKHandedness)updateHandedness;
+
+- (BOOL)isFist;
 
 - (OLKHandedness)updateHandednessByThumbTipDistFromPalm;
 - (OLKHandedness)updateHandednessByThumbBasePosToPalm;

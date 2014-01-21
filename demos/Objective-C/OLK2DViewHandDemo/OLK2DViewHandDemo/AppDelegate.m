@@ -8,12 +8,29 @@
 
 #import "AppDelegate.h"
 #import "Sample.h"
+#import "OLKDemoHandsOverlayViewController.h"
 
 @implementation AppDelegate
 
 @synthesize window = _window;
 @synthesize sample = _sample; // must retain for notifications
 @synthesize handView = _handView;
+
++ (void)initialize
+{
+    NSMutableDictionary *properties = [[NSMutableDictionary alloc] init];
+    NSDictionary *tmpProperties = [OLKDemoHandsOverlayViewController defaultProperties];
+    [properties addEntriesFromDictionary:tmpProperties];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    [defaults registerDefaults:properties];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)notification
+{
+    [_sample terminate];
+}
+
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
