@@ -42,14 +42,6 @@
     BOOL _prevNoHands;
 }
 
-@synthesize handBoundsButton = _handBoundsButton;
-@synthesize fingerLinesButton = _fingerLinesButton;
-@synthesize fingerTipsButton = _fingerTipsButton;
-@synthesize fingerDepthYButton = _fingerDepthYButton;
-@synthesize palmButton = _palmButton;
-@synthesize hand3DButton = _hand3DButton;
-@synthesize autoSizeButton = _autoSizeButton;
-@synthesize stablePalmsButton = _stablePalmsButton;
 @synthesize interactionBoxButton = _interactionBoxButton;
 
 - (void)terminate
@@ -89,8 +81,15 @@
 
     [_displayingView addSubview:_handsOverlayController.handsConfigMenu];
     _handsOverlayController.handsConfigMenu.frame = _displayingView.frame;
+    
+    [self updateButtons];
 }
 
+
+- (void)updateButtons
+{
+    
+}
 
 #pragma mark - SampleListener Callbacks
 
@@ -221,76 +220,10 @@
     }
 }
 
-- (IBAction)enableHandBounds:(id)sender
-{
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setEnableDrawHandsBoundingCircle:YES];
-    else
-        [_handsOverlayController setEnableDrawHandsBoundingCircle:NO];
-}
-
-- (IBAction)enableFingerLines:(id)sender
-{
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setEnableDrawFingers:YES];
-    else
-        [_handsOverlayController setEnableDrawFingers:NO];
-}
-
-- (IBAction)enableFingerTips:(id)sender
-{
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setEnableDrawFingerTips:YES];
-    else
-        [_handsOverlayController setEnableDrawFingerTips:NO];
-}
-
-- (IBAction)enableFingersZisY:(id)sender
-{
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setEnableScreenYAxisUsesZAxis:YES];
-    else
-        [_handsOverlayController setEnableScreenYAxisUsesZAxis:NO];
-}
-
-- (IBAction)enableDrawPalm:(id)sender
-{
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setEnableDrawPalms:YES];
-    else
-        [_handsOverlayController setEnableDrawPalms:NO];
-}
-
-- (IBAction)enableAutoHandSize:(id)sender
-{
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setEnableAutoFitHands:YES];
-    else
-        [_handsOverlayController setEnableAutoFitHands:NO];
-}
-
-- (IBAction)enable3DHand:(id)sender
-{
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setEnable3DHand:YES];
-    else
-        [_handsOverlayController setEnable3DHand:NO];
-}
-
-- (IBAction)enableStabilizedPalms:(id)sender
-{
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setUseStabilized:YES];
-    else
-        [_handsOverlayController setUseStabilized:NO];
-}
 
 - (IBAction)enableInteractionBox:(id)sender
 {
-    if ([(NSButton*)sender state] == NSOnState)
-        [_handsOverlayController setUseInteractionBox:YES];
-    else
-        [_handsOverlayController setUseInteractionBox:NO];
+    [_handsOverlayController setUseInteractionBox:YES];
 }
 
 - (IBAction)resetCalibration:(id)sender

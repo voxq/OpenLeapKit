@@ -23,24 +23,8 @@
 - (IBAction)goFullScreen:(id)sender;
 - (IBAction)resetCalibration:(id)sender;
 
-- (IBAction)enableHandBounds:(id)sender;
-- (IBAction)enableFingerLines:(id)sender;
-- (IBAction)enableFingerTips:(id)sender;
-- (IBAction)enableFingersZisY:(id)sender;
-- (IBAction)enableDrawPalm:(id)sender;
-- (IBAction)enableAutoHandSize:(id)sender;
-- (IBAction)enable3DHand:(id)sender;
-- (IBAction)enableStabilizedPalms:(id)sender;
 - (IBAction)enableInteractionBox:(id)sender;
 
-@property (nonatomic) IBOutlet NSButton *handBoundsButton;
-@property (nonatomic) IBOutlet NSButton *fingerLinesButton;
-@property (nonatomic) IBOutlet NSButton *fingerTipsButton;
-@property (nonatomic) IBOutlet NSButton *fingerDepthYButton;
-@property (nonatomic) IBOutlet NSButton *palmButton;
-@property (nonatomic) IBOutlet NSButton *hand3DButton;
-@property (nonatomic) IBOutlet NSButton *autoSizeButton;
-@property (nonatomic) IBOutlet NSButton *stablePalmsButton;
 @property (nonatomic) IBOutlet NSButton *interactionBoxButton;
 
 @end
