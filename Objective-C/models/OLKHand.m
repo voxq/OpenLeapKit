@@ -79,8 +79,8 @@ static OLKHand *gPrevHand=nil;
         //        NSLog(@"Closed Fist - sphereOffset=%f - sphereRadius=%f", sphereCenterOffset, leapHand.sphereRadius);
         return YES;
     }
-    else
-        NSLog(@"Open Hand - sphereOffset=%f - sphereRadius=%f", sphereCenterOffset, leapHand.sphereRadius);
+//    else
+//        NSLog(@"Open Hand - sphereOffset=%f - sphereRadius=%f", sphereCenterOffset, leapHand.sphereRadius);
     return NO;
 }
 
