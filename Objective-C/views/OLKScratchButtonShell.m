@@ -368,26 +368,6 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     [self resetSwitcherToBeginPosition];
 }
 
-- (BOOL)detectReset:(NSPoint)position
-{
-    if (position.x > self.size.width + _resetEscapeZone.width)
-        return TRUE;
-    if (position.x < - _resetEscapeZone.width)
-        return TRUE;
-    if (position.y < -_resetEscapeZone.height || position.y > self.size.height+_resetEscapeZone.height)
-        return TRUE;
-    
-    return FALSE;
-}
-
-- (BOOL)escapeInY:(NSPoint)position
-{
-    if (position.y < -_escapeZone.height || position.y > self.size.height+_escapeZone.height)
-        return TRUE;
-    
-    return FALSE;
-}
-
 - (BOOL)inSlideInitiateZone:(NSPoint)position
 {
     return NO;
@@ -471,7 +451,7 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 - (void)triggerCompleted
 {
     if (_togglesState)
-        _on ^= YES;
+        _on = !_on;
 
     [self reset];
     if (_useResetEscape)
@@ -549,7 +529,7 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     
     if (_requiresReset)
     {
-        if ([self detectReset:position])
+        if ([self escapedResetZone:position])
             _requiresReset = NO;
         
         return FALSE;

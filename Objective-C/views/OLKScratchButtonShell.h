@@ -11,8 +11,6 @@
 
 @interface OLKScratchButtonShell : OLKNIControl
 
-- (BOOL)escapeInY:(NSPoint)position;
-
 // These methods are required to be implemented in subclasses
 - (void)updateSwitcherPosition:(NSPoint)position;
 - (BOOL)positionReachedHalfwayHotzone:(NSPoint)position;
@@ -31,7 +29,6 @@
 - (BOOL)handleSliding:(NSPoint)position;
 - (BOOL)detectSlideInitiate:(NSPoint)position;
 - (BOOL)cursorMovedTo:(NSPoint)position;
-- (BOOL)detectReset:(NSPoint)position;
 - (BOOL)inHotZone:(NSPoint)position;
 - (BOOL)escapedResetZone:(NSPoint)position;
 - (BOOL)escapedHotZone:(NSPoint)position;

@@ -78,6 +78,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 @synthesize fitHandFact = _fitHandFact;
 @synthesize calibrator = _calibrator;
 @synthesize findRightLeft = _findRightLeft;
+@synthesize constrainHandsToSpace = _constrainHandsToSpace;
 
 - (id)init
 {
@@ -93,6 +94,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         _useStabilized = TRUE;
         _useInteractionBox = TRUE;
         _allowAllHands = TRUE;
+        _constrainHandsToSpace = TRUE;
         _findRightLeft = YES;
         _showPointables = TRUE;
         _rangeOffset = -80;
@@ -421,6 +423,20 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     }
 }
 
+- (NSRect)constrainInputCompletelyInView:(NSRect)frameRect handSpaceView:(NSView *)handSpaceView
+{
+    if (frameRect.origin.x + frameRect.size.width/2 > handSpaceView.bounds.origin.x + handSpaceView.bounds.size.width)
+        frameRect.origin.x = handSpaceView.bounds.origin.x + handSpaceView.bounds.size.width - frameRect.size.width/2;
+    if (frameRect.origin.y + frameRect.size.height/2 > handSpaceView.bounds.origin.y + handSpaceView.bounds.size.height)
+        frameRect.origin.y = handSpaceView.bounds.origin.y + handSpaceView.bounds.size.height - frameRect.size.height/2;
+    if (frameRect.origin.x + frameRect.size.width/2 < handSpaceView.bounds.origin.x)
+        frameRect.origin.x = handSpaceView.bounds.origin.x - frameRect.size.width/2;
+    if (frameRect.origin.y + frameRect.size.height/2 < handSpaceView.bounds.origin.y)
+        frameRect.origin.y = handSpaceView.bounds.origin.y - frameRect.size.height/2;
+    return frameRect;
+}
+
+
 - (void)updateHandViewForHand:(OLKHand *)hand
 {
     NSView <OLKHandContainer>*handView = [self viewForHand:hand];
@@ -469,6 +485,9 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
     oldRect.origin.x -= [handView frame].size.width/2;
     oldRect.origin.y -= [handView frame].size.height/2;
+
+    if (_constrainHandsToSpace)
+        oldRect = [self constrainInputCompletelyInView:oldRect handSpaceView:spaceView];
 
     if (_drawHands)
     {

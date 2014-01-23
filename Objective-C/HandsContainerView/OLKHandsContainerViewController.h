@@ -91,6 +91,7 @@
 @property (nonatomic) NSMutableArray *gestureContext;
 @property (nonatomic) BOOL allowAllHands;
 @property (nonatomic) BOOL findRightLeft;
+@property (nonatomic) BOOL constrainHandsToSpace;
 @property (nonatomic) OLKHandednessAlgorithm handednessAlgorithm;
 @property (nonatomic) BOOL showPointables;
 @property (nonatomic) NSSize pointableScale;

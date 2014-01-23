@@ -19,6 +19,8 @@
 		2F31B04C1847509900913C6B /* OLKCircleMenuView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F31B04A1847509900913C6B /* OLKCircleMenuView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F31B04D1847509900913C6B /* OLKCircleMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F31B04B1847509900913C6B /* OLKCircleMenuView.m */; };
 		2F31B05C1847751F00913C6B /* OLKSliderControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F31B05A1847751F00913C6B /* OLKSliderControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F382FE218918122009C9280 /* OLKHoverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F382FE118918122009C9280 /* OLKHoverButton.m */; };
+		2F382FE418918133009C9280 /* OLKHoverButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F382FE318918133009C9280 /* OLKHoverButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F52478A185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F524788185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F52478B185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F524789185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m */; };
 		2F683202185BA3EE0064E5B2 /* OLKNIControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F683200185BA3EE0064E5B2 /* OLKNIControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -96,6 +98,8 @@
 		2F31B04B1847509900913C6B /* OLKCircleMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKCircleMenuView.m; path = views/OLKCircleMenuView.m; sourceTree = "<group>"; };
 		2F31B05A1847751F00913C6B /* OLKSliderControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKSliderControl.h; path = views/OLKSliderControl.h; sourceTree = "<group>"; };
 		2F31B05B1847751F00913C6B /* OLKSliderControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKSliderControl.m; path = views/OLKSliderControl.m; sourceTree = "<group>"; };
+		2F382FE118918122009C9280 /* OLKHoverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKHoverButton.m; path = views/OLKHoverButton.m; sourceTree = "<group>"; };
+		2F382FE318918133009C9280 /* OLKHoverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKHoverButton.h; path = views/OLKHoverButton.h; sourceTree = "<group>"; };
 		2F524788185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKCircleMenuMultiCursorView.h; path = views/OLKCircleMenuMultiCursorView.h; sourceTree = "<group>"; };
 		2F524789185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKCircleMenuMultiCursorView.m; path = views/OLKCircleMenuMultiCursorView.m; sourceTree = "<group>"; };
 		2F683200185BA3EE0064E5B2 /* OLKNIControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKNIControl.h; path = views/OLKNIControl.h; sourceTree = "<group>"; };
@@ -184,6 +188,8 @@
 				2FEEE36B185F8B860032054D /* OLKVertScratchButton.m */,
 				2FC917C5185E54A4008F36AD /* OLKScratchButtonShell.h */,
 				2FC917C6185E54A4008F36AD /* OLKScratchButtonShell.m */,
+				2F382FE318918133009C9280 /* OLKHoverButton.h */,
+				2F382FE118918122009C9280 /* OLKHoverButton.m */,
 				2F0FE34F187729EA00DF174D /* OLKSlider.h */,
 				2F0FE34D187729DE00DF174D /* OLKSlider.m */,
 				2F31B04A1847509900913C6B /* OLKCircleMenuView.h */,
@@ -355,6 +361,7 @@
 				2FC917C3185E548B008F36AD /* OLKHorizScratchButton.h in Headers */,
 				2FEEE36C185F8B860032054D /* OLKVertScratchButton.h in Headers */,
 				2FC917C7185E54A4008F36AD /* OLKScratchButtonShell.h in Headers */,
+				2F382FE418918133009C9280 /* OLKHoverButton.h in Headers */,
 				2F0FE350187729EA00DF174D /* OLKSlider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -452,6 +459,7 @@
 				2FC917C8185E54A4008F36AD /* OLKScratchButtonShell.m in Sources */,
 				2FEEE36D185F8B860032054D /* OLKVertScratchButton.m in Sources */,
 				2F0FE34E187729DE00DF174D /* OLKSlider.m in Sources */,
+				2F382FE218918122009C9280 /* OLKHoverButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
