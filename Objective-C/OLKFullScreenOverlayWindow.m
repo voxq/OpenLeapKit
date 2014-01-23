@@ -12,6 +12,8 @@ static float const inchesToMM = 25.4;
 
 @implementation OLKFullScreenOverlayWindow
 
+@synthesize useFullScreenBounds = _useFullScreenBounds;
+
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
     if (self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation])
@@ -41,7 +43,6 @@ static float const inchesToMM = 25.4;
 
 - (void)awakeFromNib
 {
-    [self resetToDefaultConfig];
     [self moveToScreen:[self screen]];
 }
 
@@ -52,6 +53,7 @@ static float const inchesToMM = 25.4;
 
 - (void)resetToDefaultConfig
 {
+    _useFullScreenBounds = NO;
     [self setBackingType:NSBackingStoreBuffered];
 	[self setStyleMask:NSUtilityWindowMask | NSNonactivatingPanelMask];
     [self setOpaque:NO];
@@ -62,9 +64,18 @@ static float const inchesToMM = 25.4;
     [self setHasShadow:NO];
 }
 
+- (void)setUseFullScreenBounds:(BOOL)useFullScreenBounds
+{
+    _useFullScreenBounds = useFullScreenBounds;
+    [self moveToScreen:self.screen];
+}
+
 - (void)moveToScreen:(NSScreen *)screen
 {
-    [self setFrame:[screen frame] display:YES];
+    if (_useFullScreenBounds)
+        [self setFrame:[screen frame] display:YES];
+    else
+        [self setFrame:[screen visibleFrame] display:YES];
 }
 
 - (void)moveToNextScreen

@@ -77,12 +77,31 @@
     [_selectPointCalibratedImg unlockFocus];
 }
 
+- (void)drawHelp
+{
+    NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    [style setAlignment:NSCenterTextAlignment];
+    
+    NSDictionary *foreAttrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Helvetica Neue" size:25], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, nil];
+    NSMutableDictionary *backAttrs = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:-18.0], NSStrokeWidthAttributeName, [NSColor whiteColor], NSStrokeColorAttributeName, nil];
+    [backAttrs addEntriesFromDictionary:foreAttrs];
+    
+    NSRect boundsRect = self.bounds;
+    NSString *helpStr = @"Put your hand over red dot and press a key.\nWhen all dots are green calibration is complete.\nPress ESC to exit.";
+    NSRect labelRect;
+    labelRect.size = [helpStr sizeWithAttributes:backAttrs];
+    labelRect.origin = NSMakePoint(boundsRect.origin.x + boundsRect.size.width/2-labelRect.size.width/2, boundsRect.origin.y+boundsRect.size.height/2-labelRect.size.height/2);
+    [helpStr drawInRect:labelRect withAttributes:[NSDictionary dictionaryWithDictionary:backAttrs]];
+    [helpStr drawInRect:labelRect withAttributes:foreAttrs];
+
+}
 
 - (void)drawRect:(NSRect)dirtyRect
 {
     if (!_rangeCalibrator)
         return;
 
+    [self drawHelp];
     NSPoint drawLocation;
     NSRect convertRect;
     convertRect.origin = [_rangeCalibrator screenPos1];
@@ -129,6 +148,7 @@
         [_selectPointUncalibratedImg drawAtPoint:drawLocation fromRect:selectPointRect operation:NSCompositeSourceOver fraction:1];
     else if (_positionsCalibrated == OLKRangeAllPositionsCalibrated)
         [_selectPointCalibratedImg drawAtPoint:drawLocation fromRect:selectPointRect operation:NSCompositeSourceOver fraction:1];
+    
 }
 
 - (void)keyDown:(NSEvent *)event

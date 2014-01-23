@@ -314,6 +314,7 @@
     float sphereCenterOffset = transformedPosition.z;
     [sphereCenter moveToPoint:NSMakePoint(palmCircleBounds.origin.x + lineWidthHalf, palmCircleBounds.origin.y + palmCircleBounds.size.height/2 - sphereCenterOffset*_fitHandFact.height)];
     
+//        NSLog(@"%f,%f,%f", sphereCenterOffset, transformedPosition.y, leapHand.sphereRadius);
 //    if ([_hand isFist])
 //        NSLog(@"Closed Fist - sphereOffset=%f - sphereRadius=%f", sphereCenterOffset, leapHand.sphereRadius);
 //    else

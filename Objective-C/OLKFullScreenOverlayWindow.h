@@ -17,4 +17,6 @@
 - (NSSize)screenPhysicalSize;
 - (NSSize)determinePointSizeFromDesiredPhysicalSize:(NSSize)desiredPhysicalSize;
 
+@property (nonatomic) BOOL useFullScreenBounds;
+
 @end
