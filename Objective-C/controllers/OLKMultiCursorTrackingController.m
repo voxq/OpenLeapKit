@@ -45,7 +45,8 @@
     OLKCursorTracking *cursorTracking = [_cursorTrackings objectForKey:handView];
     if (!cursorTracking)
         cursorTracking = [self createCursorTracking:cursorPos withHandView:handView];
-    [cursorTracking setCursorPos:cursorPos];
+    else
+        [cursorTracking setCursorPos:cursorPos];
 }
 
 - (OLKCursorTracking *)createCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView

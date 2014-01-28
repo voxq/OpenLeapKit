@@ -121,7 +121,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     [super setSize:size];
     
     [self createButtonImages];
-    [self reset];
+    [self softReset];
     [self prepareLabelImage];
 }
 
@@ -169,6 +169,16 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     _hovering = NO;
     _hoveringSince = nil;
     _controllingHandView = nil;
+}
+
+- (void)softReset
+{
+    if (_useResetEscape)
+        _requiresReset = YES;
+    else
+        _requiresReset = NO;
+    _hovering = NO;
+    _hoveringSince = nil;
 }
 
 - (BOOL)inHotZone:(NSPoint)position
@@ -227,9 +237,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     if (_togglesState)
         _on = !_on;
 
-    [self reset];
-    if (_useResetEscape)
-        _requiresReset = TRUE;
+    [self softReset];
     
     if (!_togglesState)
         [self initAnimateOnActivate];
@@ -239,6 +247,8 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 
 - (BOOL)detectCompletion:(NSPoint)position
 {
+    if (_requiresReset)
+        return NO;
     if (!_hoveringSince)
         return YES;
     
@@ -260,7 +270,11 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     }
 
     if  ([self detectCompletion:position])
-         return FALSE;
+    {
+        if (_requiresReset)
+            return TRUE;
+        return FALSE;
+    }
     
     return TRUE;
 }
@@ -286,11 +300,12 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     if (_requiresReset)
     {
         if ([self escapedResetZone:position])
+        {
             _requiresReset = NO;
-        
-        return FALSE;
+            return FALSE;
+        }
+        return TRUE;
     }
-    
     if (_hovering)
         return [self handleHovering:position];
     
@@ -303,6 +318,15 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         return;
     
     cursorPos = [self convertCusorPos:cursorPos fromHandView:handView];
+
+    // Check whether the button was just added and a cursor is already in it, so we do not want to trigger
+    OLKCursorTracking *cursorTracking = [self.cursorTrackings objectForKey:handView];
+    if (!cursorTracking)
+    {
+        if ([self inHotZone:cursorPos])
+            return;
+        [super setCursorTracking:cursorPos withHandView:handView];
+    }
     
     if (![self cursorMovedTo:cursorPos])
     {
@@ -319,16 +343,14 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 
 - (void)removeCursorTracking:(NSView <OLKHandContainer> *)handView
 {
+    [super removeCursorTracking:handView];
     if (_controllingHandView && _controllingHandView == handView)
-    {
-        _controllingHandView = nil;
         [self reset];
-    }
 }
 
 - (void)removeAllCursorTracking
 {
-    _controllingHandView = nil;
+    [super removeAllCursorTracking];
     [self reset];
 }
 

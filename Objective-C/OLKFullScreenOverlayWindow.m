@@ -48,7 +48,7 @@ static float const inchesToMM = 25.4;
 
 - (BOOL)canBecomeKeyWindow
 {
-    return YES;
+    return NO;
 }
 
 - (void)resetToDefaultConfig

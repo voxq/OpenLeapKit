@@ -530,9 +530,12 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     if (_requiresReset)
     {
         if ([self escapedResetZone:position])
+        {
             _requiresReset = NO;
+            return FALSE;
+        }
         
-        return FALSE;
+        return TRUE;
     }
     
     if (_sliding)
