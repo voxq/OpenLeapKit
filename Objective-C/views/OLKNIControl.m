@@ -29,19 +29,38 @@
 @synthesize labelImage = _labelImage;
 @synthesize labelAttributes = _labelAttributes;
 @synthesize labelBackAttributes = _labelBackAttributes;
+@synthesize outlineLabel = _outlineLabel;
 
 - (id)init
 {
     if (self = [super init])
     {
+        _outlineLabel = YES;
         _needsRedraw = YES;
         _visible = YES;
         _active = YES;
         _enable = YES;
         _autoFontSize = YES;
         _autoCalcLabelRect = YES;
+        [self calculateLabelAttributes];
     }
     return self;
+}
+
+- (void)calculateLabelAttributes
+{
+    NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    [style setAlignment:NSCenterTextAlignment];
+    
+    _labelAttributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Helvetica Neue" size:_labelFontSize], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, nil];
+    
+    if (!_outlineLabel)
+        return;
+    
+    NSMutableDictionary *backgroundAttrs = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:-18.0], NSStrokeWidthAttributeName, [NSColor whiteColor], NSStrokeColorAttributeName, nil];
+    [backgroundAttrs addEntriesFromDictionary:_labelAttributes];
+    _labelBackAttributes = [NSDictionary dictionaryWithDictionary:backgroundAttrs];
+    
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -51,12 +70,13 @@
     copyOfSelf.action = _action;
     copyOfSelf.active = _active;
     copyOfSelf.size = _size;
+    copyOfSelf.outlineLabel = _outlineLabel;
     copyOfSelf.drawLocation = _drawLocation;
     copyOfSelf.visible = _visible;
     copyOfSelf.enable = _enable;
     copyOfSelf.needsRedraw = _needsRedraw;
-    copyOfSelf.labelAttributes = self.labelAttributes;
-    copyOfSelf.labelBackAttributes = self.labelBackAttributes;
+    copyOfSelf.labelAttributes = _labelAttributes;
+    copyOfSelf.labelBackAttributes = _labelBackAttributes;
     copyOfSelf.labelFontSize = _labelFontSize;
     copyOfSelf.autoFontSize = _autoFontSize;
     copyOfSelf.autoCalcLabelRect = _autoCalcLabelRect;
@@ -64,14 +84,20 @@
     if (!copyOfSelf.autoCalcLabelRect)
         copyOfSelf.labelRectBounds = _labelRectBounds;
     copyOfSelf.parentView = _parentView;
+    
+    return copyOfSelf;
+}
+
+- (id)copyAddingToSuper
+{
+    OLKNIControl *copyOfSelf = [self copy];
     if (self.superHandCursorResponder)
     {
         if ([self.superHandCursorResponder isKindOfClass:[OLKNIControlsContainerView class]])
-             [(OLKNIControlsContainerView *)self.superHandCursorResponder addControl:copyOfSelf];
+            [(OLKNIControlsContainerView *)self.superHandCursorResponder addControl:copyOfSelf];
         else
-             [self.superHandCursorResponder addHandCursorResponder:copyOfSelf];
+            [self.superHandCursorResponder addHandCursorResponder:copyOfSelf];
     }
-    
     return copyOfSelf;
 }
 
@@ -85,54 +111,45 @@
 {
     _labelFontSize = labelFontSize;
 
-    if (!_autoFontSize)
+    if (_autoFontSize && !_labelFontSize)
+        [self recalculateFontSize];
+    else
+        [self calculateLabelAttributes];
+    
+    if (!_autoFontSize || !labelFontSize)
     {
         [_parentView setNeedsDisplayInRect:self.labelRectBounds];
         return;
     }
-    _labelAttributes = nil;
-    _labelBackAttributes = nil;
-    NSDictionary *labelAttributes = self.labelBackAttributes;
-    
     _autoFontSize = NO;
     [_parentView setNeedsDisplayInRect:self.frame];
+}
+
+- (void)recalculateFontSize
+{
+    if (_size.width > _size.height)
+        _labelFontSize = _size.height/3.5;
+    else
+        _labelFontSize = _size.width/3.5;
+
+    [self calculateLabelAttributes];
 }
 
 - (float)labelFontSize
 {
     if (!_labelFontSize && _autoFontSize)
-    {
-        if (_size.width > _size.height)
-            _labelFontSize = _size.height/4;
-        else
-            _labelFontSize = _size.width/4;
-    }
+        [self recalculateFontSize];
+    
     return _labelFontSize;
 }
 
 - (NSDictionary *)labelAttributes
 {
-    if (!_labelAttributes)
-    {
-        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [style setAlignment:NSCenterTextAlignment];
-        
-        _labelAttributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Helvetica Neue" size:_labelFontSize], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, nil];
-    }
     return _labelAttributes;
 }
 
 - (NSDictionary *)labelBackAttributes
 {
-    if (!_labelBackAttributes)
-    {
-        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [style setAlignment:NSCenterTextAlignment];
-        
-        NSMutableDictionary *backgroundAttrs = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:-18.0], NSStrokeWidthAttributeName, [NSColor whiteColor], NSStrokeColorAttributeName, nil];
-        [backgroundAttrs addEntriesFromDictionary:self.labelAttributes];
-        _labelBackAttributes = [NSDictionary dictionaryWithDictionary:backgroundAttrs];
-    }
     return _labelBackAttributes;
 }
 
@@ -142,7 +159,15 @@
         return;
     
     if (_size.width > _size.height)
-        _labelRectBounds.size = [self.label boundingRectWithSize:NSMakeSize(self.size.width, 10000) options:NSStringDrawingUsesLineFragmentOrigin attributes:self.labelBackAttributes].size;
+    {
+        NSDictionary *attrs;
+        if (_outlineLabel)
+            attrs = self.labelBackAttributes;
+        else
+            attrs = self.labelAttributes;
+        
+        _labelRectBounds.size = [self.label boundingRectWithSize:NSMakeSize(self.size.width, 10000) options:NSStringDrawingUsesLineFragmentOrigin attributes:attrs].size;
+    }
     else
     {
         _labelRectBounds.size.width = _size.width*3;
@@ -182,14 +207,8 @@
     if (![self.label length] || NSEqualSizes(_size, NSZeroSize))
         return;
 
-    if (_autoFontSize)
-    {
-        _labelFontSize = 0;
-        float tmp = self.labelFontSize;
-        _labelAttributes = nil;
-        _labelBackAttributes = nil;
-        NSDictionary *labelAttributes = self.labelBackAttributes;
-    }
+    if (_autoFontSize && !_labelFontSize)
+        [self recalculateFontSize];
     
     if (_autoCalcLabelRect)
         [self autoCalculateLabelRectBounds];
@@ -202,7 +221,8 @@
     
     [_labelImage lockFocus];
     
-    [self.label drawInRect:labelRect withAttributes:self.labelBackAttributes];
+    if (_outlineLabel)
+        [self.label drawInRect:labelRect withAttributes:self.labelBackAttributes];
     [self.label drawInRect:labelRect withAttributes:self.labelAttributes];
     
     [_labelImage unlockFocus];

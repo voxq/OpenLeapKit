@@ -12,12 +12,14 @@
 
 @interface OLKNIControl : OLKMultiCursorTrackingController <NSCopying>
 
+- (id)copyAddingToSuper;
 - (void)prepareLabelImage; // If you don't want the standard label drawing, override this so the standard label NSImage is not prepared and cached.
 - (void)drawLabel;
 - (void)draw;
 - (void)requestRedraw;
 - (NSRect)frame;
 - (NSPoint)convertToParentViewCusorPos:(NSPoint)cursorPos fromHandView:(NSView <OLKHandContainer> *)handView;
+- (void)recalculateFontSize;
 
 // converts the cursorPos to a point relative to the controls origin (drawLocation).
 - (NSPoint)convertCusorPos:(NSPoint)cursorPos fromHandView:(NSView <OLKHandContainer> *)handView;
@@ -41,6 +43,7 @@
 @property (nonatomic) BOOL autoFontSize;
 @property (nonatomic) BOOL autoCalcLabelRect;
 @property (nonatomic) BOOL needsRedraw;
+@property (nonatomic) BOOL outlineLabel;
 @property (nonatomic, weak) NSView *parentView;
 
 @end

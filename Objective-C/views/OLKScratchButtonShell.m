@@ -20,6 +20,7 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 }
 
 @synthesize controllingHandView = _controllingHandView;
+@synthesize prevControllingHandView = _prevControllingHandView;
 @synthesize superHandCursorResponder = _superHandCursorResponder;
 @synthesize activated = _activated;
 @synthesize alpha = _alpha;
@@ -364,6 +365,7 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     _requiresReset = NO;
     _halfway = NO;
     _sliding = NO;
+    _prevControllingHandView = _controllingHandView;
     _controllingHandView = nil;
     [self resetSwitcherToBeginPosition];
 }
@@ -554,7 +556,10 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     if (![self cursorMovedTo:cursorPos])
     {
         if (_controllingHandView)
+        {
+            _prevControllingHandView = _controllingHandView;
             _controllingHandView = nil;
+        }
         return;
     }
     
@@ -568,6 +573,7 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 {
     if (_controllingHandView && _controllingHandView == handView)
     {
+        _prevControllingHandView = _controllingHandView;
         _controllingHandView = nil;
         [self reset];
     }
@@ -575,6 +581,7 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 
 - (void)removeAllCursorTracking
 {
+    _prevControllingHandView = _controllingHandView;
     _controllingHandView = nil;
     [self reset];
 }

@@ -60,7 +60,7 @@
         return;
     
     float curDist = sqrtf(cursorPos.x*cursorPos.x + cursorPos.y*cursorPos.y);
-    if (curDist <= [super thresholdForHit]*[self radius])
+    if (curDist <= [super thresholdForStrike]*[self radius])
     {
         [intentStrikeCheck setState:OLKIntentStrikeCheckStateConfirmed];
         if ([_multiTapDelegate respondsToSelector:@selector(strikeConfirmed:cursorContext:)])
@@ -94,12 +94,6 @@
 
 - (void)resetWithAllIntentStrikeChecksSetTo:(OLKIntentStrikeCheckState)state
 {
-    if (!_multiTapDelegate)
-    {
-        [self removeAllCursorTracking];
-        return;
-    }
-    
     NSEnumerator *enumerator = [_intentionalStrikeChecks keyEnumerator];
     id key = [enumerator nextObject];
     while (key)
@@ -119,6 +113,7 @@
                 if ([_multiTapDelegate respondsToSelector:@selector(strikeConfirmed:cursorContext:)])
                     [_multiTapDelegate strikeConfirmed:self cursorContext:key];
             }
+            [self resetCurrentCursorTracking:key];
         }
         key = [enumerator nextObject];
     }
@@ -145,7 +140,7 @@
 
 - (void)removeCursorContext:(id)cursorContext
 {
-    [super removeCursorContext:cursorContext];
+    [super removeCursorTracking:cursorContext];
     if (![_intentionalStrikeChecks count])
         return;
     
@@ -167,29 +162,30 @@
     [newDict removeObjectForKey:cursorContext];
     if ([newDict count] < [_intentionalStrikeChecks count])
         _intentionalStrikeChecks = [NSDictionary dictionaryWithDictionary:newDict];
+
+    [self resetCurrentCursorTracking:cursorContext];
 }
 
-- (void)setCursorPos:(NSPoint)cursorPos cursorContext:(id)cursorContext
+- (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView<OLKHandContainer> *)cursorContext
 {
     int selectedIndexBefore = [super selectedIndex:cursorContext];
     
-    [super setCursorPos:cursorPos cursorContext:cursorContext];
+    [super setCursorTracking:cursorPos withHandView:cursorContext];
 
     OLKIntentStrikeCheck *intentStrikeCheck = [_intentionalStrikeChecks objectForKey:cursorContext];
     
-    if ([super selectedIndex:cursorContext] == OLKCircleOptionMultiInputInvalidSelection)
-    {
-        if (intentStrikeCheck)
-            [self removeIntentStrikeCheck:cursorContext];
-        return;
-    }
-    if (selectedIndexBefore == OLKCircleOptionMultiInputInvalidSelection)
+    if (selectedIndexBefore == OLKOptionMultiInputInvalidSelection && [super selectedIndex:cursorContext] != OLKOptionMultiInputInvalidSelection)
     {
         [self startIntentionalStrikeCheck:cursorPos cursorContext:cursorContext];
         return;
     }
 
+    if (!intentStrikeCheck)
+        return;
+
     [self updateIntentionalStrikeCheck:cursorPos cursorContext:cursorContext intentStrikeCheck:intentStrikeCheck];
+    if ([intentStrikeCheck state] == OLKIntentStrikeCheckStateNonIntended || [intentStrikeCheck state] == OLKIntentStrikeCheckStateConfirmed)
+        [self removeIntentStrikeCheck:cursorContext];
 }
 
 

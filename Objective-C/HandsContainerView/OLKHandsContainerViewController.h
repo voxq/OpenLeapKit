@@ -61,12 +61,15 @@
 
 @interface OLKHandsContainerViewController : NSObject
 
-- (void)onFrame:(NSNotification *)notification;
+- (void)onFrame:(LeapFrame *)leapFrame controller:(LeapController *)controller;
 - (NSView <OLKHandContainer> *)viewForHand:(OLKHand *)hand;
 - (void)updateHandsAndPointablesViews;
 - (void)updateHandViewForHand:(OLKHand *)hand;
 - (NSView <OLKHandContainer>*)viewForLeapHandId:(int)leapHandId;
 - (OLKHand *)handFromLeapHand:(LeapHand *)leapHand;
+
+
+@property (nonatomic, readonly) LeapFrame *leapFrame;
 
 @property (nonatomic) BOOL drawHands;
 @property (nonatomic) NSView <OLKHandsContainerView> *handsSpaceView;

@@ -67,7 +67,7 @@
     float rangeOfMaxWidth = [leapDevice range]*percentRangeOfMaxWidth;
     float xAngle = [leapDevice horizontalViewAngle];
     
-    float widthToMap = rangeOfMaxWidth * xAngle/2 * 2;
+    float widthToMap = rangeOfMaxWidth * xAngle;
     
     NSRect boundsRect = [view bounds];
     NSSize viewSize = boundsRect.size;
@@ -82,5 +82,28 @@
     return viewPos;
 }
 
++ (float)distanceToWidthBoundary:(LeapVector *)position leapDevice:(LeapDevice *)leapDevice
+{
+    float xAngle = [leapDevice horizontalViewAngle]/2;
+    
+    float xWidthAtY = xAngle * position.y;
+    float xPos = position.x;
+    if (xPos<0)
+        xPos = -xPos;
+    float dist = xWidthAtY - xPos;
+    return dist;
+}
+
++ (float)distanceToDepthBoundary:(LeapVector *)position leapDevice:(LeapDevice *)leapDevice
+{
+    float zAngle = [leapDevice verticalViewAngle]/2;
+    
+    float zWidthAtY = zAngle * position.y;
+    float zPos = position.z;
+    if (zPos<0)
+        zPos = -zPos;
+    float dist = zWidthAtY - zPos;
+    return dist;
+}
 
 @end

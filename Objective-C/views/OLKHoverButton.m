@@ -17,6 +17,10 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     float _activateAlpha;
     BOOL _activated;
     float _pauseActivateFrames;
+    NSImage *_intButtonHoverImg;
+    NSImage *_intButtonOffImg;
+    NSImage *_intButtonOnImg;
+    NSImage *_intButtonActivatedImg;
 }
 
 @synthesize buttonHoverImg = _buttonHoverImg;
@@ -70,6 +74,11 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     copyOfSelf.useResetEscape = _useResetEscape;
     copyOfSelf.togglesState = _togglesState;
     copyOfSelf.on = _on;
+    copyOfSelf.buttonActivatedImg = _buttonActivatedImg;
+    copyOfSelf.buttonHoverImg = _buttonHoverImg;
+    copyOfSelf.buttonOffImg = _buttonOffImg;
+    copyOfSelf.buttonOnImg = _buttonOnImg;
+    [copyOfSelf createButtonImages];
     return copyOfSelf;
 }
 
@@ -111,6 +120,69 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 - (void)createButtonImages
 {
     NSSize size = [self size];
+    if (_buttonHoverImg)
+    {
+        _intButtonHoverImg = [[NSImage alloc] initWithSize:size];
+        [_intButtonHoverImg lockFocus];
+        NSRect sourceRect;
+        sourceRect.origin = NSZeroPoint;
+        sourceRect.size = _buttonHoverImg.size;
+        NSRect destRect;
+        destRect.size = size;
+        destRect.origin = NSZeroPoint;
+        [_buttonHoverImg drawInRect:destRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        [_intButtonHoverImg unlockFocus];
+    }
+    else
+        _intButtonHoverImg = nil;
+
+    if (_buttonActivatedImg)
+    {
+        _intButtonActivatedImg = [[NSImage alloc] initWithSize:size];
+        [_intButtonActivatedImg lockFocus];
+        NSRect sourceRect;
+        sourceRect.origin = NSZeroPoint;
+        sourceRect.size = _buttonActivatedImg.size;
+        NSRect destRect;
+        destRect.size = size;
+        destRect.origin = NSZeroPoint;
+        [_buttonActivatedImg drawInRect:destRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        [_intButtonActivatedImg unlockFocus];
+    }
+    else
+        _intButtonActivatedImg = nil;
+    
+    if (_buttonOnImg)
+    {
+        _intButtonOnImg = [[NSImage alloc] initWithSize:size];
+        [_intButtonOnImg lockFocus];
+        NSRect sourceRect;
+        sourceRect.origin = NSZeroPoint;
+        sourceRect.size = _buttonOnImg.size;
+        NSRect destRect;
+        destRect.size = size;
+        destRect.origin = NSZeroPoint;
+        [_buttonOnImg drawInRect:destRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        [_intButtonOnImg unlockFocus];
+    }
+    else
+        _intButtonOnImg = nil;
+    
+    if (_buttonOffImg)
+    {
+        _intButtonOffImg = [[NSImage alloc] initWithSize:size];
+        [_intButtonOffImg lockFocus];
+        NSRect sourceRect;
+        sourceRect.origin = NSZeroPoint;
+        sourceRect.size = _buttonOffImg.size;
+        NSRect destRect;
+        destRect.size = size;
+        destRect.origin = NSZeroPoint;
+        [_buttonOffImg drawInRect:destRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        [_intButtonOffImg unlockFocus];
+    }
+    else
+        _intButtonOffImg = nil;
 }
 
 - (void)setSize:(NSSize)size
@@ -141,22 +213,55 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     
     if (!self.active)
         currentAlpha /= 2;
+   
+    NSImage *bottomImg = nil;
     if (_on || (_hovering && !_hoverTimeToActivate))
+    {
+        bottomImg = _intButtonOnImg;
         curColor = _onColor;
+    }
     else if (_hovering)
+    {
+        bottomImg = _intButtonHoverImg;
         curColor = _hoverColor;
+    }
     else
+    {
+        bottomImg = _intButtonOffImg;
         curColor = _offColor;
+    }
 
-    [curColor set];
     NSRect buttonRect;
     buttonRect.origin = self.drawLocation;
     buttonRect.size = self.size;
-    NSRectFill(buttonRect);
+    
+    if (bottomImg)
+    {
+        NSRect sourceRect;
+        sourceRect.origin = NSZeroPoint;
+        sourceRect.size = bottomImg.size;
+        [bottomImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+    }
+    else
+    {
+        [curColor set];
+        NSRectFill(buttonRect);
+    }
+    
     if (_activated && !_togglesState)
     {
-        [[_onColor colorWithAlphaComponent:_activateAlpha] set];
-        NSRectFillUsingOperation(buttonRect, NSCompositeSourceOver);
+        if (_intButtonActivatedImg)
+        {
+            NSRect sourceRect;
+            sourceRect.origin = NSZeroPoint;
+            sourceRect.size = _intButtonActivatedImg.size;
+            [_intButtonActivatedImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        }
+        else
+        {
+            [[_onColor colorWithAlphaComponent:_activateAlpha] set];
+            NSRectFillUsingOperation(buttonRect, NSCompositeSourceOver);
+        }
     }
     
     [super draw];
@@ -306,10 +411,12 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         }
         return TRUE;
     }
+    _hovering = [self detectHoverInitiate:position];
+    
     if (_hovering)
         return [self handleHovering:position];
     
-    return [self detectHoverInitiate:position];
+    return _hovering;
 }
 
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView

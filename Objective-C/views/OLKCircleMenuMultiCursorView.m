@@ -9,7 +9,6 @@
 #import "OLKCircleMenuMultiCursorView.h"
 
 @implementation OLKCircleMenuMultiCursorView
-
 {
     NSArray *_hoverImages;
     NSImage *_image;
@@ -18,23 +17,26 @@
 }
 
 @synthesize superHandCursorResponder = _superHandCursorResponder;
+@synthesize subHandCursorResponders = _subHandCursorResponders;
 
-@synthesize circleInput = _circleInput;
+@synthesize optionInput = _optionInput;
 
 @synthesize innerRadius = _innerRadius;
 @synthesize center = _center;
+
+@synthesize maintainProportion = _maintainProportion;
 @synthesize active = _active;
 @synthesize textFontSize = _textFontSize;
 @synthesize currentAlpha = _currentAlpha;
 @synthesize highlightPositions = _highlightPositions;
 @synthesize inactiveAlphaMultiplier = _inactiveAlphaMultiplier;
-@synthesize optionRingColor = _optionRingColor;
+@synthesize optionBackgroundColor = _optionBackgroundColor;
 @synthesize optionSeparatorColor = _optionSeparatorColor;
 @synthesize optionHoverColor = _optionHoverColor;
 @synthesize optionHighlightColor = _optionHighlightColor;
 @synthesize optionInnerHighlightColor = _optionInnerHighlightColor;
 @synthesize optionSelectColor = _optionSelectColor;
-@synthesize baseCircleImage = _baseCircleImage;
+@synthesize baseImage = _baseImage;
 @synthesize hoverImage = _hoverImage;
 @synthesize fillCenterColor = _fillCenterColor;
 
@@ -54,27 +56,55 @@
     return self;
 }
 
+- (NSPoint)convertToInputCursorPos:(NSPoint)cursorPos fromView:(NSView <OLKHandContainer>*)handView
+{
+    return [self positionRelativeToCenter:cursorPos convertFromView:[handView superview]];
+}
+
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
 {
-    NSPoint cursorPosRelativeToCircleCenter = [self positionRelativeToCenter:cursorPos convertFromView:[handView superview]];
-    if (_active)
-        [_circleInput setCursorPos:cursorPosRelativeToCircleCenter cursorContext:handView];
 }
 
-- (void)removeCursorTracking:(NSView<OLKHandContainer> *)handView
+- (void)setOptionInput:(OLKCircleOptionMultiCursorInput *)optionInput
 {
-    [_circleInput removeCursorContext:handView];
+    if (_optionInput)
+        [self removeHandCursorResponder:optionInput];
+
+    _optionInput = optionInput;
+    if (!_optionInput.datasource)
+        _optionInput.datasource = self;
+    [self addHandCursorResponder:optionInput];
 }
 
-- (void)removeAllCursorTracking
+- (void)addHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder
 {
-    [_circleInput removeAllCursorTracking];
+    if (!_subHandCursorResponders)
+        _subHandCursorResponders = [NSArray arrayWithObject:handCursorResponder];
+    else
+        _subHandCursorResponders = [_subHandCursorResponders arrayByAddingObject:handCursorResponder];
+    [handCursorResponder setSuperHandCursorResponder:self];
+}
+
+- (void)removeHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder
+{
+    NSMutableArray *newArray = [NSMutableArray arrayWithArray:_subHandCursorResponders];
+    [newArray removeObject:handCursorResponder];
+    _subHandCursorResponders = [NSArray arrayWithArray:newArray];
+    [handCursorResponder setSuperHandCursorResponder:nil];
 }
 
 - (void)removeFromSuperHandCursorResponder
 {
     if (_superHandCursorResponder)
         [_superHandCursorResponder removeHandCursorResponder:self];
+}
+
+- (void)removeCursorTracking:(NSView<OLKHandContainer> *)handView
+{
+}
+
+- (void)removeAllCursorTracking
+{
 }
 
 - (void)setHoverImage:(NSImage *)hoverImage
@@ -96,7 +126,7 @@
     
     NSAffineTransform* transform = [NSAffineTransform transform] ;
 
-//    [transform scaleBy:_circleInput.radius/_hoverImage.size.width];
+//    [transform scaleBy:_optionInput.radius/_hoverImage.size.width];
     // In order to avoid clipping the image, translate
     // the coordinate system to its center
     [transform translateXBy:+hoverImage.size.width/2
@@ -121,9 +151,9 @@
 
 - (NSImage *)scaledHoverImage
 {
-    NSImage *hoverImage = [[NSImage alloc] initWithSize:NSMakeSize([_circleInput radius]*2, [_circleInput radius]*2)];
+    NSImage *hoverImage = [[NSImage alloc] initWithSize:NSMakeSize([_optionInput radius]*2, [_optionInput radius]*2)];
     [hoverImage lockFocus];
-    [_hoverImage drawInRect:NSMakeRect(0, 0, _circleInput.radius*2, _circleInput.radius*2) fromRect:NSMakeRect(0, 0, _hoverImage.size.width, _hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
+    [_hoverImage drawInRect:NSMakeRect(0, 0, _optionInput.radius*2, _optionInput.radius*2) fromRect:NSMakeRect(0, 0, _hoverImage.size.width, _hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
     [hoverImage unlockFocus];
     return hoverImage;
 }
@@ -133,7 +163,7 @@
 {
     if (!_hoverImage)
         return;
-    int objectCount = (int)[[_circleInput optionObjects] count];
+    int objectCount = (int)[[_optionInput optionObjects] count];
     NSMutableArray *hoverImages = [[NSMutableArray alloc] initWithCapacity:objectCount];
     float angleInc = 360.0/(float)objectCount;
     float degAngle = 0;
@@ -159,29 +189,23 @@
 - (void)setFrame:(NSRect)frameRect
 {
     [super setFrame:frameRect];
-    NSRect boundsRect = [super bounds];
-    _innerRadius = [_circleInput radius] * [_circleInput thresholdForHit];
-    _textFontSize = ([_circleInput radius] - _innerRadius)/2;
-    _textFont = [NSFont fontWithName:@"Helvetica Neue" size:_textFontSize];
-    _center = boundsRect.origin;
-    _center.x += boundsRect.size.width/2;
-    _center.y += boundsRect.size.height/2;
     [self drawIntoImage];
 }
 
 - (void)configDefaultView
 {
+    _maintainProportion = YES;
     _optionHighlightColor = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:1 alpha:1];
     _optionSeparatorColor = [NSColor colorWithCalibratedRed:0.8 green:1 blue:0.8 alpha:1];
-    _optionRingColor = [NSColor colorWithCalibratedRed:0.5 green:1 blue:0.5 alpha:1];
+    _optionBackgroundColor = [NSColor colorWithCalibratedRed:0.5 green:1 blue:0.5 alpha:1];
     _optionInnerHighlightColor = [NSColor colorWithCalibratedRed:0.3 green:0.8 blue:0.8 alpha:0.5];
     _optionSelectColor = [NSColor colorWithCalibratedRed:1 green:0.3 blue:0.3 alpha:0.5];
     _optionHoverColor = [NSColor colorWithCalibratedRed:0.5 green:0.75 blue:0.95 alpha:1];
     _fillCenterColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:0.75];
     
     _currentAlpha = 1.0;
-    _innerRadius = [_circleInput  radius] * [_circleInput  thresholdForHit];
-    _textFontSize = ([_circleInput  radius] - _innerRadius)/2;
+    _innerRadius = [_optionInput  radius] * [_optionInput  thresholdForStrike];
+    _textFontSize = ([_optionInput  radius] - _innerRadius)/2;
     _textFont = [NSFont fontWithName:@"Helvetica Neue" size:_textFontSize];
     [self redraw];
 }
@@ -204,13 +228,20 @@
 
 - (void)drawIntoImage
 {
-    if ([_circleInput optionObjects] == nil)
+    if ([_optionInput optionObjects] == nil)
         return;
     
-    float radius = [_circleInput radius];
-    float radiusWithRoomForHover = [_circleInput radius]-4;
+    float radius = [_optionInput radius];
+    float radiusWithRoomForHover = [_optionInput radius]-4;
+    NSRect boundsRect = [super bounds];
+    _innerRadius = radius * [_optionInput thresholdForStrike];
+    _textFontSize = (radius - _innerRadius)/2;
+    _textFont = [NSFont fontWithName:@"Helvetica Neue" size:_textFontSize];
+    _center = boundsRect.origin;
+    _center.x += boundsRect.size.width/2;
+    _center.y += boundsRect.size.height/2;
+
     int index;
-    NSRect boundsRect = [self bounds];
     NSPoint offsetCenter=_center;
     
     _imageDrawRect.size.width = radius*2;
@@ -227,14 +258,19 @@
         _imageDrawRect.origin.y = _center.y - radius;
         offsetCenter.y = offsetCenter.x;
     }
-    if (_baseCircleImage)
-    {
-        [_baseCircleImage setSize:_imageDrawRect.size];
-        return;
-    }
     _image = [[NSImage alloc] initWithSize:_imageDrawRect.size];
     [_image lockFocus];
     
+    if (_baseImage)
+    {
+        NSRect sourceRect;
+        sourceRect.origin = NSZeroPoint;
+        sourceRect.size = _baseImage.size;
+        [_baseImage drawInRect:_imageDrawRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        [_image unlockFocus];
+        return;
+    }
+
     NSBezierPath *innerFill = [NSBezierPath bezierPath];
     NSRect innerFillRectCircle;
     innerFillRectCircle.origin.x = offsetCenter.x - _innerRadius;
@@ -251,7 +287,7 @@
     NSBezierPath *menuEntriesPath = [NSBezierPath bezierPath] ;
     [menuEntriesPath setLineWidth: 2 ] ;
     
-    int objectCount = (int)[[_circleInput optionObjects] count];
+    int objectCount = (int)[[_optionInput optionObjects] count];
     float arcAngleOffset = (360.0 / (float)objectCount) / 2.0;
     float degAngle;
     
@@ -272,7 +308,7 @@
         }
         if (closePath)
         {
-            [_optionRingColor set] ;
+            [_optionBackgroundColor set] ;
             // and fill it
             [menuEntriesPath fill] ;
             [_optionSeparatorColor set] ;
@@ -281,19 +317,17 @@
             position = 0;
             degAngle = 360.0/(float)objectCount * index + 90;
             
-            if (closePath)
-            {
-                // draw an arc (perc is a certain percentage ; something between 0 and 1
-                [menuEntriesPath appendBezierPathWithArcWithCenter:offsetCenter radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-                [menuEntriesPath appendBezierPathWithArcWithCenter:offsetCenter radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
-                [menuEntriesPath closePath];
-                [_optionHighlightColor set] ;
-                // and fill it
-                [menuEntriesPath fill] ;
-                [_optionSeparatorColor set] ;
-                [menuEntriesPath stroke] ;
-                [menuEntriesPath removeAllPoints];
-            }
+            // draw an arc (perc is a certain percentage ; something between 0 and 1
+            [menuEntriesPath appendBezierPathWithArcWithCenter:offsetCenter radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+            [menuEntriesPath appendBezierPathWithArcWithCenter:offsetCenter radius:_innerRadius startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+            [menuEntriesPath closePath];
+            [_optionHighlightColor set] ;
+            // and fill it
+            [menuEntriesPath fill] ;
+            [_optionSeparatorColor set] ;
+            [menuEntriesPath stroke] ;
+            [menuEntriesPath removeAllPoints];
+
             closePath = FALSE;
             continue;
         }
@@ -311,7 +345,7 @@
     
     if (position != 0)
     {
-        [_optionRingColor set] ;
+        [_optionBackgroundColor set] ;
         // and fill it
         [menuEntriesPath fill] ;
         [_optionSeparatorColor set] ;
@@ -358,6 +392,11 @@
     else
         textColor = [NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1];
     
+    NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    [style setAlignment:NSCenterTextAlignment];
+    //        NSFont *font = [fontManager fontWithFamily:@"Helvetica Neue" traits:NSBoldFontMask weight:0 size:60];
+    NSDictionary* attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[self textFont], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor colorWithCalibratedRed:0 green:0.4 blue:0.2 alpha:1], NSForegroundColorAttributeName, nil];
+    
     _textImage = [[NSImage alloc] initWithSize:boundsRect.size];
     [_textImage lockFocus];
     
@@ -366,7 +405,7 @@
     for (index = 0; index < objectCount; index++) {
         float radAngle;
         int pos = objectCount - 1 - index;
-        NSString *string = [[_circleInput optionObjects] objectAtIndex:index];
+        NSString *string = [[_optionInput optionObjects] objectAtIndex:index];
         if (pos == 0)
             radAngle = 0;
         else
@@ -376,17 +415,16 @@
         radAngle *=2;
         
         NSRect textRect;
-        textRect.origin.x = offsetCenter.x + distance * cos(radAngle) - 200;
-        textRect.origin.x += (textRect.origin.x - offsetCenter.x)/distance*5;
+        textRect.size = [string sizeWithAttributes:attrs];
+
+        textRect.origin.x = offsetCenter.x + distance * cos(radAngle) - textRect.size.width/2;
+        textRect.origin.x += (textRect.origin.x - offsetCenter.x)/distance*0.5;
         
-        textRect.origin.y = offsetCenter.y + distance * sin(radAngle) - _textFontSize/2;
-//        textRect.origin.y -= (distance - ((textRect.origin.y - offsetCenter.y) + distance))/(distance/2);
-        textRect.size.width = 400;
-        textRect.size.height = _textFontSize*1.2;
-        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [style setAlignment:NSCenterTextAlignment];
-        //        NSFont *font = [fontManager fontWithFamily:@"Helvetica Neue" traits:NSBoldFontMask weight:0 size:60];
-        NSDictionary* attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[self textFont], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor colorWithCalibratedRed:0 green:0.4 blue:0.2 alpha:1], NSForegroundColorAttributeName, nil];
+        textRect.origin.y = offsetCenter.y + distance * sin(radAngle) ;
+        float offset = offsetCenter.y - distance;
+        float adjustment = (distance*2 - (textRect.origin.y-offset))/25;
+        textRect.origin.y -= adjustment;
+
         [string drawInRect:textRect withAttributes:attrs];
     }
     
@@ -395,33 +433,46 @@
         [self generateHoverImages];
 }
 
+- (void)setBaseImage:(NSImage *)baseCircleImage
+{
+    _baseImage = baseCircleImage;
+    [self drawIntoImage];
+}
+
 - (void)drawRect:(NSRect)rect {
     NSRect boundsRect = [self bounds];
-    int objectCount = [[_circleInput optionObjects] count];
+    int objectCount = [[_optionInput optionObjects] count];
     if (!objectCount)
         return;
-    float radiusWithRoomForHover = [_circleInput radius]-4;
+
+    NSRect circleBoundsRect = _imageDrawRect;
+//    NSRect circleBoundsRect = boundsRect;
+//    circleBoundsRect.origin.x -= [_image size].width/2-_center.x;
+//    circleBoundsRect.origin.y -= [_image size].height/2-_center.y;
+    
+    NSRect intersectRect = NSIntersectionRect(rect, circleBoundsRect);
+    if (NSEqualRects(NSZeroRect, intersectRect))
+        return;
+    
+    float radiusWithRoomForHover = [_optionInput radius]-4;
     float arcAngleOffset = (180.0 / (float)objectCount);
     float degAngle;
     float scaledAlpha = _currentAlpha;
     if (!_active)
         scaledAlpha *= 0.33;
-    if (_baseCircleImage)
-        _image = _baseCircleImage;
     
-    // debug see the view container translucently
-    //    NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect ];
-    //    [[[NSColor whiteColor] colorWithAlphaComponent:0.5] set];
-    //    [path fill];
+    NSRect imageRect = intersectRect;
+    if (boundsRect.size.width > boundsRect.size.height)
+        imageRect.origin.x -= (boundsRect.size.width - boundsRect.size.height)/2;
+    else if (boundsRect.size.height > boundsRect.size.width)
+        imageRect.origin.y -= (boundsRect.size.height - boundsRect.size.width)/2;
     
-    boundsRect.origin.x -= [_image size].width/2-_center.x;
-    boundsRect.origin.y -= [_image size].height/2-_center.y;
-    [_image drawInRect:_imageDrawRect fromRect:NSMakeRect(0, 0, [_image size].width, [_image size].height)
+    [_image drawInRect:intersectRect fromRect:imageRect
              operation: NSCompositeSourceOver
               fraction: scaledAlpha];
 
     
-    NSDictionary *selectedIndexesDict = [_circleInput selectedIndexes];
+    NSDictionary *selectedIndexesDict = [_optionInput selectedIndexes];
     NSEnumerator *enumer = [selectedIndexesDict objectEnumerator];
     NSNumber *selectedIndexNum = [enumer nextObject];
     while (selectedIndexNum)
@@ -454,14 +505,14 @@
         selectedIndexNum = [enumer nextObject];
     }
         //    NSLog(@"drawing rect: %f, %f, %f, %f",rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    NSDictionary *hoverIndexesDict = [_circleInput hoverIndexes];
+    NSDictionary *hoverIndexesDict = [_optionInput hoverIndexes];
     enumer = [hoverIndexesDict objectEnumerator];
     selectedIndexNum = [enumer nextObject];
     while (selectedIndexNum)
     {
         int hoverIndex = [selectedIndexNum intValue];
 
-        if (hoverIndex == OLKCircleOptionMultiInputInvalidSelection)
+        if (hoverIndex == OLKOptionMultiInputInvalidSelection)
         {
             selectedIndexNum = [enumer nextObject];
             continue;
@@ -481,9 +532,16 @@
         NSBezierPath *aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
         [aimedLetterHighlightPath setLineWidth:2] ;
         
+        float hoverOuter = (radiusWithRoomForHover - _innerRadius)/12;
+        float hoverInner = (radiusWithRoomForHover - _innerRadius)/8;
+        if (hoverOuter > 4)
+        {
+            hoverOuter = 4;
+            hoverInner = 6;
+        }
         // draw an arc (perc is a certain percentage ; something between 0 and 1
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover + (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover - (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover + hoverOuter startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover - hoverInner startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
         [aimedLetterHighlightPath closePath];
         [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
         [aimedLetterHighlightPath fill];
@@ -491,8 +549,8 @@
         [aimedLetterHighlightPath stroke];
         aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
         [aimedLetterHighlightPath setLineWidth:1] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - (radiusWithRoomForHover - _innerRadius)/12 startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + (radiusWithRoomForHover - _innerRadius)/8 startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - hoverOuter startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + hoverInner startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
         [aimedLetterHighlightPath closePath];
         [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
         [aimedLetterHighlightPath fill];
@@ -501,10 +559,10 @@
         selectedIndexNum = [enumer nextObject];
     }
     
-    if (_baseCircleImage)
+    if (_baseImage)
         return;
     
-    [_textImage drawInRect:boundsRect fromRect:NSMakeRect(0, 0, [_textImage size].width, [_textImage  size].height)
+    [_textImage drawInRect:intersectRect fromRect:imageRect
                  operation: NSCompositeSourceOver
                   fraction: scaledAlpha];
     

@@ -20,7 +20,10 @@
 @interface OLKNIControlsContainerView : NSView <OLKHandCursorResponderParent>
 
 - (void)addControl:(OLKNIControl *)control;
+- (void)addControl:(OLKNIControl *)control withExclusiveControl:(OLKHandCursorControl)exclusiveControl;
+- (void)changeControl:(OLKNIControl *)control toExclusiveControl:(OLKHandCursorControl)exclusiveControl;
 - (void)addControlsForLabels:(NSArray *)controlLabels withTemplate:(OLKNIControl *)controlTemplate;
+- (void)addControlsForLabels:(NSArray *)controlLabels withTemplate:(OLKNIControl *)controlTemplate exclusiveControl:(OLKHandCursorControl)exclusiveControl;
 - (NSRect)layoutControlsEvenly:(NSRect)containRect forControls:(NSRange)controlRange;
 - (void)removeControl:(OLKNIControl *)control;
 - (void)removeAllControls;
@@ -36,5 +39,6 @@
 @property (nonatomic) NSObject <OLKNIControlsContainerViewDelegate> * delegate;
 @property (nonatomic) BOOL enabled;
 @property (nonatomic) BOOL active;
+@property (nonatomic) OLKHandCursorControl defaultCursorControl; // default is OLKHandCursorControlPeerAndChildren
 
 @end

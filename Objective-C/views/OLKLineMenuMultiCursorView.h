@@ -1,19 +1,19 @@
 //
-//  OLKCircleMenuMultiCursorView.h
+//  OLKLineMenuMultiCursorView.h
 //  OpenLeapKit
 //
-//  Created by Tyler Zetterstrom on 2013-12-10.
-//  Copyright (c) 2013 Tyler Zetterstrom. All rights reserved.
+//  Created by Tyler Zetterstrom on 2014-02-10.
+//  Copyright (c) 2014 Tyler Zetterstrom. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
+#import "OLKLineOptionMultiCursorInput.h"
 #import "OLKMenuMultiCursorView.h"
-#import "OLKCircleOptionMultiCursorInput.h"
 #import "OLKHandCursorResponder.h"
 
-@interface OLKCircleMenuMultiCursorView : NSView <OLKHandCursorResponderParent, OLKOptionMultiCursorInputDatasource, OLKColorThemeableMenuMultiCursorView, OLKImageThemeableMenuMultiCursorView, OLKTextMenuMultiCursorView>
+@interface OLKLineMenuMultiCursorView : NSView <OLKHandCursorResponderParent, OLKOptionMultiCursorInputDatasource, OLKColorThemeableMenuMultiCursorView, OLKImageThemeableMenuMultiCursorView, OLKTextMenuMultiCursorView>
 
-- (NSPoint)positionRelativeToCenter:(NSPoint)position convertFromView:(NSView *)view;
+- (void)redraw;
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer> *)handView;
 - (NSPoint)convertToInputCursorPos:(NSPoint)cursorPos fromView:(NSView <OLKHandContainer>*)handView;
 - (void)removeFromSuperHandCursorResponder;
@@ -27,12 +27,9 @@
 
 @property (nonatomic) NSObject <OLKHandCursorResponderParent> *superHandCursorResponder;
 
-@property (nonatomic) OLKCircleOptionMultiCursorInput *optionInput;
+@property (nonatomic) OLKLineOptionMultiCursorInput *optionInput;
 @property (nonatomic) BOOL active;
 @property (nonatomic) BOOL maintainProportion;
-
-@property (nonatomic) NSPoint center;
-@property (nonatomic) CGFloat innerRadius;
 
 @property (nonatomic) NSImage *baseImage;
 @property (nonatomic) NSImage *hoverImage;
@@ -47,11 +44,6 @@
 @property (nonatomic) NSColor *optionSeparatorColor;
 @property (nonatomic) NSColor *optionHoverColor;
 @property (nonatomic) NSColor *optionHighlightColor;
-@property (nonatomic) NSColor *optionInnerHighlightColor;
 @property (nonatomic) NSColor *optionSelectColor;
-
-@property (nonatomic) NSColor *fillCenterColor;
-
-@property (nonatomic) NSSet *highlightPositions;
 
 @end

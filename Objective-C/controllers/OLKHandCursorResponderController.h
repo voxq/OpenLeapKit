@@ -17,7 +17,9 @@
 - (void)removeCursorTracking:(NSView <OLKHandContainer> *)handView;
 - (void)removeAllCursorTracking;
 
+@property (nonatomic) BOOL reset;
 @property (nonatomic, readonly) NSArray *subHandCursorResponders;
+@property (nonatomic, readonly) NSDictionary *controllingCursorResponders;
 
 @property (nonatomic) NSObject <OLKHandCursorResponderParent> *superHandCursorResponder;
 

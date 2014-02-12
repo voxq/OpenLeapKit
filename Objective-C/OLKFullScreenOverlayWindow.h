@@ -18,5 +18,5 @@
 - (NSSize)determinePointSizeFromDesiredPhysicalSize:(NSSize)desiredPhysicalSize;
 
 @property (nonatomic) BOOL useFullScreenBounds;
-
+@property (nonatomic) BOOL canBeKey;
 @end

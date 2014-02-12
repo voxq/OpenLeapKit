@@ -56,6 +56,7 @@
 @property (nonatomic) BOOL requiresReset;
 
 @property (nonatomic) NSView <OLKHandContainer> *controllingHandView;
+@property (nonatomic) NSView <OLKHandContainer> *prevControllingHandView;
 @property (nonatomic) BOOL activated;
 @property (nonatomic) float alpha;
 @property (nonatomic) NSPoint switcherPosition;

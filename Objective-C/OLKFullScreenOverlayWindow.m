@@ -13,6 +13,7 @@ static float const inchesToMM = 25.4;
 @implementation OLKFullScreenOverlayWindow
 
 @synthesize useFullScreenBounds = _useFullScreenBounds;
+@synthesize canBeKey = _canBeKey;
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
@@ -48,11 +49,12 @@ static float const inchesToMM = 25.4;
 
 - (BOOL)canBecomeKeyWindow
 {
-    return NO;
+    return _canBeKey;
 }
 
 - (void)resetToDefaultConfig
 {
+    _canBeKey = NO;
     _useFullScreenBounds = NO;
     [self setBackingType:NSBackingStoreBuffered];
 	[self setStyleMask:NSUtilityWindowMask | NSNonactivatingPanelMask];

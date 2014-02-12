@@ -187,9 +187,12 @@ static float const OLKVertScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 
 - (void)resetSwitcherToBeginPosition
 {
+    NSRect switcherDrawRect;
+    switcherDrawRect.origin = self.switcherDrawPosition;
+    switcherDrawRect.size = self.switcherOnImg.size;
+    [self.parentView setNeedsDisplayInRect:switcherDrawRect];
     self.switcherPosition = NSMakePoint([self switcherXPos], [self switcherBeginYPos]);
     [self.parentView setNeedsDisplayInRect:self.halfwayCatcherDrawRect];
-    self.sliding = TRUE;
     [self.parentView setNeedsDisplayInRect:self.beginCatcherDrawRect];
     self.sliding = FALSE;
 }

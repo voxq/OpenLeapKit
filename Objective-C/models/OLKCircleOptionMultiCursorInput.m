@@ -7,6 +7,7 @@
 //
 
 #import "OLKCircleOptionMultiCursorInput.h"
+#import "OLKRepeatTracker.h"
 
 @interface OLKCircleOptionCursorTracking : NSObject
 
@@ -49,10 +50,10 @@
     if (self = [super init])
     {
         _requiresMoveToInner = YES;
-        _hoverIndex = OLKCircleOptionMultiInputInvalidSelection;
-        _selectedIndex = OLKCircleOptionMultiInputInvalidSelection;
-        _prevHoverIndex = OLKCircleOptionMultiInputInvalidSelection;
-        _prevSelectedIndex = OLKCircleOptionMultiInputInvalidSelection;
+        _hoverIndex = OLKOptionMultiInputInvalidSelection;
+        _selectedIndex = OLKOptionMultiInputInvalidSelection;
+        _prevHoverIndex = OLKOptionMultiInputInvalidSelection;
+        _prevSelectedIndex = OLKOptionMultiInputInvalidSelection;
     }
     return self;
 }
@@ -72,13 +73,17 @@
 }
 
 @synthesize delegate = _delegate;
+@synthesize datasource = _datasource;
 
+@synthesize superHandCursorResponder = _superHandCursorResponder;
+
+@synthesize size = _size;
 @synthesize radius = _radius;
-@synthesize thresholdForReenter = _thresholdForReenter;
-@synthesize thresholdForHit = _thresholdForHit;
+@synthesize thresholdForPrepRestrike = _thresholdForPrepRestrike;
+@synthesize thresholdForStrike = _thresholdForStrike;
 @synthesize thresholdForRepeat = _thresholdForRepeat;
-@synthesize thresholdForCenter = _thresholdForCenter;
-@synthesize applyThresholdsAsFactorsToRadius = _applyThresholdsAsFactorsToRadius;
+@synthesize thresholdForStrictReset = _thresholdForStrictReset;
+@synthesize applyThresholdsAsFactors = _applyThresholdsAsFactors;
 
 @synthesize enableRepeatTracking = _enableRepeatTracking;
 
@@ -99,20 +104,20 @@
 
 - (void)resetToDefaults
 {
-    _applyThresholdsAsFactorsToRadius = YES;
+    _applyThresholdsAsFactors = YES;
     if (_useInverse)
     {
         _thresholdForRepeat = 6.0/7.0;
-        _thresholdForHit = 1;
-        _thresholdForCenter = 1+1.0/3.0;
+        _thresholdForStrike = 1;
+        _thresholdForStrictReset = 1+1.0/3.0;
     }
     else
     {
-        _thresholdForHit = 6.0/7.0;
+        _thresholdForStrike = 6.0/7.0;
         _thresholdForRepeat = 1;
-        _thresholdForCenter = 1.0/3.0;
+        _thresholdForStrictReset = 1.0/3.0;
     }
-    _thresholdForReenter = 15;
+    _thresholdForPrepRestrike = 15;
     _radius = 1;
 }
 
@@ -121,26 +126,26 @@
     if (useInverse != _useInverse)
     {
         float oldValue = _thresholdForRepeat;
-        _thresholdForRepeat = _thresholdForHit;
-        _thresholdForHit = oldValue;
-        if (_applyThresholdsAsFactorsToRadius)
+        _thresholdForRepeat = _thresholdForStrike;
+        _thresholdForStrike = oldValue;
+        if (_applyThresholdsAsFactors)
         {
             if (useInverse)
-                _thresholdForCenter = 1+_thresholdForCenter;
+                _thresholdForStrictReset = 1+_thresholdForStrictReset;
             else
-                _thresholdForCenter = _thresholdForCenter-1;
+                _thresholdForStrictReset = _thresholdForStrictReset-1;
         }
     }
     _useInverse = useInverse;
 }
 
-- (void)setRequiresMoveToInner:(BOOL)requiresMoveToInner cursorContext:(id)cursorContext
+- (void)setRequiresMoveToPrepRestrikeZone:(BOOL)requiresMoveToInner cursorContext:(id)cursorContext
 {
     OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
     [cursorTracking setRequiresMoveToInner:requiresMoveToInner];
 }
 
-- (void)setRequiresMoveToCenter:(BOOL)requiresMoveToCenter cursorContext:(id)cursorContext
+- (void)setRequiresMoveToStrictResetZone:(BOOL)requiresMoveToCenter cursorContext:(id)cursorContext
 {
     OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
     [cursorTracking setRequiresMoveToCenter:requiresMoveToCenter];
@@ -198,7 +203,13 @@
     return [NSDictionary dictionaryWithDictionary:hovers];
 }
 
-- (void)removeCursorContext:(id)cursorContext
+- (void)removeFromSuperHandCursorResponder
+{
+    if (_superHandCursorResponder)
+        [_superHandCursorResponder removeHandCursorResponder:self];
+}
+
+- (void)removeCursorTracking:(id)cursorContext
 {
     NSMutableDictionary *newDict = [NSMutableDictionary dictionaryWithDictionary:_cursorTrackings];
     [newDict removeObjectForKey:cursorContext];
@@ -206,19 +217,26 @@
         _cursorTrackings = [NSDictionary dictionaryWithDictionary:newDict];
 }
 
+- (void)resetCurrentCursorTracking:(id)cursorContext
+{
+    OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
+    [cursorTracking setRequiresMoveToInner:TRUE];
+    [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
+    [cursorTracking setHoverIndex:OLKOptionMultiInputInvalidSelection];
+    [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
+    [cursorTracking setSelectedIndex:OLKOptionMultiInputInvalidSelection];
+}
+
 - (void)resetCurrentCursorTracking
 {
-    NSEnumerator *enumer = [_cursorTrackings keyEnumerator];
-    id key = [enumer nextObject];
-    while (key)
+    NSEnumerator *enumer = [_cursorTrackings objectEnumerator];
+    for (OLKCircleOptionCursorTracking *cursorTracking in enumer)
     {
-        OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:key];
         [cursorTracking setRequiresMoveToInner:TRUE];
         [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
-        [cursorTracking setHoverIndex:OLKCircleOptionMultiInputInvalidSelection];
+        [cursorTracking setHoverIndex:OLKOptionMultiInputInvalidSelection];
         [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
-        [cursorTracking setSelectedIndex:OLKCircleOptionMultiInputInvalidSelection];
-        key = [enumer nextObject];
+        [cursorTracking setSelectedIndex:OLKOptionMultiInputInvalidSelection];
     }
 }
 
@@ -236,6 +254,36 @@
 {
     OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
     [cursorTracking setEnableRepeatTracking:enableRepeatTracking];
+}
+
+- (float)angleForPosition:(NSPoint)cursorPos
+{
+    float oOverA = (cursorPos.y)/(cursorPos.x);
+    float degree = atan(oOverA) + M_PI_2;
+    degree *= (180/M_PI);
+    if (cursorPos.x < 0)
+        degree = 180-degree;
+    else
+        degree = 360 - degree;
+    
+    degree += 180;
+    if (degree >=360)
+        degree -= 360;
+    
+    return degree;
+}
+
+- (id)objectAtPosition:(NSPoint)position
+{
+    if (!_optionObjects || !_optionObjects.count)
+        return nil;
+    
+    return [self objectAtAngle:[self angleForPosition:position]];
+}
+
+- (int)indexAtPosition:(NSPoint)position
+{
+    return [self indexAtAngle:[self angleForPosition:position]];
 }
 
 - (id)objectAtAngle:(float)degree
@@ -261,62 +309,62 @@
 
 - (BOOL)distanceInRepeatZone:(float)distance
 {
-    if (_applyThresholdsAsFactorsToRadius)
+    if (_applyThresholdsAsFactors)
     {
         if (_useInverse)
-            return (distance <= _thresholdForHit * _radius && distance >= _thresholdForRepeat * _radius);
+            return (distance <= _thresholdForStrike * _radius && distance >= _thresholdForRepeat * _radius);
         
-        return (distance <= _thresholdForRepeat * _radius && distance >= _thresholdForHit * _radius);
+        return (distance <= _thresholdForRepeat * _radius && distance >= _thresholdForStrike * _radius);
     }
     if (_useInverse)
-        return (distance <= _thresholdForHit && distance >= _thresholdForRepeat);
+        return (distance <= _thresholdForStrike && distance >= _thresholdForRepeat);
     
-    return (distance <= _thresholdForRepeat && distance >= _thresholdForHit);
+    return (distance <= _thresholdForRepeat && distance >= _thresholdForStrike);
 }
 
 - (BOOL)distanceInPreparedToStrikeZone:(float)distance
 {
-    if (_applyThresholdsAsFactorsToRadius)
+    if (_applyThresholdsAsFactors)
     {
         if (_useInverse)
-            return (distance > _thresholdForHit * _radius);
+            return (distance > _thresholdForStrike * _radius);
         
-        return (distance < _thresholdForHit*_radius);
+        return (distance < _thresholdForStrike*_radius);
     }
     if (_useInverse)
-        return (distance > _thresholdForHit);
+        return (distance > _thresholdForStrike);
     
-    return (distance < _thresholdForHit);
+    return (distance < _thresholdForStrike);
 }
 
 - (BOOL)distanceReenteredPreparedToStrikeZone:(float)distance
 {
-    if (_applyThresholdsAsFactorsToRadius)
+    if (_applyThresholdsAsFactors)
     {
         if (_useInverse)
-            return (distance > _thresholdForHit * _radius + _thresholdForReenter);
+            return (distance > _thresholdForStrike * _radius + _thresholdForPrepRestrike);
         
-        return (distance < _thresholdForHit*_radius - _thresholdForReenter);
+        return (distance < _thresholdForStrike*_radius - _thresholdForPrepRestrike);
     }
     if (_useInverse)
-        return (distance > _thresholdForHit + _thresholdForReenter);
+        return (distance > _thresholdForStrike + _thresholdForPrepRestrike);
     
-    return (distance < _thresholdForHit - _thresholdForReenter);
+    return (distance < _thresholdForStrike - _thresholdForPrepRestrike);
 }
 
 -(BOOL)distanceInCenterZone:(float)distance
 {
-    if (_applyThresholdsAsFactorsToRadius)
+    if (_applyThresholdsAsFactors)
     {
         if (_useInverse)
-            return (distance > _thresholdForCenter * _radius);
+            return (distance > _thresholdForStrictReset * _radius);
         
-        return (distance < _thresholdForCenter*_radius);
+        return (distance < _thresholdForStrictReset*_radius);
     }
     if (_useInverse)
-        return (distance > _thresholdForCenter);
+        return (distance > _thresholdForStrictReset);
     
-    return (distance < _thresholdForCenter);
+    return (distance < _thresholdForStrictReset);
 }
 
 - (NSDictionary *)objectCoordinates
@@ -340,7 +388,14 @@
     return [NSDictionary dictionaryWithDictionary:coordinateObjects];
 }
 
-- (void)setCursorPos:(NSPoint)cursorPos cursorContext:(id)cursorContext
+- (NSPoint)convertToLocalCursorPos:(NSPoint)cursorPos fromView:(NSView <OLKHandContainer>*)handView
+{
+    if (![_datasource respondsToSelector:@selector(convertToInputCursorPos:fromView:)])
+        return cursorPos;
+    return [_datasource convertToInputCursorPos:cursorPos fromView:handView];
+}
+
+- (OLKCircleOptionCursorTracking *)createOrGetTracking:(NSPoint)cursorPos withContext:(id)cursorContext
 {
     OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
     if (!cursorTracking)
@@ -354,81 +409,83 @@
         [cursorTracking setEnableRepeatTracking:[self enableRepeatTracking]];
     }
     [cursorTracking setCursorPos:cursorPos];
+    return cursorTracking;
+}
 
-    float oOverA = (cursorPos.y)/(cursorPos.x);
-    float degree = atan(oOverA) + M_PI_2;
-    degree *= (180/M_PI_2);
-    degree /= 2;
-    if (cursorPos.x < 0)
-        degree = 180-degree;
-    else
-        degree = 360 - degree;
+- (BOOL)handleRepeatTracking:(OLKCircleOptionCursorTracking *)cursorTracking index:(int)index withCursorContext:(id)cursorContext
+{
+    OLKRepeatTracker *repeatTracker = cursorTracking.repeatTracker;
     
-    degree += 180;
-    if (degree >=360)
-        degree -= 360;
+    if (!repeatTracker || ![repeatTracker isRepeating])
+        return FALSE;
     
-    int index = [self indexAtAngle:degree];
-    
-    [cursorTracking setLastUpdateCursorDistance:sqrtf(cursorPos.x*cursorPos.x + cursorPos.y*cursorPos.y)];
-    float lastDist = [cursorTracking lastUpdateCursorDistance];
-    OLKRepeatTracker *repeatTracker = [cursorTracking repeatTracker];
-    
-    if (repeatTracker && [repeatTracker isRepeating])
+    if ([self distanceInRepeatZone:cursorTracking.lastUpdateCursorDistance])
     {
-        if ([self distanceInRepeatZone:lastDist])
+        if ([repeatTracker detectRepeatOfObject:[NSNumber numberWithInt:index]])
         {
-            if (![repeatTracker detectRepeatOfObject:[NSNumber numberWithInt:index]])
-                return;
-            
             if ([_delegate respondsToSelector:@selector(repeatTriggered:sender:cursorContext:)])
                 [_delegate repeatTriggered:index sender:self cursorContext:cursorContext];
         }
-        else
-        {
-            [repeatTracker setIsRepeating:NO];
-            if ([_delegate respondsToSelector:@selector(repeatEnded:sender:cursorContext:)])
-                [_delegate repeatEnded:index sender:self cursorContext:cursorContext];
-        }
+        return TRUE;
     }
-    BOOL requiresMoveToInner = [cursorTracking requiresMoveToInner];
-    BOOL requiresMoveToCenter = [cursorTracking requiresMoveToCenter];
-    
-    if ([self distanceInPreparedToStrikeZone:lastDist])
+
+    [repeatTracker setIsRepeating:NO];
+    if ([_delegate respondsToSelector:@selector(repeatEnded:sender:cursorContext:)])
+        [_delegate repeatEnded:index sender:self cursorContext:cursorContext];
+
+    return FALSE;
+}
+
+- (void)handlePreparedToStrike:(OLKCircleOptionCursorTracking *)cursorTracking index:(int)index cursorContext:(id)cursorContext
+{
+    if (cursorTracking.requiresMoveToInner && [self distanceReenteredPreparedToStrikeZone:cursorTracking.lastUpdateCursorDistance])
     {
-        if (requiresMoveToInner && [self distanceReenteredPreparedToStrikeZone:lastDist])
-        {
-            [cursorTracking setRequiresMoveToInner:NO];
-            if ([_delegate respondsToSelector:@selector(cursorMovedToInner:cursorContext:)])
-                [_delegate cursorMovedToInner:self cursorContext:cursorContext];
-        }
-        
-        if (requiresMoveToCenter && [self distanceInCenterZone:lastDist])
-        {
-            [cursorTracking setRequiresMoveToCenter:NO];
-            if ([_delegate respondsToSelector:@selector(cursorMovedToCenter:cursorContext:)])
-                [_delegate cursorMovedToCenter:self cursorContext:cursorContext];
-        }
-        
-        if ([cursorTracking hoverIndex] != index)
-        {
-            [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
-            [cursorTracking setHoverIndex:index];
-            if ([_delegate respondsToSelector:@selector(hoverIndexChanged:sender:cursorContext:)])
-                [_delegate hoverIndexChanged:index sender:self cursorContext:cursorContext];
-        }
-        if ([cursorTracking selectedIndex] != OLKCircleOptionMultiInputInvalidSelection)
-        {
-            [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
-            [cursorTracking setSelectedIndex:OLKCircleOptionMultiInputInvalidSelection];
-            if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:cursorContext:)])
-                [_delegate selectedIndexChanged:OLKCircleOptionMultiInputInvalidSelection sender:self cursorContext:cursorContext];
-        }
-        
+        [cursorTracking setRequiresMoveToInner:NO];
+        if ([_delegate respondsToSelector:@selector(cursorMovedToPrepRestrikeZone:cursorContext:)])
+            [_delegate cursorMovedToPrepRestrikeZone:self cursorContext:cursorContext];
+    }
+    
+    if (cursorTracking.requiresMoveToCenter && [self distanceInCenterZone:cursorTracking.lastUpdateCursorDistance])
+    {
+        [cursorTracking setRequiresMoveToCenter:NO];
+        if ([_delegate respondsToSelector:@selector(cursorMovedToStrictResetZone:cursorContext:)])
+            [_delegate cursorMovedToStrictResetZone:self cursorContext:cursorContext];
+    }
+    
+    if ([cursorTracking hoverIndex] != index)
+    {
+        [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
+        [cursorTracking setHoverIndex:index];
+        if ([_delegate respondsToSelector:@selector(hoverIndexChanged:sender:cursorContext:)])
+            [_delegate hoverIndexChanged:index sender:self cursorContext:cursorContext];
+    }
+    if ([cursorTracking selectedIndex] != OLKOptionMultiInputInvalidSelection)
+    {
+        [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
+        [cursorTracking setSelectedIndex:OLKOptionMultiInputInvalidSelection];
+        if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:cursorContext:)])
+            [_delegate selectedIndexChanged:OLKOptionMultiInputInvalidSelection sender:self cursorContext:cursorContext];
+    }
+}
+
+- (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer> *)cursorContext
+{
+    OLKCircleOptionCursorTracking *cursorTracking = [self createOrGetTracking:cursorPos withContext:cursorContext];
+    
+    int index = [self indexAtPosition:cursorPos];
+    
+    [cursorTracking setLastUpdateCursorDistance:sqrtf(cursorPos.x*cursorPos.x + cursorPos.y*cursorPos.y)];
+
+    if ([self handleRepeatTracking:cursorTracking index:index withCursorContext:cursorContext])
+        return;
+    
+    if ([self distanceInPreparedToStrikeZone:cursorTracking.lastUpdateCursorDistance])
+    {
+        [self handlePreparedToStrike:cursorTracking index:index cursorContext:cursorContext];
         return;
     }
     
-    if (requiresMoveToInner)
+    if (cursorTracking.requiresMoveToInner)
         return;
     
     [cursorTracking setRequiresMoveToInner:YES];
@@ -438,8 +495,8 @@
     if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:cursorContext:)])
         [_delegate selectedIndexChanged:index sender:self cursorContext:cursorContext];
     
-    if (repeatTracker)
-        [repeatTracker initRepeatWithObject:[NSNumber numberWithInt:index]];
+    if (cursorTracking.repeatTracker)
+        [cursorTracking.repeatTracker initRepeatWithObject:[NSNumber numberWithInt:index]];
 }
 
 - (NSArray *)cursorPositions

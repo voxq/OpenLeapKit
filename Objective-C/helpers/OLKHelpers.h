@@ -42,5 +42,7 @@
 
 // Maps leap positions to a view, using the device range with supplied offset, and horizontal angle to calculate .
 + (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view proximityOffset:(float)proximityOffset rangeOffset:(float)rangeOffset percentRangeOfMaxWidth:(float)percentRangeOfMaxWidth forLeapDevice:(LeapDevice *)leapDevice;
++ (float)distanceToDepthBoundary:(LeapVector *)position leapDevice:(LeapDevice *)leapDevice;
++ (float)distanceToWidthBoundary:(LeapVector *)position leapDevice:(LeapDevice *)leapDevice;
 
 @end
