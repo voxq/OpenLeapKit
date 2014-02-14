@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F0E69CE18ACC9F100BF0074 /* OLKSimplePointableHandView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F0E69CC18ACC9F100BF0074 /* OLKSimplePointableHandView.h */; };
+		2F0E69CF18ACC9F100BF0074 /* OLKSimplePointableHandView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F0E69CD18ACC9F100BF0074 /* OLKSimplePointableHandView.m */; };
 		2F0FE34E187729DE00DF174D /* OLKSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F0FE34D187729DE00DF174D /* OLKSlider.m */; };
 		2F0FE350187729EA00DF174D /* OLKSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F0FE34F187729EA00DF174D /* OLKSlider.h */; };
 		2F16EA0518576993000FB1C0 /* OLKCircleOptionMultiCursorInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F16EA0318576992000FB1C0 /* OLKCircleOptionMultiCursorInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -92,6 +94,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2F0E69CC18ACC9F100BF0074 /* OLKSimplePointableHandView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKSimplePointableHandView.h; sourceTree = "<group>"; };
+		2F0E69CD18ACC9F100BF0074 /* OLKSimplePointableHandView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKSimplePointableHandView.m; sourceTree = "<group>"; };
 		2F0FE34D187729DE00DF174D /* OLKSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKSlider.m; path = views/OLKSlider.m; sourceTree = "<group>"; };
 		2F0FE34F187729EA00DF174D /* OLKSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKSlider.h; path = views/OLKSlider.h; sourceTree = "<group>"; };
 		2F16EA0318576992000FB1C0 /* OLKCircleOptionMultiCursorInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKCircleOptionMultiCursorInput.h; sourceTree = "<group>"; };
@@ -299,6 +303,8 @@
 				2FEDD73F17CC9D3600165DD2 /* OLKHandsContainerViewController.m */,
 				2FEDD72B17CC97B500165DD2 /* OLKSimpleVectHandView.h */,
 				2FEDD72C17CC97B500165DD2 /* OLKSimpleVectHandView.m */,
+				2F0E69CC18ACC9F100BF0074 /* OLKSimplePointableHandView.h */,
+				2F0E69CD18ACC9F100BF0074 /* OLKSimplePointableHandView.m */,
 			);
 			path = HandsContainerView;
 			sourceTree = "<group>";
@@ -380,6 +386,7 @@
 				2F4DDE3C18A9402C009E1FFB /* OLKOptionMultiCursorInput.h in Headers */,
 				2F4DDE4018A956E5009E1FFB /* OLKLineOptionMultiCursorInput.h in Headers */,
 				2F0FE350187729EA00DF174D /* OLKSlider.h in Headers */,
+				2F0E69CE18ACC9F100BF0074 /* OLKSimplePointableHandView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +487,7 @@
 				2F382FE218918122009C9280 /* OLKHoverButton.m in Sources */,
 				2F4DDE3818A91CE8009E1FFB /* OLKLineMenuMultiCursorView.m in Sources */,
 				2F4DDE4118A956E5009E1FFB /* OLKLineOptionMultiCursorInput.m in Sources */,
+				2F0E69CF18ACC9F100BF0074 /* OLKSimplePointableHandView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

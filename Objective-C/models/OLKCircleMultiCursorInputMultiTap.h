@@ -11,6 +11,7 @@
 typedef enum {
     OLKIntentStrikeCheckStateThresholdReached,
     OLKIntentStrikeCheckStateNotRepeat,
+    OLKIntentStrikeCheckStateRepeat,
     OLKIntentStrikeCheckStateConfirmed,
     OLKIntentStrikeCheckStateNonIntended
 } OLKIntentStrikeCheckState;

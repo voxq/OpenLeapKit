@@ -10,6 +10,7 @@
 #import "OLKOptionMultiCursorInput.h"
 #import "OLKHandCursorResponder.h"
 #import "OLKHoverButton.h"
+#import "OLKRepeatTracker.h"
 
 @interface OLKLineOptionMultiCursorInput : NSObject <OLKOptionMultiCursorInput>
 
@@ -26,6 +27,7 @@
 - (int)hoverIndex:(id)cursorContext;
 - (int)prevSelectedIndex:(id)cursorContext;
 - (int)prevHoverIndex:(id)cursorContext;
+- (OLKRepeatTracker *)repeatTrackerFor:(id)cursorContext;
 - (NSDictionary *)selectedIndexes;
 - (NSDictionary *)hoverIndexes;
 - (void)resetCurrentCursorTracking:(NSView <OLKHandContainer> *)handView;
@@ -51,5 +53,6 @@
 @property (nonatomic) BOOL applyThresholdsAsFactors;
 @property (nonatomic) BOOL enableRepeatTracking;
 @property (nonatomic) BOOL vertical;
+@property (nonatomic) BOOL active;
 
 @end

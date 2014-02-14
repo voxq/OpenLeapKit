@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "OLKOptionMultiCursorInput.h"
 #import "OLKHandCursorResponder.h"
+#import "OLKRepeatTracker.h"
 
 @interface OLKCircleOptionMultiCursorInput : NSObject <OLKOptionMultiCursorInput>
 
@@ -25,6 +26,7 @@
 - (void)setRequiresMoveToPrepRestrikeZone:(BOOL)requiresMoveToInner cursorContext:(id)cursorContext;
 - (void)setRequiresMoveToStrictResetZone:(BOOL)requiresMoveToCenter cursorContext:(id)cursorContext;
 - (int)selectedIndex:(id)cursorContext;
+- (OLKRepeatTracker *)repeatTrackerFor:(id)cursorContext;
 - (int)hoverIndex:(id)cursorContext;
 - (int)prevSelectedIndex:(id)cursorContext;
 - (int)prevHoverIndex:(id)cursorContext;
@@ -52,6 +54,7 @@
 
 @property (nonatomic) CGFloat radius;
 @property (nonatomic) NSSize size;
+@property (nonatomic) BOOL active;
 
 @end
 

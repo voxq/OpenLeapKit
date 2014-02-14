@@ -40,11 +40,24 @@
 - (OLKHand *)manufactureHand:(LeapHand *)leapHand;
 @end
 
+typedef enum
+{
+    OLKHandCursorPosTypePalm,
+    OLKHandCursorPosTypeLongFingerTip,
+    OLKHandCursorPosTypeLongFingerTipRelative,
+    OLKHandCursorPosTypeLongFingerTipPalmAdapt
+}
+OLKHandContainerCursorPositionType;
+
 @protocol OLKHandContainer <NSObject, NSCopying>
 
 @property (nonatomic) OLKHand *hand;
 @property (nonatomic) NSView *spaceView;
 @property (nonatomic) BOOL enabled;
+@property (nonatomic) OLKHandContainerCursorPositionType cursorType;
+@property (nonatomic) NSPoint activePoint;
+@property (nonatomic) NSPoint centerPoint;
+
 
 @end
 
@@ -97,6 +110,10 @@ typedef enum {
 - (LeapVector *)palmPosition;
 - (LeapVector *)direction;
 - (LeapVector *)palmNormal;
+
+- (LeapVector *)longFingerTipPos;
+- (LeapVector *)longFingerTipRelativePos;
+- (LeapVector *)longFingerTipPalmPosAdapt;
 
 @property (nonatomic) LeapHand *leapHand;
 @property (nonatomic) LeapFrame *leapFrame;

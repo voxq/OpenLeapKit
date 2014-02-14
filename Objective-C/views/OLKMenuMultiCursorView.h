@@ -17,6 +17,7 @@
 @property (nonatomic) NSObject <OLKOptionMultiCursorInput> *optionInput;
 @property (nonatomic) BOOL active;
 @property (nonatomic) BOOL maintainProportion;
+@property (nonatomic) BOOL showSelection;
 
 @end
 

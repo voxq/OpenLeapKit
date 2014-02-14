@@ -87,6 +87,7 @@
 
 @synthesize optionObjects = _optionObjects;
 @synthesize size = _size;
+@synthesize active = _active;
 
 - (id)init
 {
@@ -101,6 +102,7 @@
 
 - (void)resetToDefaults
 {
+    _active = YES;
     _applyThresholdsAsFactors = YES;
     _thresholdForStrike = 2;
     _thresholdForRepeat = 5;
@@ -142,6 +144,14 @@
 {
     OLKLineOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
     return [cursorTracking prevHoverIndex];
+}
+
+- (OLKRepeatTracker *)repeatTrackerFor:(id)cursorContext
+{
+    OLKLineOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
+    if (!cursorTracking)
+        return nil;
+    return cursorTracking.repeatTracker;
 }
 
 - (NSDictionary *)selectedIndexes

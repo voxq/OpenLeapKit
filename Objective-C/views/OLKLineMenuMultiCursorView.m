@@ -17,6 +17,7 @@
 }
 
 @synthesize superHandCursorResponder = _superHandCursorResponder;
+@synthesize subHandCursorResponders = _subHandCursorResponders;
 
 @synthesize optionInput = _optionInput;
 
@@ -32,7 +33,7 @@
 @synthesize optionSelectColor = _optionSelectColor;
 @synthesize baseImage = _baseImage;
 @synthesize hoverImage = _hoverImage;
-
+@synthesize showSelection = _showSelection;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -54,6 +55,20 @@
 
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
 {
+}
+
+- (void)setActive:(BOOL)active
+{
+    _active = active;
+    [_optionInput removeAllCursorTracking];
+}
+
+- (NSArray *)subHandCursorResponders
+{
+    if (!_active)
+        return nil;
+    
+    return _subHandCursorResponders;
 }
 
 - (void)setOptionInput:(OLKLineOptionMultiCursorInput *)optionInput
@@ -238,6 +253,36 @@
     [self drawIntoImage];
 }
 
+- (void)drawSelections:(float)alpha
+{
+    int objectCount = _optionInput.optionObjects.count;
+    if (!objectCount)
+        return;
+    
+    NSBezierPath *selectEntriesPath = [NSBezierPath bezierPath] ;
+    [selectEntriesPath setLineWidth: 4 ] ;
+    
+    NSDictionary *selectedIndexesDict = [_optionInput selectedIndexes];
+    NSEnumerator *enumer = [selectedIndexesDict objectEnumerator];
+    for (NSNumber *selectedIndexNum in enumer)
+    {
+        int selectedIndex = [selectedIndexNum intValue];
+        if (selectedIndex < objectCount && selectedIndex >= 0)
+        {
+            NSRect optionRect = [_optionInput optionRectForIndex:selectedIndex];
+            optionRect.origin.x += _imageDrawRect.origin.x;
+            optionRect.origin.y += _imageDrawRect.origin.y;
+            [selectEntriesPath appendBezierPathWithRect:optionRect];
+        }
+    }
+    
+    if (selectedIndexesDict.count)
+    {
+        [[_optionSelectColor colorWithAlphaComponent:alpha*[_optionSelectColor alphaComponent]] set] ;
+        [selectEntriesPath fill] ;
+    }
+}
+
 - (void)drawRect:(NSRect)rect {
     NSRect boundsRect = [self bounds];
     int objectCount = _optionInput.optionObjects.count;
@@ -257,28 +302,8 @@
              operation: NSCompositeSourceOver
               fraction: scaledAlpha];
     
-    NSBezierPath *selectEntriesPath = [NSBezierPath bezierPath] ;
-    [selectEntriesPath setLineWidth: 4 ] ;
-
-    NSDictionary *selectedIndexesDict = [_optionInput selectedIndexes];
-    NSEnumerator *enumer = [selectedIndexesDict objectEnumerator];
-    for (NSNumber *selectedIndexNum in enumer)
-    {
-        int selectedIndex = [selectedIndexNum intValue];
-        if (selectedIndex < objectCount && selectedIndex >= 0)
-        {
-            NSRect optionRect = [_optionInput optionRectForIndex:selectedIndex];
-            optionRect.origin.x += _imageDrawRect.origin.x;
-            optionRect.origin.y += _imageDrawRect.origin.y;
-            [selectEntriesPath appendBezierPathWithRect:optionRect];
-        }
-    }
-
-    if (selectedIndexesDict.count)
-    {
-        [[_optionSelectColor colorWithAlphaComponent:scaledAlpha*[_optionSelectColor alphaComponent]] set] ;
-        [selectEntriesPath fill] ;
-    }
+    if (_showSelection)
+        [self drawSelections:scaledAlpha];
     
     if (_baseImage)
         return;

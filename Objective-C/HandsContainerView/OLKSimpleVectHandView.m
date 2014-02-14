@@ -38,7 +38,6 @@
 @implementation OLKSimpleVectHandView
 {
     NSMutableArray *_fingerBases;
-    NSPoint _centerPoint;
 }
 
 @synthesize enabled = _enabled;
@@ -57,6 +56,9 @@
 @synthesize enableStable = _enableStable;
 @synthesize palmColor = _palmColor;
 @synthesize enableSphere = _enableSphere;
+@synthesize cursorType = _cursorType;
+@synthesize centerPoint = _centerPoint;
+@synthesize activePoint = _activePoint;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -76,6 +78,7 @@
         _enableStable = YES;
         _enabled = YES;
         _enableSphere = YES;
+        _cursorType = OLKHandCursorPosTypeLongFingerTipPalmAdapt;
     }
     
     return self;
@@ -421,11 +424,16 @@
     
 }
 
-- (void)drawRect:(NSRect)dirtyRect
+- (void)setFrame:(NSRect)frameRect
 {
+    [super setFrame:frameRect];
     _centerPoint.x = (_bounds.origin.x + _bounds.size.width)/2;
     _centerPoint.y = (_bounds.origin.y + _bounds.size.height)/2;
+    _activePoint = _centerPoint;
+}
 
+- (void)drawRect:(NSRect)dirtyRect
+{
     if (!_enabled)
         return;
     

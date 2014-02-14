@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "OLKHandsContainerViewController.h"
+#import "OLKRepeatTracker.h"
 
 static int const OLKOptionMultiInputInvalidSelection = -1;
 
@@ -44,11 +45,13 @@ static int const OLKOptionMultiInputInvalidSelection = -1;
 - (int)hoverIndex:(id)cursorContext;
 - (int)prevSelectedIndex:(id)cursorContext;
 - (int)prevHoverIndex:(id)cursorContext;
+- (OLKRepeatTracker *)repeatTrackerFor:(id)cursorContext;
 - (NSDictionary *)selectedIndexes;
 - (NSDictionary *)hoverIndexes;
 - (void)resetCurrentCursorTracking:(NSView <OLKHandContainer> *)handView;
 - (void)removeCursorTracking:(NSView <OLKHandContainer> *)handView;
 - (NSArray *)cursorPositions;
+
 @property (nonatomic) NSObject <OLKOptionMultiCursorInputDelegate> *delegate;
 
 @property (nonatomic) NSArray *optionObjects;
@@ -60,5 +63,6 @@ static int const OLKOptionMultiInputInvalidSelection = -1;
 @property (nonatomic) float thresholdForStrictReset;
 @property (nonatomic) BOOL applyThresholdsAsFactors;
 @property (nonatomic) BOOL enableRepeatTracking;
+@property (nonatomic) BOOL active;
 
 @end

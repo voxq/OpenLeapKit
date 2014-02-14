@@ -19,6 +19,7 @@
 @property (nonatomic) BOOL isRepeating;
 @property (nonatomic) int repeatRate;
 @property (nonatomic) int repeatCycles;
+@property (nonatomic) int repeatedCountAtSpeed;
 @property (nonatomic) int repeatedCount;
 @property (nonatomic) int repeatAccelOnCycles;
 @property (nonatomic) int repeatAccelAmt;

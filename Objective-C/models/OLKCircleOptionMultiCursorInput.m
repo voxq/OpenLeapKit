@@ -90,6 +90,7 @@
 @synthesize optionObjects = _optionObjects;
 
 @synthesize useInverse = _useInverse;
+@synthesize active = _active;
 
 - (id)init
 {
@@ -105,6 +106,8 @@
 - (void)resetToDefaults
 {
     _applyThresholdsAsFactors = YES;
+    _active = YES;
+
     if (_useInverse)
     {
         _thresholdForRepeat = 6.0/7.0;
@@ -173,6 +176,14 @@
 {
     OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
     return [cursorTracking prevHoverIndex];
+}
+
+- (OLKRepeatTracker *)repeatTrackerFor:(id)cursorContext;
+{
+    OLKCircleOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
+    if (!cursorTracking)
+        return NO;
+    return cursorTracking.repeatTracker;
 }
 
 - (NSDictionary *)selectedIndexes

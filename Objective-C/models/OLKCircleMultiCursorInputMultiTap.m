@@ -169,6 +169,9 @@
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView<OLKHandContainer> *)cursorContext
 {
     int selectedIndexBefore = [super selectedIndex:cursorContext];
+    OLKRepeatTracker *repeatTrack = [super repeatTrackerFor:cursorContext];
+    int repeatCountBefore = repeatTrack.repeatedCount;
+    BOOL repeatingBefore = repeatTrack.isRepeating;
     
     [super setCursorTracking:cursorPos withHandView:cursorContext];
 
@@ -177,6 +180,21 @@
     if (selectedIndexBefore == OLKOptionMultiInputInvalidSelection && [super selectedIndex:cursorContext] != OLKOptionMultiInputInvalidSelection)
     {
         [self startIntentionalStrikeCheck:cursorPos cursorContext:cursorContext];
+        return;
+    }
+
+    if (repeatCountBefore && repeatingBefore)
+    {
+        if (!repeatTrack.isRepeating)
+            [self removeIntentStrikeCheck:cursorContext];
+        return;
+    }
+    
+    if (!repeatCountBefore && repeatTrack.repeatedCount)
+    {
+        [intentStrikeCheck setState:OLKIntentStrikeCheckStateRepeat];
+        if ([_multiTapDelegate respondsToSelector:@selector(strikeConfirmed:cursorContext:)])
+            [_multiTapDelegate strikeConfirmed:self cursorContext:cursorContext];
         return;
     }
 

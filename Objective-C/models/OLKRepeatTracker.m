@@ -14,6 +14,7 @@
 @synthesize repeatRate = _repeatRate;
 @synthesize repeatCycles = _repeatCycles;
 @synthesize repeatedCount = _repeatedCount;
+@synthesize repeatedCountAtSpeed = _repeatedCountAtSpeed;
 @synthesize repeatAccelOnCycles = _repeatAccelOnCycles;
 @synthesize repeatAccelAmt = _repeatAccelAmt;
 @synthesize repeatAccel = _repeatAccel;
@@ -40,6 +41,7 @@
 - (void)reset
 {
     _repeatCycles = 0;
+    _repeatedCountAtSpeed = 0;
     _repeatedCount = 0;
     _isRepeating = FALSE;
 }
@@ -47,7 +49,9 @@
 - (void)initRepeatWithObject:(id)object
 {
     _repeatAccel = 1;
-    _repeatedCount = 1;
+    _repeatedCount = 0;
+    _repeatedCountAtSpeed = 0;
+    
     _isRepeating = YES;
     _repeatCycles = 0;
     _repeatObject = object;
@@ -77,11 +81,12 @@
     
     //            NSLog(@"Repeating!");
     _repeatedCount ++;
-    if (_repeatAccel > 0 && _repeatedCount>_repeatAccelOnCycles*(_repeatAccel/_repeatAccelAmt))
+    _repeatedCountAtSpeed ++;
+    if (_repeatAccel > 0 && _repeatedCountAtSpeed>_repeatAccelOnCycles*(_repeatAccel/_repeatAccelAmt))
     {
         //                NSLog(@"Accelerating repeat!");
         _repeatAccel += _repeatAccelAmt;
-        _repeatedCount = 0;
+        _repeatedCountAtSpeed = 0;
     }
     _repeatCycles = 0;
     return YES;

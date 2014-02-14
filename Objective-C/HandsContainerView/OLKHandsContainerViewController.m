@@ -510,12 +510,27 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     }
     
     NSRect oldRect = [handView frame];
-    LeapHand *leapHand = [hand leapHand];
-    LeapVector *palmPosition;
-    if (_useStabilized)
-        palmPosition = [leapHand stabilizedPalmPosition];
-    else
-        palmPosition = [leapHand palmPosition];
+
+    LeapVector *position;
+    switch (handView.cursorType)
+    {
+        case OLKHandCursorPosTypeLongFingerTip:
+            position = [hand longFingerTipPos];
+            break;
+            
+        case OLKHandCursorPosTypeLongFingerTipRelative:
+            position = [hand longFingerTipRelativePos];
+            break;
+            
+        case OLKHandCursorPosTypeLongFingerTipPalmAdapt:
+            position = [hand longFingerTipPalmPosAdapt];
+            break;
+            
+        case OLKHandCursorPosTypePalm:
+        default:
+            position = [hand palmPosition];
+            break;
+    }
     
     NSView *spaceView;
     if (_overrideSpaceViews)
@@ -534,14 +549,14 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     if (_calibrator)
     {
         NSRect convertRect;
-        convertRect.origin = [_calibrator screenPosFromLeapPos:palmPosition];
+        convertRect.origin = [_calibrator screenPosFromLeapPos:position];
         convertRect.size = oldRect.size;
         oldRect = [[spaceView window] convertRectFromScreen:convertRect];
     }
     else if (_useInteractionBox)
-        oldRect.origin = [OLKHelpers convertInteractionBoxLeapPos:palmPosition toConfinedView:spaceView forFrame:[leapHand frame] trim:_trimInteraction];
+        oldRect.origin = [OLKHelpers convertInteractionBoxLeapPos:position toConfinedView:spaceView forFrame:[[hand leapHand] frame] trim:_trimInteraction];
     else
-        oldRect.origin = [OLKHelpers convertLeapPos:palmPosition toConfinedView:spaceView proximityOffset:_proximityOffset rangeOffset:_rangeOffset percentRangeOfMaxWidth:_percentRangeOfMaxWidth forLeapDevice:_leapDevice];
+        oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedView:spaceView proximityOffset:_proximityOffset rangeOffset:_rangeOffset percentRangeOfMaxWidth:_percentRangeOfMaxWidth forLeapDevice:_leapDevice];
 
     oldRect.origin.x -= [handView frame].size.width/2;
     oldRect.origin.y -= [handView frame].size.height/2;

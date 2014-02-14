@@ -11,6 +11,7 @@
 @implementation OLKCircleMenuMultiCursorView
 {
     NSArray *_hoverImages;
+    NSArray *_selectImages;
     NSImage *_image;
     NSImage *_textImage;
     NSRect _imageDrawRect;
@@ -39,6 +40,7 @@
 @synthesize baseImage = _baseImage;
 @synthesize hoverImage = _hoverImage;
 @synthesize fillCenterColor = _fillCenterColor;
+@synthesize showSelection = _showSelection;
 
 // Many of the methods here are similar to those in the simpler DotView example.
 // See that example for detailed explanations; here we will discuss those
@@ -63,6 +65,20 @@
 
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
 {
+}
+
+- (void)setActive:(BOOL)active
+{
+    _active = active;
+    [_optionInput removeAllCursorTracking];
+}
+
+- (NSArray *)subHandCursorResponders
+{
+    if (!_active)
+        return nil;
+    
+    return _subHandCursorResponders;
 }
 
 - (void)setOptionInput:(OLKCircleOptionMultiCursorInput *)optionInput
@@ -115,22 +131,33 @@
         return;
     }
     _hoverImage = hoverImage;
-    [self generateHoverImages];
+    _hoverImages = [self generateRotatedImages:_hoverImage];
 }
 
-- (NSImage*)hoverImageRotatedByDegrees:(CGFloat)degrees
+- (void)setSelectedImage:(NSImage *)selectedImage
 {
-    NSImage *hoverImage = [self scaledHoverImage];
-    NSSize rotatedSize = NSMakeSize(hoverImage.size.height, hoverImage.size.width) ;
+    if (selectedImage == nil)
+    {
+        _selectImages = nil;
+        return;
+    }
+    _selectedImage = selectedImage;
+    _selectImages = [self generateRotatedImages:_selectedImage];
+}
+
+- (NSImage*)imageRotatedByDegrees:(CGFloat)degrees image:(NSImage *)origImage
+{
+    NSImage *image = [self scaledImage:origImage];
+    NSSize rotatedSize = NSMakeSize(image.size.height, image.size.width) ;
     NSImage* rotatedImage = [[NSImage alloc] initWithSize:rotatedSize] ;
     
     NSAffineTransform* transform = [NSAffineTransform transform] ;
 
-//    [transform scaleBy:_optionInput.radius/_hoverImage.size.width];
+//    [transform scaleBy:_optionInput.radius/_image.size.width];
     // In order to avoid clipping the image, translate
     // the coordinate system to its center
-    [transform translateXBy:+hoverImage.size.width/2
-                        yBy:+hoverImage.size.height/2] ;
+    [transform translateXBy:+image.size.width/2
+                        yBy:+image.size.height/2] ;
     // then rotate
     [transform rotateByDegrees:degrees] ;
     // Then translate the origin system back to
@@ -140,7 +167,7 @@
     
     [rotatedImage lockFocus] ;
     [transform concat] ;
-    [hoverImage drawAtPoint:NSMakePoint(0,0)
+    [image drawAtPoint:NSMakePoint(0,0)
              fromRect:NSZeroRect
             operation:NSCompositeCopy
              fraction:1.0] ;
@@ -149,30 +176,30 @@
     return rotatedImage;
 }
 
-- (NSImage *)scaledHoverImage
+- (NSImage *)scaledImage:(NSImage *)imageToScale
 {
-    NSImage *hoverImage = [[NSImage alloc] initWithSize:NSMakeSize([_optionInput radius]*2, [_optionInput radius]*2)];
-    [hoverImage lockFocus];
-    [_hoverImage drawInRect:NSMakeRect(0, 0, _optionInput.radius*2, _optionInput.radius*2) fromRect:NSMakeRect(0, 0, _hoverImage.size.width, _hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
-    [hoverImage unlockFocus];
-    return hoverImage;
+    NSImage *image = [[NSImage alloc] initWithSize:NSMakeSize([_optionInput radius]*2, [_optionInput radius]*2)];
+    [image lockFocus];
+    [imageToScale drawInRect:NSMakeRect(0, 0, _optionInput.radius*2, _optionInput.radius*2) fromRect:NSMakeRect(0, 0, imageToScale.size.width, imageToScale.size.height) operation:NSCompositeSourceOver fraction:1];
+    [image unlockFocus];
+    return image;
 }
 
 
-- (void)generateHoverImages
+- (NSArray *)generateRotatedImages:(NSImage *)templateImage
 {
-    if (!_hoverImage)
-        return;
+    if (!templateImage)
+        return nil;
     int objectCount = (int)[[_optionInput optionObjects] count];
-    NSMutableArray *hoverImages = [[NSMutableArray alloc] initWithCapacity:objectCount];
+    NSMutableArray *rotImages = [[NSMutableArray alloc] initWithCapacity:objectCount];
     float angleInc = 360.0/(float)objectCount;
     float degAngle = 0;
     for (int i=0; i < objectCount; i++)
     {
-        [hoverImages addObject:[self hoverImageRotatedByDegrees:degAngle]];
+        [rotImages addObject:[self imageRotatedByDegrees:degAngle image:templateImage]];
         degAngle += angleInc;
     }
-    _hoverImages = [NSArray arrayWithArray:hoverImages];
+    return [NSArray arrayWithArray:rotImages];
 }
 
 - (NSPoint)positionRelativeToCenter:(NSPoint)position convertFromView:(NSView *)view
@@ -188,12 +215,24 @@
 
 - (void)setFrame:(NSRect)frameRect
 {
+    BOOL redraw;
+    if (NSEqualSizes(frameRect.size, self.frame.size))
+        redraw = NO;
+    else
+        redraw = YES;
+
     [super setFrame:frameRect];
+    if (!redraw)
+        return;
+    
     [self drawIntoImage];
+    _hoverImages = [self generateRotatedImages:_hoverImage];
+    _selectImages = [self generateRotatedImages:_selectedImage];
 }
 
 - (void)configDefaultView
 {
+    _showSelection = YES;
     _maintainProportion = YES;
     _optionHighlightColor = [NSColor colorWithCalibratedRed:0.5 green:0.5 blue:1 alpha:1];
     _optionSeparatorColor = [NSColor colorWithCalibratedRed:0.8 green:1 blue:0.8 alpha:1];
@@ -222,7 +261,8 @@
 - (void)redraw
 {
     [self drawIntoImage];
-    [self generateHoverImages];
+    _hoverImages = [self generateRotatedImages:_hoverImage];
+    _selectImages = [self generateRotatedImages:_selectedImage];
     self.needsDisplay = YES;
 }
 
@@ -429,14 +469,121 @@
     }
     
     [_textImage unlockFocus];
-    if (_hoverImage)
-        [self generateHoverImages];
 }
 
 - (void)setBaseImage:(NSImage *)baseCircleImage
 {
     _baseImage = baseCircleImage;
     [self drawIntoImage];
+}
+
+- (void)drawSelections:(float)alpha arcAngleOffset:(float)arcAngleOffset radius:(float)radius
+{
+    int objectCount = [[_optionInput optionObjects] count];
+    if (!objectCount)
+        return;
+    
+    float degAngle;
+    NSDictionary *selectedIndexesDict = [_optionInput selectedIndexes];
+    NSEnumerator *enumer = [selectedIndexesDict objectEnumerator];
+    for (NSNumber *selectedIndexNum in enumer)
+    {
+        int selectedIndex = [selectedIndexNum intValue];
+        if (selectedIndex == OLKOptionMultiInputInvalidSelection)
+            continue;
+        
+        if (selectedIndex < objectCount && selectedIndex >= 0)
+        {
+            if (_selectedImage)
+            {
+                int highlightCheck = objectCount-selectedIndex;
+                if (highlightCheck == objectCount)
+                    highlightCheck = 0;
+                NSImage *selectImage = [_selectImages objectAtIndex:highlightCheck];
+                [selectImage drawAtPoint:_imageDrawRect.origin fromRect:NSMakeRect(0,0, selectImage.size.width, selectImage.size.height) operation:NSCompositeSourceOver fraction:1];
+                continue;
+            }
+            NSBezierPath *selPath = [NSBezierPath bezierPath] ;
+            
+            // set some line width
+            
+            [selPath setLineWidth: 2 ] ;
+            
+            // move to the center so that we have a closed slice
+            // size_x and size_y are the height and width of the view
+            
+            degAngle = 360 - (float)arcAngleOffset*2 * (selectedIndex) + 90;
+            
+            [selPath moveToPoint: NSMakePoint( _center.x, _center.y ) ] ;
+            // draw an arc (perc is a certain percentage ; something between 0 and 1
+            [selPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radius startAngle:degAngle-arcAngleOffset  endAngle:degAngle+arcAngleOffset ] ;
+            
+            // close the slice , by drawing a line to the center
+            [selPath lineToPoint: NSMakePoint( _center.x, _center.y ) ] ;
+            
+            [[_optionSelectColor colorWithAlphaComponent:alpha*[_optionSelectColor alphaComponent]] set] ;
+            // and fill it
+            [selPath fill] ;
+        }
+    }   
+}
+
+- (void)drawHover:(float)alpha arcAngleOffset:(float)arcAngleOffset radius:(float)radius
+{
+    int objectCount = [[_optionInput optionObjects] count];
+    if (!objectCount)
+        return;
+    
+    float degAngle;
+
+    NSDictionary *hoverIndexesDict = [_optionInput hoverIndexes];
+    NSEnumerator *enumer = [hoverIndexesDict objectEnumerator];
+    for (NSNumber *selectedIndexNum in enumer)
+    {
+        int hoverIndex = [selectedIndexNum intValue];
+        
+        if (hoverIndex == OLKOptionMultiInputInvalidSelection)
+            continue;
+        
+        if (_hoverImage)
+        {
+            int highlightCheck = objectCount-hoverIndex;
+            if (highlightCheck == objectCount)
+                highlightCheck = 0;
+            NSImage *hoverImage = [_hoverImages objectAtIndex:highlightCheck];
+            [hoverImage drawAtPoint:_imageDrawRect.origin fromRect:NSMakeRect(0,0, hoverImage.size.width, hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
+            continue;
+        }
+        degAngle = 360 - (float)arcAngleOffset*2 * (hoverIndex) + 90;
+        
+        NSBezierPath *aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
+        [aimedLetterHighlightPath setLineWidth:2] ;
+        
+        float hoverOuter = (radius - _innerRadius)/12;
+        float hoverInner = (radius - _innerRadius)/8;
+        if (hoverOuter > 4)
+        {
+            hoverOuter = 4;
+            hoverInner = 6;
+        }
+        // draw an arc (perc is a certain percentage ; something between 0 and 1
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radius + hoverOuter startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radius - hoverInner startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+        [aimedLetterHighlightPath closePath];
+        [[_optionHoverColor colorWithAlphaComponent:alpha] set];
+        [aimedLetterHighlightPath fill];
+        [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:alpha] set];
+        [aimedLetterHighlightPath stroke];
+        aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
+        [aimedLetterHighlightPath setLineWidth:1] ;
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - hoverOuter startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
+        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + hoverInner startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
+        [aimedLetterHighlightPath closePath];
+        [[_optionHoverColor colorWithAlphaComponent:alpha] set];
+        [aimedLetterHighlightPath fill];
+        [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:alpha] set];
+        [aimedLetterHighlightPath stroke];
+    }
 }
 
 - (void)drawRect:(NSRect)rect {
@@ -471,93 +618,11 @@
              operation: NSCompositeSourceOver
               fraction: scaledAlpha];
 
+    if (_showSelection)
+        [self drawSelections:scaledAlpha arcAngleOffset:arcAngleOffset radius:radiusWithRoomForHover];
     
-    NSDictionary *selectedIndexesDict = [_optionInput selectedIndexes];
-    NSEnumerator *enumer = [selectedIndexesDict objectEnumerator];
-    NSNumber *selectedIndexNum = [enumer nextObject];
-    while (selectedIndexNum)
-    {
-        int selectedIndex = [selectedIndexNum intValue];
-        if (selectedIndex < objectCount && selectedIndex >= 0)
-        {
-            NSBezierPath *selPath = [NSBezierPath bezierPath] ;
-            
-            // set some line width
-            
-            [selPath setLineWidth: 2 ] ;
-            
-            // move to the center so that we have a closed slice
-            // size_x and size_y are the height and width of the view
-            
-            degAngle = 360 - (float)arcAngleOffset*2 * (selectedIndex) + 90;
-            
-            [selPath moveToPoint: NSMakePoint( _center.x, _center.y ) ] ;
-            // draw an arc (perc is a certain percentage ; something between 0 and 1
-            [selPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover startAngle:degAngle-arcAngleOffset  endAngle:degAngle+arcAngleOffset ] ;
-            
-            // close the slice , by drawing a line to the center
-            [selPath lineToPoint: NSMakePoint( _center.x, _center.y ) ] ;
-            
-            [[_optionSelectColor colorWithAlphaComponent:scaledAlpha*[_optionSelectColor alphaComponent]] set] ;
-            // and fill it
-            [selPath fill] ;
-        }
-        selectedIndexNum = [enumer nextObject];
-    }
         //    NSLog(@"drawing rect: %f, %f, %f, %f",rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    NSDictionary *hoverIndexesDict = [_optionInput hoverIndexes];
-    enumer = [hoverIndexesDict objectEnumerator];
-    selectedIndexNum = [enumer nextObject];
-    while (selectedIndexNum)
-    {
-        int hoverIndex = [selectedIndexNum intValue];
-
-        if (hoverIndex == OLKOptionMultiInputInvalidSelection)
-        {
-            selectedIndexNum = [enumer nextObject];
-            continue;
-        }
-        if (_hoverImage)
-        {
-            int highlightCheck = objectCount-hoverIndex;
-            if (highlightCheck == objectCount)
-                highlightCheck = 0;
-            NSImage *hoverImage = [_hoverImages objectAtIndex:highlightCheck];
-            [hoverImage drawAtPoint:_imageDrawRect.origin fromRect:NSMakeRect(0,0, hoverImage.size.width, hoverImage.size.height) operation:NSCompositeSourceOver fraction:1];
-            selectedIndexNum = [enumer nextObject];
-            continue;
-        }
-        degAngle = 360 - (float)arcAngleOffset*2 * (hoverIndex) + 90;
-        
-        NSBezierPath *aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
-        [aimedLetterHighlightPath setLineWidth:2] ;
-        
-        float hoverOuter = (radiusWithRoomForHover - _innerRadius)/12;
-        float hoverInner = (radiusWithRoomForHover - _innerRadius)/8;
-        if (hoverOuter > 4)
-        {
-            hoverOuter = 4;
-            hoverInner = 6;
-        }
-        // draw an arc (perc is a certain percentage ; something between 0 and 1
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover + hoverOuter startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:radiusWithRoomForHover - hoverInner startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
-        [aimedLetterHighlightPath closePath];
-        [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
-        [aimedLetterHighlightPath fill];
-        [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
-        [aimedLetterHighlightPath stroke];
-        aimedLetterHighlightPath = [NSBezierPath bezierPath] ;
-        [aimedLetterHighlightPath setLineWidth:1] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius - hoverOuter startAngle:degAngle-arcAngleOffset endAngle:degAngle+arcAngleOffset ] ;
-        [aimedLetterHighlightPath appendBezierPathWithArcWithCenter:NSMakePoint( _center.x, _center.y ) radius:_innerRadius + hoverInner startAngle:degAngle+arcAngleOffset endAngle:degAngle-arcAngleOffset clockwise:YES];
-        [aimedLetterHighlightPath closePath];
-        [[_optionHoverColor colorWithAlphaComponent:scaledAlpha] set];
-        [aimedLetterHighlightPath fill];
-        [[[_optionHoverColor highlightWithLevel:0.8] colorWithAlphaComponent:scaledAlpha] set];
-        [aimedLetterHighlightPath stroke];
-        selectedIndexNum = [enumer nextObject];
-    }
+    [self drawHover:scaledAlpha arcAngleOffset:arcAngleOffset radius:radiusWithRoomForHover];
     
     if (_baseImage)
         return;
