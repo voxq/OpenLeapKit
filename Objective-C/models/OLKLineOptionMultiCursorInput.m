@@ -7,7 +7,6 @@
 //
 
 #import "OLKLineOptionMultiCursorInput.h"
-#import "OLKRepeatTracker.h"
 
 @interface OLKLineOptionCursorTracking : NSObject
 
@@ -190,6 +189,7 @@
 
 - (void)removeCursorTracking:(id)cursorContext
 {
+    [self resetCurrentCursorTracking:cursorContext];
     NSMutableDictionary *newDict = [NSMutableDictionary dictionaryWithDictionary:_cursorTrackings];
     [newDict removeObjectForKey:cursorContext];
     if ([newDict count] < [_cursorTrackings count])
@@ -199,28 +199,31 @@
 - (void)resetCurrentCursorTracking:(id)cursorContext
 {
     OLKLineOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
-    [cursorTracking setRequiresMoveToPrepRestrikeZone:TRUE];
     [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
-    [cursorTracking setHoverIndex:OLKOptionMultiInputInvalidSelection];
+    if ([cursorTracking hoverIndex] != OLKOptionMultiInputInvalidSelection)
+    {
+        [cursorTracking setHoverIndex:OLKOptionMultiInputInvalidSelection];
+        if ([_delegate respondsToSelector:@selector(hoverIndexChanged:sender:cursorContext:)])
+            [_delegate hoverIndexChanged:OLKOptionMultiInputInvalidSelection sender:self cursorContext:cursorContext];
+    }
     [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
-    [cursorTracking setSelectedIndex:OLKOptionMultiInputInvalidSelection];
+    if ([cursorTracking selectedIndex] != OLKOptionMultiInputInvalidSelection)
+    {
+        [cursorTracking setSelectedIndex:OLKOptionMultiInputInvalidSelection];
+        if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:cursorContext:)])
+            [_delegate selectedIndexChanged:OLKOptionMultiInputInvalidSelection sender:self cursorContext:cursorContext];
+    }
 }
 
 - (void)resetCurrentCursorTracking
 {
-    NSEnumerator *enumer = [_cursorTrackings objectEnumerator];
-    for (OLKLineOptionCursorTracking *cursorTracking in enumer)
-    {
-        [cursorTracking setRequiresMoveToPrepRestrikeZone:TRUE];
-        [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
-        [cursorTracking setHoverIndex:OLKOptionMultiInputInvalidSelection];
-        [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
-        [cursorTracking setSelectedIndex:OLKOptionMultiInputInvalidSelection];
-    }
+    for (id key in [_cursorTrackings keyEnumerator])
+        [self resetCurrentCursorTracking:key];
 }
 
 - (void)removeAllCursorTracking
 {
+    [self resetCurrentCursorTracking];
     _cursorTrackings = nil;
 }
 

@@ -40,7 +40,7 @@ static const NSSize defaultFitHandFact = {150, 150};
 @interface OLKSimpleVectHandView : NSView <OLKHandContainer>
 
 @property (nonatomic) OLKHand *hand;
-@property (nonatomic) OLKHandContainerCursorPositionType cursorType;
+@property (nonatomic) OLKHandCursorPosType cursorType;
 @property (nonatomic) NSView *spaceView;
 
 @property (nonatomic) BOOL enabled;

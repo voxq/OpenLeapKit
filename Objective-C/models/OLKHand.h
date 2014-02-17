@@ -47,14 +47,14 @@ typedef enum
     OLKHandCursorPosTypeLongFingerTipRelative,
     OLKHandCursorPosTypeLongFingerTipPalmAdapt
 }
-OLKHandContainerCursorPositionType;
+OLKHandCursorPosType;
 
 @protocol OLKHandContainer <NSObject, NSCopying>
 
 @property (nonatomic) OLKHand *hand;
 @property (nonatomic) NSView *spaceView;
 @property (nonatomic) BOOL enabled;
-@property (nonatomic) OLKHandContainerCursorPositionType cursorType;
+@property (nonatomic) OLKHandCursorPosType cursorType;
 @property (nonatomic) NSPoint activePoint;
 @property (nonatomic) NSPoint centerPoint;
 

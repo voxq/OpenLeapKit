@@ -46,6 +46,7 @@ typedef enum
 
 @optional
 
+- (void)subHandCursorResponderRemovedTracking:(id)handCursorResponder forCursorContext:(id)cursorContext;
 - (NSPoint)convertForChildrenCursorPos:(NSPoint)cursorPos fromView:(NSView <OLKHandContainer>*)handView;
 - (OLKHandCursorControl)controlByHand:(NSView <OLKHandContainer> *)handView ofChild:(id)subHandCursorResponder;
 - (void)controlReleasedByHand:(NSView <OLKHandContainer> *)handView;

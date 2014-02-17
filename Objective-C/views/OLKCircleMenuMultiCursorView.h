@@ -19,7 +19,7 @@
 - (void)removeFromSuperHandCursorResponder;
 - (void)removeCursorTracking:(NSView <OLKHandContainer> *)handView;
 - (void)removeAllCursorTracking;
-
+- (void)subHandCursorResponderRemovedTracking:(id)handCursorResponder forCursorContext:(id)cursorContext;
 - (void)addHandCursorResponder:(id)handCursorResponder;
 - (void)removeHandCursorResponder:(id)handCursorResponder;
 

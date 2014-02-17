@@ -11,7 +11,7 @@
 
 @interface OLKSimplePointableHandView : NSView <OLKHandContainer>
 
-@property (nonatomic, readonly) OLKHandContainerCursorPositionType cursorType;
+@property (nonatomic) OLKHandCursorPosType cursorType;
 
 @property (nonatomic) OLKHand *hand;
 @property (nonatomic) NSView *spaceView;
