@@ -21,6 +21,7 @@
 - (BOOL)escapedHotZone:(NSPoint)position;
 - (void)triggerCompleted;
 - (BOOL)detectCompletion:(NSPoint)position;
+- (void)createButtonImages;
 
 @property (nonatomic) NSImage *buttonHoverImg;
 @property (nonatomic) NSImage *buttonOffImg;
@@ -40,8 +41,10 @@
 @property (nonatomic) NSColor *onColor;
 @property (nonatomic) NSColor *offColor;
 @property (nonatomic) NSColor *hoverColor;
+@property (nonatomic) NSColor *borderColor;
 @property (nonatomic) BOOL useResetEscape;
 @property (nonatomic) BOOL togglesState;
 @property (nonatomic) BOOL on;
+@property (nonatomic) BOOL showBorder;
 
 @end

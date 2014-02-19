@@ -43,6 +43,8 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 @synthesize hovering = _hovering;
 @synthesize requiresReset = _requiresReset;
 @synthesize useResetEscape = _useResetEscape;
+@synthesize showBorder = _showBorder;
+@synthesize borderColor = _borderColor;
 
 - (id)init
 {
@@ -51,6 +53,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         _offColor = [NSColor colorWithCalibratedRed:0.8 green:0.4 blue:0.4 alpha:1];
         _onColor = [NSColor colorWithCalibratedRed:0.4 green:0.8 blue:0.4 alpha:1];
         _hoverColor = [NSColor colorWithCalibratedRed:0.4 green:0.8 blue:0.8 alpha:1];
+        _borderColor = [NSColor blackColor];
         
         _alpha = 1.0;
         _activated = NO;
@@ -58,6 +61,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         _activateAlpha = 0;
         _activated = NO;
         _useResetEscape = NO;
+        _showBorder = NO;
     }
     return self;
 }
@@ -71,6 +75,8 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     copyOfSelf.resetEscapeZone = _resetEscapeZone;
     copyOfSelf.onColor = _onColor;
     copyOfSelf.offColor = _offColor;
+    copyOfSelf.borderColor = _borderColor;
+    copyOfSelf.showBorder = _showBorder;
     copyOfSelf.useResetEscape = _useResetEscape;
     copyOfSelf.togglesState = _togglesState;
     copyOfSelf.on = _on;
@@ -244,8 +250,18 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     }
     else
     {
-        [curColor set];
-        NSRectFill(buttonRect);
+        if (curColor)
+        {
+            [curColor set];
+            NSRectFill(buttonRect);
+        }
+        if (_showBorder && _borderColor)
+        {
+            NSBezierPath *buttonPath = [[NSBezierPath alloc] init];
+            [buttonPath appendBezierPathWithRect:buttonRect];
+            [_borderColor set];
+            [buttonPath stroke];
+        }
     }
     
     if (_activated && !_togglesState)

@@ -84,7 +84,11 @@ typedef enum {
 
 @interface OLKHand : NSObject <NSCopying>
 
++ (BOOL)isLeapHandFingersMissingOrPinch:(LeapHand *)leapHand;
+- (BOOL)fingersMissingOrPinch;
 + (BOOL)isLeapHandFist:(LeapHand *)leapHand;
++ (BOOL)isLeapHandPointing:(LeapHand *)leapHand;
+- (BOOL)isPointing;
 + (LeapMatrix *)transformForHandReference:(LeapHand *)hand;
 
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;

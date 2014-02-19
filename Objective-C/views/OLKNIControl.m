@@ -246,6 +246,8 @@
 
 - (void)draw
 {
+    if (!_visible)
+        return;
     [self drawLabel];
     self.needsRedraw = NO;
 }
@@ -254,6 +256,14 @@
 {
     self.needsRedraw = YES;
     [self.parentView setNeedsDisplayInRect:[self frame]];
+}
+
+- (NSRect)frameWithoutLabel
+{
+    NSRect frameRect;
+    frameRect.size = _size;
+    frameRect.origin = _drawLocation;
+    return frameRect;
 }
 
 - (NSRect)frame
