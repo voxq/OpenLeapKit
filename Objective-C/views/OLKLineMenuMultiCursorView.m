@@ -34,6 +34,7 @@
 @synthesize baseImage = _baseImage;
 @synthesize hoverImage = _hoverImage;
 @synthesize showSelection = _showSelection;
+@synthesize optionTextColor = _optionTextColor;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -136,7 +137,7 @@
     _optionBackgroundColor = [NSColor colorWithCalibratedRed:0.5 green:1 blue:0.5 alpha:1];
     _optionSelectColor = [NSColor colorWithCalibratedRed:1 green:0.3 blue:0.3 alpha:0.5];
     _optionHoverColor = [NSColor colorWithCalibratedRed:0.5 green:0.75 blue:0.95 alpha:1];
-    
+    _optionTextColor = [NSColor colorWithCalibratedRed:0 green:0.4 blue:0.2 alpha:1];
     _currentAlpha = 1.0;
     _textFont = [NSFont fontWithName:@"Helvetica Neue" size:_textFontSize];
     [self redraw];
@@ -228,7 +229,7 @@
     NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [style setAlignment:NSCenterTextAlignment];
     //        NSFont *font = [fontManager fontWithFamily:@"Helvetica Neue" traits:NSBoldFontMask weight:0 size:60];
-    NSDictionary* attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[self textFont], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor colorWithCalibratedRed:0 green:0.4 blue:0.2 alpha:1], NSForegroundColorAttributeName, nil];
+    NSDictionary* attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[self textFont], NSFontAttributeName, style, NSParagraphStyleAttributeName, _optionTextColor, NSForegroundColorAttributeName, nil];
     
     _textImage = [[NSImage alloc] initWithSize:boundsRect.size];
     [_textImage lockFocus];

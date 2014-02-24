@@ -43,6 +43,7 @@
 @property (nonatomic) float textFontSize;
 @property (nonatomic) NSFont *textFont;
 
+@property (nonatomic) NSColor *optionTextColor;
 @property (nonatomic) NSColor *optionBackgroundColor;
 @property (nonatomic) NSColor *optionSeparatorColor;
 @property (nonatomic) NSColor *optionHoverColor;

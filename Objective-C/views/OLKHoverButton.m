@@ -218,7 +218,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     NSColor *curColor;
     
     if (!self.active)
-        currentAlpha /= 2;
+        currentAlpha *= 2.0/3.0;
    
     NSImage *bottomImg = nil;
     if (_on || (_hovering && !_hoverTimeToActivate))
@@ -246,20 +246,20 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         NSRect sourceRect;
         sourceRect.origin = NSZeroPoint;
         sourceRect.size = bottomImg.size;
-        [bottomImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        [bottomImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha];
     }
     else
     {
         if (curColor)
         {
-            [curColor set];
+            [[curColor colorWithAlphaComponent:currentAlpha] set];
             NSRectFill(buttonRect);
         }
         if (_showBorder && _borderColor)
         {
             NSBezierPath *buttonPath = [[NSBezierPath alloc] init];
             [buttonPath appendBezierPathWithRect:buttonRect];
-            [_borderColor set];
+            [[_borderColor colorWithAlphaComponent:currentAlpha] set];
             [buttonPath stroke];
         }
     }
@@ -271,7 +271,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
             NSRect sourceRect;
             sourceRect.origin = NSZeroPoint;
             sourceRect.size = _intButtonActivatedImg.size;
-            [_intButtonActivatedImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+            [_intButtonActivatedImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha];
         }
         else
         {

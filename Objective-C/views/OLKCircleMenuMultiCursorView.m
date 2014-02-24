@@ -41,6 +41,7 @@
 @synthesize hoverImage = _hoverImage;
 @synthesize fillCenterColor = _fillCenterColor;
 @synthesize showSelection = _showSelection;
+@synthesize optionTextColor = _optionTextColor;
 
 // Many of the methods here are similar to those in the simpler DotView example.
 // See that example for detailed explanations; here we will discuss those
@@ -241,7 +242,8 @@
     _optionSelectColor = [NSColor colorWithCalibratedRed:1 green:0.3 blue:0.3 alpha:0.5];
     _optionHoverColor = [NSColor colorWithCalibratedRed:0.5 green:0.75 blue:0.95 alpha:1];
     _fillCenterColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:0.75];
-    
+    _optionTextColor = [NSColor colorWithCalibratedRed:0 green:0.4 blue:0.2 alpha:1];
+
     _currentAlpha = 1.0;
     _innerRadius = [_optionInput  radius] * [_optionInput  thresholdForStrike];
     _textFontSize = ([_optionInput  radius] - _innerRadius)/2;
@@ -435,7 +437,7 @@
     NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [style setAlignment:NSCenterTextAlignment];
     //        NSFont *font = [fontManager fontWithFamily:@"Helvetica Neue" traits:NSBoldFontMask weight:0 size:60];
-    NSDictionary* attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[self textFont], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor colorWithCalibratedRed:0 green:0.4 blue:0.2 alpha:1], NSForegroundColorAttributeName, nil];
+    NSDictionary* attrs = [[NSDictionary alloc] initWithObjectsAndKeys:[self textFont], NSFontAttributeName, style, NSParagraphStyleAttributeName, _optionTextColor, NSForegroundColorAttributeName, nil];
     
     _textImage = [[NSImage alloc] initWithSize:boundsRect.size];
     [_textImage lockFocus];

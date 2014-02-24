@@ -7,6 +7,7 @@
 //
 
 #import "OLKLineOptionMultiCursorInput.h"
+#import <OmniAppKit/NSBezierPath-OAExtensions.h>
 
 @interface OLKLineOptionCursorTracking : NSObject
 
@@ -69,6 +70,7 @@
 @implementation OLKLineOptionMultiCursorInput
 {
     NSDictionary *_cursorTrackings;
+    NSBezierPath *_rectPath;
 }
 
 @synthesize delegate = _delegate;
@@ -215,6 +217,24 @@
     }
 }
 
+- (void)setRectPath
+{
+    _rectPath = [[NSBezierPath alloc] init];
+    [_rectPath appendBezierPathWithRect:NSMakeRect(0, 0, _size.width, _size.height)];
+}
+
+- (void)setSize:(NSSize)size
+{
+    _size = size;
+    [self setRectPath];
+}
+
+- (void)setVertical:(BOOL)vertical
+{
+    _vertical = vertical;
+    [self setRectPath];
+}
+
 - (void)resetCurrentCursorTracking
 {
     for (id key in [_cursorTrackings keyEnumerator])
@@ -252,7 +272,7 @@
     if (_vertical)
     {
         optionDimension = _size.height/_optionObjects.count;
-        optionRect.origin = NSMakePoint(0, _size.height-index*optionDimension);
+        optionRect.origin = NSMakePoint(0, _size.height-index*optionDimension-optionDimension);
         optionRect.size = NSMakeSize(_size.width, optionDimension);
     }
     else
@@ -272,6 +292,7 @@
     {
         optionDimension = _size.height/_optionObjects.count;
         index = position.y/optionDimension;
+        index = _optionObjects.count - 1 - index;
     }
     else
     {
@@ -472,8 +493,20 @@
         cursorTracking = [self createTracking:cursorPos withContext:cursorContext];
     }
     else
-        cursorTracking.cursorPos = cursorPos;
-        
+    {
+        NSPoint intersectPoint;
+        if (!cursorTracking.requiresMoveToPrepRestrikeZone && [_rectPath intersectionWithLine:&intersectPoint lineStart:cursorTracking.cursorPos lineEnd:cursorPos])
+        {
+            NSPoint otherDirIntersectPoint;
+            if ([_rectPath intersectionWithLine:&otherDirIntersectPoint lineStart:cursorPos lineEnd:cursorTracking.cursorPos])
+                intersectPoint = NSMakePoint(intersectPoint.x+(otherDirIntersectPoint.x - intersectPoint.x)/2, intersectPoint.y+(otherDirIntersectPoint.y - intersectPoint.y)/2);
+            
+            cursorPos = intersectPoint;
+        }
+        else
+            cursorTracking.cursorPos = cursorPos;
+    }
+    
     if ([self checkAndHandleRepeatTracking:cursorTracking])
         return;
     

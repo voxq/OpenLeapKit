@@ -47,6 +47,7 @@
 @property (nonatomic) float currentAlpha;
 @property (nonatomic) float inactiveAlphaMultiplier;
 
+@property (nonatomic) NSColor *optionTextColor;
 @property (nonatomic) NSColor *optionBackgroundColor;
 @property (nonatomic) NSColor *optionSeparatorColor;
 @property (nonatomic) NSColor *optionHoverColor;
