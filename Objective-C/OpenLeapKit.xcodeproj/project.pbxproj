@@ -59,6 +59,7 @@
 		2FC917C4185E548B008F36AD /* OLKHorizScratchButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC917C2185E548B008F36AD /* OLKHorizScratchButton.m */; };
 		2FC917C7185E54A4008F36AD /* OLKScratchButtonShell.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC917C5185E54A4008F36AD /* OLKScratchButtonShell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FC917C8185E54A4008F36AD /* OLKScratchButtonShell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC917C6185E54A4008F36AD /* OLKScratchButtonShell.m */; };
+		2FDD863B18BCF3CE001A2226 /* OmniAppKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2F8D06B318B76A2E00C3AED1 /* OmniAppKit.framework */; };
 		2FE3CC26185C7A7D0002876F /* OLKMultiCursorTrackingController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FE3CC24185C7A7D0002876F /* OLKMultiCursorTrackingController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FE3CC27185C7A7D0002876F /* OLKMultiCursorTrackingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE3CC25185C7A7D0002876F /* OLKMultiCursorTrackingController.m */; };
 		2FE5C43A1849E5FF00A00517 /* OLKCircleOptionInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FE5C4381849E5FF00A00517 /* OLKCircleOptionInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -141,6 +142,16 @@
 			dstSubfolderSpec = 6;
 			files = (
 				2F30E30917CF693100F14438 /* libLeap.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FDD863A18BCF3C3001A2226 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2FDD863B18BCF3CE001A2226 /* OmniAppKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,6 +484,7 @@
 				2FEDD70517CC970600165DD2 /* Headers */,
 				2FEDD70617CC970600165DD2 /* Resources */,
 				2F30E30817CF692200F14438 /* CopyFiles */,
+				2FDD863A18BCF3C3001A2226 /* CopyFiles */,
 			);
 			buildRules = (
 			);

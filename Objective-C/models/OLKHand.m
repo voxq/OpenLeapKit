@@ -726,7 +726,9 @@ static OLKHand *gPrevHand=nil;
 //            return nil;
         
         pointFinger = [_leapHand.fingers objectAtIndex:2];
-        if (!pointFinger.isExtended)
+        LeapFinger *finger3 = [_leapHand.fingers objectAtIndex:3];
+        LeapFinger *finger4 = [_leapHand.fingers objectAtIndex:4];
+        if (!pointFinger.isExtended && !finger3.isExtended && !finger4.isExtended)
         {
             pointFinger = [_leapHand.fingers objectAtIndex:1];
             if (!pointFinger.isExtended)

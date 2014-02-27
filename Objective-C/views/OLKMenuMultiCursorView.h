@@ -18,6 +18,7 @@
 @property (nonatomic) BOOL active;
 @property (nonatomic) BOOL maintainProportion;
 @property (nonatomic) BOOL showSelection;
+@property (nonatomic) BOOL fastEdit; // suggests realtime editing required, ie. resizing/reposition with many calls to setFrame.
 
 @end
 
