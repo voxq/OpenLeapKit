@@ -42,6 +42,7 @@
 @synthesize fillCenterColor = _fillCenterColor;
 @synthesize showSelection = _showSelection;
 @synthesize optionTextColor = _optionTextColor;
+@synthesize fastEdit = _fastEdit;
 
 // Many of the methods here are similar to those in the simpler DotView example.
 // See that example for detailed explanations; here we will discuss those

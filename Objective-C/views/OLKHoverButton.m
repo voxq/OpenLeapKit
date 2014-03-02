@@ -54,14 +54,16 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         _onColor = [NSColor colorWithCalibratedRed:0.4 green:0.8 blue:0.4 alpha:1];
         _hoverColor = [NSColor colorWithCalibratedRed:0.4 green:0.8 blue:0.8 alpha:1];
         _borderColor = [NSColor blackColor];
-        
+
+        _offColor = [NSColor whiteColor];
+
         _alpha = 1.0;
         _activated = NO;
         _requiresReset = NO;
         _activateAlpha = 0;
         _activated = NO;
         _useResetEscape = NO;
-        _showBorder = NO;
+        _showBorder = YES;
     }
     return self;
 }

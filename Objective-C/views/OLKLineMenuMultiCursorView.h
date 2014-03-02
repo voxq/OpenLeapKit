@@ -30,6 +30,7 @@
 @property (nonatomic) OLKLineOptionMultiCursorInput *optionInput;
 @property (nonatomic) BOOL active;
 @property (nonatomic) BOOL maintainProportion;
+@property (nonatomic) BOOL fastEdit; // suggests realtime editing required, ie. resizing/reposition with many calls to setFrame.
 
 @property (nonatomic) NSImage *baseImage;
 @property (nonatomic) NSImage *hoverImage;

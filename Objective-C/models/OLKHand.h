@@ -105,6 +105,8 @@ typedef enum {
 - (OLKHandedness)updateHandedness;
 
 - (BOOL)isFist;
+- (BOOL)isLeftHand;
+- (BOOL)isRightHand;
 
 - (OLKHandedness)updateHandednessByThumbTipDistFromPalm;
 - (OLKHandedness)updateHandednessByThumbBasePosToPalm;

@@ -9,7 +9,6 @@
 #import <Cocoa/Cocoa.h>
 #import "OLKOptionMultiCursorInput.h"
 #import "OLKHandCursorResponder.h"
-#import "OLKHoverButton.h"
 #import "OLKRepeatTracker.h"
 
 @interface OLKLineOptionMultiCursorInput : NSObject <OLKOptionMultiCursorInput>

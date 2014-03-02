@@ -607,6 +607,34 @@ static OLKHand *gPrevHand=nil;
     return [OLKHand isLeapHandFist:_leapHand];
 }
 
+- (BOOL)isLeftHand
+{
+    if ([_leapHand respondsToSelector:@selector(isLeft)])
+        return [_leapHand isLeft];
+
+    return [self updateHandedness] == OLKLeftHand;
+}
+
+- (BOOL)isRightHand
+{
+    if ([_leapHand respondsToSelector:@selector(isRight)])
+        return [_leapHand isRight];
+    
+    return [self updateHandedness] == OLKRightHand;
+}
+
+- (LeapFinger *)thumb
+{
+    if ([_leapHand respondsToSelector:@selector(isLeft)])
+        return [_leapHand.fingers objectAtIndex:0];
+
+    if (_thumb)
+        return _thumb;
+    
+    [self updateHandednessByThumbTipAndBaseCombo];
+    return _thumb;
+}
+
 - (OLKHandedness)updateHandednessByThumbTipDistFromPalm
 {
     LeapFinger *thumb=nil;

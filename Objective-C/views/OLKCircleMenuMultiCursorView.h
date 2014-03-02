@@ -30,6 +30,7 @@
 @property (nonatomic) OLKCircleOptionMultiCursorInput *optionInput;
 @property (nonatomic) BOOL active;
 @property (nonatomic) BOOL maintainProportion;
+@property (nonatomic) BOOL fastEdit; // suggests realtime editing required, ie. resizing/reposition with many calls to setFrame.
 
 @property (nonatomic) NSPoint center;
 @property (nonatomic) CGFloat innerRadius;

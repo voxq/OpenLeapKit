@@ -56,6 +56,7 @@ static float const inchesToMM = 25.4;
 {
     _canBeKey = NO;
     _useFullScreenBounds = NO;
+    [self setHidesOnDeactivate:NO];
     [self setBackingType:NSBackingStoreBuffered];
 	[self setStyleMask:NSUtilityWindowMask | NSNonactivatingPanelMask];
     [self setOpaque:NO];

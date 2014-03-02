@@ -332,10 +332,10 @@
 
 - (BOOL)inAnyRepeatZone:(NSPoint)position
 {
-    if (position.x < -_thresholdForStrike-_thresholdForRepeat || position.x > _size.width+_thresholdForRepeat)
+    if (position.x < -_thresholdForStrike-_thresholdForRepeat || position.x > _size.width + _thresholdForStrike + _thresholdForRepeat)
         return FALSE;
     
-    if (position.y < -_thresholdForStrike-_thresholdForRepeat || position.y > _size.height+_thresholdForRepeat)
+    if (position.y < -_thresholdForStrike-_thresholdForRepeat || position.y > _size.height + _thresholdForStrike + _thresholdForRepeat)
         return FALSE;
     
     return TRUE;
@@ -462,22 +462,6 @@
         if ([_delegate respondsToSelector:@selector(cursorMovedToStrictResetZone:cursorContext:)])
             [_delegate cursorMovedToStrictResetZone:self cursorContext:cursorTracking.cursorContext];
     }
-/*
-    if ([cursorTracking hoverIndex] != index)
-    {
-        [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
-        [cursorTracking setHoverIndex:index];
-        if ([_delegate respondsToSelector:@selector(hoverIndexChanged:sender:cursorContext:)])
-            [_delegate hoverIndexChanged:index sender:self cursorContext:cursorTracking.cursorContext];
-    }
- */
-    if ([cursorTracking selectedIndex] != OLKOptionMultiInputInvalidSelection)
-    {
-        [cursorTracking setPrevSelectedIndex:cursorTracking.selectedIndex];
-        [cursorTracking setSelectedIndex:OLKOptionMultiInputInvalidSelection];
-        if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:cursorContext:)])
-            [_delegate selectedIndexChanged:OLKOptionMultiInputInvalidSelection sender:self cursorContext:cursorTracking.cursorContext];
-    }
 }
 
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer> *)cursorContext
@@ -491,6 +475,7 @@
             return;
 
         cursorTracking = [self createTracking:cursorPos withContext:cursorContext];
+        return;
     }
     else
     {

@@ -35,6 +35,7 @@
 @synthesize hoverImage = _hoverImage;
 @synthesize showSelection = _showSelection;
 @synthesize optionTextColor = _optionTextColor;
+@synthesize fastEdit = _fastEdit;
 
 - (id)initWithFrame:(NSRect)frame
 {
