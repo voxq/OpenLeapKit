@@ -40,7 +40,6 @@
 		2F71AD5B185B809F00D63859 /* OLKHandCursorResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F71AD59185B809F00D63859 /* OLKHandCursorResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F71AD5F185B8A9000D63859 /* OLKHandCursorResponderController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F71AD5D185B8A9000D63859 /* OLKHandCursorResponderController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2F71AD60185B8A9000D63859 /* OLKHandCursorResponderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F71AD5E185B8A9000D63859 /* OLKHandCursorResponderController.m */; };
-		2F8D06A818B76A0F00C3AED1 /* OmniAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F8D06A718B76A0F00C3AED1 /* OmniAppKit.framework */; };
 		2FB03BCB184FAF3100BB6B40 /* OLKContextHand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB03BC9184FAF3100BB6B40 /* OLKContextHand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FB03BCC184FAF3100BB6B40 /* OLKContextHand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FB03BCA184FAF3100BB6B40 /* OLKContextHand.m */; };
 		2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -59,11 +58,10 @@
 		2FC917C4185E548B008F36AD /* OLKHorizScratchButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC917C2185E548B008F36AD /* OLKHorizScratchButton.m */; };
 		2FC917C7185E54A4008F36AD /* OLKScratchButtonShell.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FC917C5185E54A4008F36AD /* OLKScratchButtonShell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FC917C8185E54A4008F36AD /* OLKScratchButtonShell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FC917C6185E54A4008F36AD /* OLKScratchButtonShell.m */; };
-		2FDD863B18BCF3CE001A2226 /* OmniAppKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2F8D06B318B76A2E00C3AED1 /* OmniAppKit.framework */; };
+		2FDD48EE18C76DF5005628A8 /* OLKGeometryHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FDD48EC18C76DF5005628A8 /* OLKGeometryHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2FDD48EF18C76DF5005628A8 /* OLKGeometryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FDD48ED18C76DF5005628A8 /* OLKGeometryHelper.m */; };
 		2FE3CC26185C7A7D0002876F /* OLKMultiCursorTrackingController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FE3CC24185C7A7D0002876F /* OLKMultiCursorTrackingController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2FE3CC27185C7A7D0002876F /* OLKMultiCursorTrackingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE3CC25185C7A7D0002876F /* OLKMultiCursorTrackingController.m */; };
-		2FE5C43A1849E5FF00A00517 /* OLKCircleOptionInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FE5C4381849E5FF00A00517 /* OLKCircleOptionInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2FE5C43B1849E5FF00A00517 /* OLKCircleOptionInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5C4391849E5FF00A00517 /* OLKCircleOptionInput.m */; };
 		2FEDD70C17CC970600165DD2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FEDD70B17CC970600165DD2 /* Cocoa.framework */; };
 		2FEDD71617CC970600165DD2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2FEDD71417CC970600165DD2 /* InfoPlist.strings */; };
 		2FEDD71A17CC970600165DD2 /* OpenLeapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEDD71917CC970600165DD2 /* OpenLeapKit.m */; };
@@ -82,58 +80,6 @@
 		2FFC640D1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FFC640B1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		2F8D06B218B76A2E00C3AED1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4AA1E7F908AA764600E2FF6B;
-			remoteInfo = "OmniAppKit (Framework)";
-		};
-		2F8D06B418B76A2E00C3AED1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4AA1E81108AA764700E2FF6B;
-			remoteInfo = OAUnitTests;
-		};
-		2F8D06B618B76A2E00C3AED1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4AA1E81E08AA764700E2FF6B;
-			remoteInfo = OAMakeImageSizeIntegral;
-		};
-		2F8D06B818B76A2E00C3AED1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4AA1E82C08AA764700E2FF6B;
-			remoteInfo = OAPatternColorPicker;
-		};
-		2F8D06BA18B76A2E00C3AED1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3434791511923B54007D0CE5;
-			remoteInfo = OmniAppKitTouch;
-		};
-		2F8D06BC18B76A2E00C3AED1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3401163511E5181A0016ADB3;
-			remoteInfo = OmniAppKitTouchTests;
-		};
-		2F8D06BE18B76A6600C3AED1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4AA1E67A08AA764600E2FF6B;
-			remoteInfo = "OmniAppKit (Framework)";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		2F30E30817CF692200F14438 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -151,7 +97,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2FDD863B18BCF3CE001A2226 /* OmniAppKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,7 +135,6 @@
 		2F71AD5D185B8A9000D63859 /* OLKHandCursorResponderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKHandCursorResponderController.h; sourceTree = "<group>"; };
 		2F71AD5E185B8A9000D63859 /* OLKHandCursorResponderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKHandCursorResponderController.m; sourceTree = "<group>"; };
 		2F8D06A718B76A0F00C3AED1 /* OmniAppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OmniAppKit.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/WordLeap-bnpfpzpypyboadcavjfywazyjfuv/Build/Products/Debug/OmniAppKit.framework"; sourceTree = "<group>"; };
-		2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OmniAppKit.xcodeproj; path = "/Users/tyler/Work/leapmotion/projects/OpenLeapKit/Objective-C/../../../../code/libraries/OmniGroup-master/Frameworks/OmniAppKit/OmniAppKit.xcodeproj"; sourceTree = "<absolute>"; };
 		2FB03BC9184FAF3100BB6B40 /* OLKContextHand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKContextHand.h; sourceTree = "<group>"; };
 		2FB03BCA184FAF3100BB6B40 /* OLKContextHand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKContextHand.m; sourceTree = "<group>"; };
 		2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGestureComponents.h; sourceTree = "<group>"; };
@@ -209,10 +153,10 @@
 		2FC917C2185E548B008F36AD /* OLKHorizScratchButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKHorizScratchButton.m; path = views/OLKHorizScratchButton.m; sourceTree = "<group>"; };
 		2FC917C5185E54A4008F36AD /* OLKScratchButtonShell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OLKScratchButtonShell.h; path = views/OLKScratchButtonShell.h; sourceTree = "<group>"; };
 		2FC917C6185E54A4008F36AD /* OLKScratchButtonShell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLKScratchButtonShell.m; path = views/OLKScratchButtonShell.m; sourceTree = "<group>"; };
+		2FDD48EC18C76DF5005628A8 /* OLKGeometryHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKGeometryHelper.h; sourceTree = "<group>"; };
+		2FDD48ED18C76DF5005628A8 /* OLKGeometryHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKGeometryHelper.m; sourceTree = "<group>"; };
 		2FE3CC24185C7A7D0002876F /* OLKMultiCursorTrackingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKMultiCursorTrackingController.h; sourceTree = "<group>"; };
 		2FE3CC25185C7A7D0002876F /* OLKMultiCursorTrackingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKMultiCursorTrackingController.m; sourceTree = "<group>"; };
-		2FE5C4381849E5FF00A00517 /* OLKCircleOptionInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLKCircleOptionInput.h; sourceTree = "<group>"; };
-		2FE5C4391849E5FF00A00517 /* OLKCircleOptionInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLKCircleOptionInput.m; sourceTree = "<group>"; };
 		2FEDD70817CC970600165DD2 /* OpenLeapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenLeapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FEDD70B17CC970600165DD2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		2FEDD70E17CC970600165DD2 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -243,7 +187,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F8D06A818B76A0F00C3AED1 /* OmniAppKit.framework in Frameworks */,
 				2F30E2FD17CF484300F14438 /* libLeap.dylib in Frameworks */,
 				2FEDD70C17CC970600165DD2 /* Cocoa.framework in Frameworks */,
 			);
@@ -286,19 +229,6 @@
 			name = views;
 			sourceTree = "<group>";
 		};
-		2F8D06AA18B76A2E00C3AED1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				2F8D06B318B76A2E00C3AED1 /* OmniAppKit.framework */,
-				2F8D06B518B76A2E00C3AED1 /* OAUnitTests.octest */,
-				2F8D06B718B76A2E00C3AED1 /* OAMakeImageSizeIntegral */,
-				2F8D06B918B76A2E00C3AED1 /* OAPatternColorPicker.bundle */,
-				2F8D06BB18B76A2E00C3AED1 /* libOmniAppKit.a */,
-				2F8D06BD18B76A2E00C3AED1 /* libOmniAppKitTouchTests.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		2FC0A44F17F45F4F009B4A7D /* controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -315,7 +245,6 @@
 		2FEDD6FE17CC970600165DD2 = {
 			isa = PBXGroup;
 			children = (
-				2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */,
 				2F23D340183E656400DF0490 /* views */,
 				2F30E2FA17CF456600F14438 /* LeapObjectiveC.mm */,
 				2FC0A44F17F45F4F009B4A7D /* controllers */,
@@ -394,6 +323,8 @@
 		2FEDD72D17CC97B500165DD2 /* helpers */ = {
 			isa = PBXGroup;
 			children = (
+				2FDD48EC18C76DF5005628A8 /* OLKGeometryHelper.h */,
+				2FDD48ED18C76DF5005628A8 /* OLKGeometryHelper.m */,
 				2FB65BB317D14828002E1C05 /* OLKGestureComponents.h */,
 				2FB65BB417D14828002E1C05 /* OLKGestureComponents.m */,
 				2FEDD72E17CC97B500165DD2 /* OLKHelpers.h */,
@@ -409,8 +340,6 @@
 				2F4DDE3E18A956E5009E1FFB /* OLKLineOptionMultiCursorInput.h */,
 				2F4DDE3F18A956E5009E1FFB /* OLKLineOptionMultiCursorInput.m */,
 				2F71AD59185B809F00D63859 /* OLKHandCursorResponder.h */,
-				2FE5C4381849E5FF00A00517 /* OLKCircleOptionInput.h */,
-				2FE5C4391849E5FF00A00517 /* OLKCircleOptionInput.m */,
 				2F6E36BE184B5A1700E34155 /* OLKRepeatTracker.h */,
 				2F6E36BF184B5A1700E34155 /* OLKRepeatTracker.m */,
 				2FEDD73117CC97B500165DD2 /* OLKHand.h */,
@@ -442,7 +371,6 @@
 				2FEDD73917CC97B500165DD2 /* OLKHand.h in Headers */,
 				2FB65BB517D14828002E1C05 /* OLKGestureComponents.h in Headers */,
 				2F31B05C1847751F00913C6B /* OLKSliderControl.h in Headers */,
-				2FE5C43A1849E5FF00A00517 /* OLKCircleOptionInput.h in Headers */,
 				2F23D343183E674500DF0490 /* OLKToggleButton.h in Headers */,
 				2F6E36C0184B5A1700E34155 /* OLKRepeatTracker.h in Headers */,
 				2FBD089F184C912B0050494C /* OLKRangeCalibrator.h in Headers */,
@@ -466,6 +394,7 @@
 				2F4DDE3718A91CE8009E1FFB /* OLKLineMenuMultiCursorView.h in Headers */,
 				2F4DDE3A18A91E88009E1FFB /* OLKMenuMultiCursorView.h in Headers */,
 				2F4DDE3C18A9402C009E1FFB /* OLKOptionMultiCursorInput.h in Headers */,
+				2FDD48EE18C76DF5005628A8 /* OLKGeometryHelper.h in Headers */,
 				2F4DDE4018A956E5009E1FFB /* OLKLineOptionMultiCursorInput.h in Headers */,
 				2F0FE350187729EA00DF174D /* OLKSlider.h in Headers */,
 				2F0E69CE18ACC9F100BF0074 /* OLKSimplePointableHandView.h in Headers */,
@@ -489,7 +418,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2F8D06BF18B76A6600C3AED1 /* PBXTargetDependency */,
 			);
 			name = OpenLeapKit;
 			productName = OpenLeapKit;
@@ -515,63 +443,12 @@
 			mainGroup = 2FEDD6FE17CC970600165DD2;
 			productRefGroup = 2FEDD70917CC970600165DD2 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 2F8D06AA18B76A2E00C3AED1 /* Products */;
-					ProjectRef = 2F8D06A918B76A2E00C3AED1 /* OmniAppKit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				2FEDD70717CC970600165DD2 /* OpenLeapKit */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		2F8D06B318B76A2E00C3AED1 /* OmniAppKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = OmniAppKit.framework;
-			remoteRef = 2F8D06B218B76A2E00C3AED1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		2F8D06B518B76A2E00C3AED1 /* OAUnitTests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OAUnitTests.octest;
-			remoteRef = 2F8D06B418B76A2E00C3AED1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		2F8D06B718B76A2E00C3AED1 /* OAMakeImageSizeIntegral */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = OAMakeImageSizeIntegral;
-			remoteRef = 2F8D06B618B76A2E00C3AED1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		2F8D06B918B76A2E00C3AED1 /* OAPatternColorPicker.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OAPatternColorPicker.bundle;
-			remoteRef = 2F8D06B818B76A2E00C3AED1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		2F8D06BB18B76A2E00C3AED1 /* libOmniAppKit.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libOmniAppKit.a;
-			remoteRef = 2F8D06BA18B76A2E00C3AED1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		2F8D06BD18B76A2E00C3AED1 /* libOmniAppKitTouchTests.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libOmniAppKitTouchTests.a;
-			remoteRef = 2F8D06BC18B76A2E00C3AED1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		2FEDD70617CC970600165DD2 /* Resources */ = {
@@ -602,13 +479,13 @@
 				2FC0A44D17F450E1009B4A7D /* OLKGestureRecognizer.m in Sources */,
 				2FC0A45317F45F67009B4A7D /* OLKGestureRecognizerDispatcher.m in Sources */,
 				2F23D344183E674500DF0490 /* OLKToggleButton.m in Sources */,
-				2FE5C43B1849E5FF00A00517 /* OLKCircleOptionInput.m in Sources */,
 				2F6E36C1184B5A1700E34155 /* OLKRepeatTracker.m in Sources */,
 				2FBD08A0184C912B0050494C /* OLKRangeCalibrator.m in Sources */,
 				2FBD08A4184CB9D00050494C /* OLKRangeCalibratorView.m in Sources */,
 				2FBD08AB184CD9A60050494C /* OLKFullScreenOverlayWindow.m in Sources */,
 				2FB03BCC184FAF3100BB6B40 /* OLKContextHand.m in Sources */,
 				2F16EA0618576993000FB1C0 /* OLKCircleOptionMultiCursorInput.m in Sources */,
+				2FDD48EF18C76DF5005628A8 /* OLKGeometryHelper.m in Sources */,
 				2F52478B185779FC00F6BD5E /* OLKCircleMenuMultiCursorView.m in Sources */,
 				2FFC640D1858E9FB004FA3E2 /* OLKCircleMultiCursorInputMultiTap.m in Sources */,
 				2F71AD54185B289100D63859 /* OLKNIControlsContainerView.m in Sources */,
@@ -627,14 +504,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		2F8D06BF18B76A6600C3AED1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "OmniAppKit (Framework)";
-			targetProxy = 2F8D06BE18B76A6600C3AED1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		2FEDD71417CC970600165DD2 /* InfoPlist.strings */ = {

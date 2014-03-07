@@ -50,11 +50,11 @@
 @property (nonatomic) BOOL applyThresholdsAsFactors;
 @property (nonatomic) BOOL enableRepeatTracking;
 
-@property (nonatomic) BOOL useInverse;
-
 @property (nonatomic) CGFloat radius;
 @property (nonatomic) NSSize size;
 @property (nonatomic) BOOL active;
+
+@property (nonatomic) OLKOptionStrikeSide strikeSide;
 
 @end
 

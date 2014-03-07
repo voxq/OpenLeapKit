@@ -44,7 +44,7 @@
 - (void)setThresholdForRepeat:(float)thresholdForRepeat
 {
     [super setThresholdForRepeat:thresholdForRepeat];
-    if (_nonIntendedThreshold == INFINITY)
+    if (_nonIntendedThreshold == INFINITY && self.radius > 1)
         _nonIntendedThreshold = thresholdForRepeat*[self radius] + [super radius]/2;
 }
 

@@ -53,5 +53,6 @@
 @property (nonatomic) BOOL enableRepeatTracking;
 @property (nonatomic) BOOL vertical;
 @property (nonatomic) BOOL active;
+@property (nonatomic) OLKOptionStrikeSide strikeSide;
 
 @end

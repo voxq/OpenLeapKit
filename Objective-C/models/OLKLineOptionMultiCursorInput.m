@@ -7,7 +7,7 @@
 //
 
 #import "OLKLineOptionMultiCursorInput.h"
-#import <OmniAppKit/NSBezierPath-OAExtensions.h>
+#import <OpenLeapKit/OLKGeometryHelper.h>
 
 @interface OLKLineOptionCursorTracking : NSObject
 
@@ -89,6 +89,7 @@
 @synthesize optionObjects = _optionObjects;
 @synthesize size = _size;
 @synthesize active = _active;
+@synthesize strikeSide = _strikeSide;
 
 - (id)init
 {
@@ -464,6 +465,67 @@
     }
 }
 
+- (int)strikeFromValidSide:(OLKLineOptionCursorTracking *)cursorTracking prevPos:(NSPoint)prevPos
+{
+    if (![self inPreparedToStrikeZone:prevPos])
+        return OLKOptionMultiInputInvalidSelection;
+
+    NSPoint upperLeftCorner = NSMakePoint(-_thresholdForStrike, _size.height+_thresholdForStrike);
+    NSPoint lowerLeftCorner = NSMakePoint(-_thresholdForStrike, -_thresholdForStrike);
+    NSPoint upperRightCorner = NSMakePoint(_size.width+_thresholdForStrike, _size.height+_thresholdForStrike);
+    NSPoint lowerRightCorner = NSMakePoint(_size.width+_thresholdForStrike, -_thresholdForStrike);
+    
+//    BOOL passedThrough = [self inPreparedToStrikeZone:cursorTracking.cursorPos];
+
+    if (_vertical)
+    {
+        if (_strikeSide == OLKOptionStrikeSideAny || _strikeSide == OLKOptionStrikeSideStarboard)
+        {
+            NSPoint intersectRight = [OLKGeometryHelper intersectPoint:lowerRightCorner line1Point2:upperRightCorner line2Point1:prevPos line2Point2:cursorTracking.cursorPos];
+            if ([OLKGeometryHelper pointOnSegment:lowerRightCorner linePoint2:upperRightCorner checkPoint:intersectRight])
+            {
+                BOOL wasLeft = [OLKGeometryHelper isLeftOfLine:upperRightCorner linePoint2:lowerRightCorner checkPoint:prevPos];
+                if (wasLeft && ![OLKGeometryHelper isLeftOfLine:upperRightCorner linePoint2:lowerRightCorner checkPoint:cursorTracking.cursorPos])
+                    return [self indexAtPosition:intersectRight];
+            }
+        }
+        if (_strikeSide == OLKOptionStrikeSideAny || _strikeSide == OLKOptionStrikeSidePort)
+        {
+            NSPoint intersectLeft = [OLKGeometryHelper intersectPoint:lowerLeftCorner line1Point2:upperLeftCorner line2Point1:prevPos line2Point2:cursorTracking.cursorPos];
+            if ([OLKGeometryHelper pointOnSegment:lowerLeftCorner linePoint2:upperLeftCorner checkPoint:intersectLeft])
+            {
+                BOOL wasLeft = [OLKGeometryHelper isLeftOfLine:lowerLeftCorner linePoint2:upperLeftCorner checkPoint:prevPos];
+                if (wasLeft && ![OLKGeometryHelper isLeftOfLine:lowerLeftCorner linePoint2:upperLeftCorner checkPoint:cursorTracking.cursorPos])
+                    return [self indexAtPosition:intersectLeft];
+            }
+        }
+    }
+    else
+    {
+        if (_strikeSide == OLKOptionStrikeSideAny || _strikeSide == OLKOptionStrikeSideStarboard)
+        {
+            NSPoint intersectBottom = [OLKGeometryHelper intersectPoint:lowerLeftCorner line1Point2:lowerRightCorner line2Point1:prevPos line2Point2:cursorTracking.cursorPos];
+            if ([OLKGeometryHelper pointOnSegment:lowerLeftCorner linePoint2:lowerRightCorner checkPoint:intersectBottom])
+            {
+                BOOL wasLeft = [OLKGeometryHelper isLeftOfLine:lowerRightCorner linePoint2:lowerLeftCorner checkPoint:prevPos];
+                if (wasLeft && ![OLKGeometryHelper isLeftOfLine:lowerRightCorner linePoint2:lowerLeftCorner checkPoint:cursorTracking.cursorPos])
+                    return [self indexAtPosition:intersectBottom];
+            }
+        }
+        if (_strikeSide == OLKOptionStrikeSideAny || _strikeSide == OLKOptionStrikeSidePort)
+        {
+            NSPoint intersectTop = [OLKGeometryHelper intersectPoint:upperLeftCorner line1Point2:upperRightCorner line2Point1:prevPos line2Point2:cursorTracking.cursorPos];
+            if ([OLKGeometryHelper pointOnSegment:upperLeftCorner linePoint2:upperRightCorner checkPoint:intersectTop])
+            {
+                BOOL wasLeft = [OLKGeometryHelper isLeftOfLine:upperLeftCorner linePoint2:upperRightCorner checkPoint:prevPos];
+                if (wasLeft && ![OLKGeometryHelper isLeftOfLine:upperLeftCorner linePoint2:upperRightCorner checkPoint:cursorTracking.cursorPos])
+                    return [self indexAtPosition:intersectTop];
+            }
+        }
+    }
+    return OLKOptionMultiInputInvalidSelection;
+}
+
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer> *)cursorContext
 {
     // Check whether the button was just added and a cursor is already in it, so we do not want to trigger
@@ -477,34 +539,23 @@
         cursorTracking = [self createTracking:cursorPos withContext:cursorContext];
         return;
     }
-    else
-    {
-        NSPoint intersectPoint;
-        if (!cursorTracking.requiresMoveToPrepRestrikeZone && [_rectPath intersectionWithLine:&intersectPoint lineStart:cursorTracking.cursorPos lineEnd:cursorPos])
-        {
-            NSPoint otherDirIntersectPoint;
-            if ([_rectPath intersectionWithLine:&otherDirIntersectPoint lineStart:cursorPos lineEnd:cursorTracking.cursorPos])
-                intersectPoint = NSMakePoint(intersectPoint.x+(otherDirIntersectPoint.x - intersectPoint.x)/2, intersectPoint.y+(otherDirIntersectPoint.y - intersectPoint.y)/2);
-            
-            cursorPos = intersectPoint;
-        }
-        else
-            cursorTracking.cursorPos = cursorPos;
-    }
+    
+    NSPoint prevPos = cursorTracking.cursorPos;
+    
+    cursorTracking.cursorPos = cursorPos;
     
     if ([self checkAndHandleRepeatTracking:cursorTracking])
         return;
     
-    if ([self inPreparedToStrikeZone:cursorPos])
+    if (cursorTracking.requiresMoveToPrepRestrikeZone || cursorTracking.requiresMoveToStrictResetZone)
     {
         [self handlePreparedToStrike:cursorTracking];
         return;
     }
     
-    if (cursorTracking.requiresMoveToPrepRestrikeZone)
+    int index = [self strikeFromValidSide:cursorTracking prevPos:prevPos];
+    if (index == OLKOptionMultiInputInvalidSelection)
         return;
-    
-    int index = [self indexAtPosition:cursorPos];
     
     cursorTracking.requiresMoveToPrepRestrikeZone = YES;
     cursorTracking.prevSelectedIndex = cursorTracking.selectedIndex;

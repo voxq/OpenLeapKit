@@ -81,6 +81,26 @@ static float const inchesToMM = 25.4;
         [self setFrame:[screen visibleFrame] display:YES];
 }
 
+- (void)moveToPrevScreen
+{
+    NSArray *screens=[NSScreen screens];
+    if ([screens count] < 2)
+        return;
+    
+    NSScreen *foundScreen=nil;
+    for (NSScreen *screen in screens)
+    {
+        if ([self screen] == screen)
+        {
+            if (!foundScreen)
+                foundScreen = [screens lastObject];
+            break;
+        }
+    }
+    
+    [self moveToScreen:foundScreen];
+}
+
 - (void)moveToNextScreen
 {
     NSArray *screens=[NSScreen screens];

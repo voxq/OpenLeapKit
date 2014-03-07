@@ -121,6 +121,8 @@ typedef enum {
 - (LeapVector *)longFingerTipRelativePos;
 - (LeapVector *)longFingerTipPalmPosAdapt;
 
+- (NSArray *)fingerPositionsTransformedToHand;
+
 @property (nonatomic) LeapHand *leapHand;
 @property (nonatomic) LeapFrame *leapFrame;
 @property (nonatomic, readonly) LeapFinger *thumb;

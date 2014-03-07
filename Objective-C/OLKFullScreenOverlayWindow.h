@@ -14,6 +14,7 @@
 - (void)moveToScreen:(NSScreen *)screen;
 - (void)moveToScreenNumber:(NSNumber *)screenNumber;
 - (void)moveToNextScreen;
+- (void)moveToPrevScreen;
 - (NSSize)screenPhysicalSize;
 - (NSSize)determinePointSizeFromDesiredPhysicalSize:(NSSize)desiredPhysicalSize;
 

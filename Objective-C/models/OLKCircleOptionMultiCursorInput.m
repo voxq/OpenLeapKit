@@ -89,13 +89,14 @@
 
 @synthesize optionObjects = _optionObjects;
 
-@synthesize useInverse = _useInverse;
 @synthesize active = _active;
+@synthesize strikeSide = _strikeSide;
 
 - (id)init
 {
     if (self = [super init])
     {
+        _strikeSide = OLKOptionStrikeSideIn;
         [self resetToDefaults];
         _enableRepeatTracking = FALSE;
         _cursorTrackings = [[NSDictionary alloc] init];
@@ -108,13 +109,13 @@
     _applyThresholdsAsFactors = YES;
     _active = YES;
 
-    if (_useInverse)
+    if (_strikeSide == OLKOptionStrikeSideOut)
     {
         _thresholdForRepeat = 6.0/7.0;
         _thresholdForStrike = 1;
         _thresholdForStrictReset = 1+1.0/3.0;
     }
-    else
+    else if (_strikeSide == OLKOptionStrikeSideIn)
     {
         _thresholdForStrike = 6.0/7.0;
         _thresholdForRepeat = 1;
@@ -124,22 +125,24 @@
     _radius = 1;
 }
 
-- (void)setUseInverse:(BOOL)useInverse
+- (void)setStrikeSide:(OLKOptionStrikeSide)strikeSide
 {
-    if (useInverse != _useInverse)
+    if (strikeSide != OLKOptionStrikeSideIn && strikeSide != OLKOptionStrikeSideOut)
+        strikeSide = OLKOptionStrikeSideIn;
+    if (strikeSide != _strikeSide)
     {
         float oldValue = _thresholdForRepeat;
         _thresholdForRepeat = _thresholdForStrike;
         _thresholdForStrike = oldValue;
         if (_applyThresholdsAsFactors)
         {
-            if (useInverse)
+            if (_strikeSide == OLKOptionStrikeSideOut)
                 _thresholdForStrictReset = 1+_thresholdForStrictReset;
             else
                 _thresholdForStrictReset = _thresholdForStrictReset-1;
         }
     }
-    _useInverse = useInverse;
+    _strikeSide = strikeSide;
 }
 
 - (void)setRequiresMoveToPrepRestrikeZone:(BOOL)requiresMoveToInner cursorContext:(id)cursorContext
@@ -327,12 +330,12 @@
 {
     if (_applyThresholdsAsFactors)
     {
-        if (_useInverse)
+        if (_strikeSide == OLKOptionStrikeSideOut)
             return (distance <= _thresholdForStrike * _radius && distance >= _thresholdForRepeat * _radius);
         
         return (distance <= _thresholdForRepeat * _radius && distance >= _thresholdForStrike * _radius);
     }
-    if (_useInverse)
+    if (_strikeSide == OLKOptionStrikeSideOut)
         return (distance <= _thresholdForStrike && distance >= _thresholdForRepeat);
     
     return (distance <= _thresholdForRepeat && distance >= _thresholdForStrike);
@@ -342,12 +345,12 @@
 {
     if (_applyThresholdsAsFactors)
     {
-        if (_useInverse)
+        if (_strikeSide == OLKOptionStrikeSideOut)
             return (distance > _thresholdForStrike * _radius);
         
         return (distance < _thresholdForStrike*_radius);
     }
-    if (_useInverse)
+    if (_strikeSide == OLKOptionStrikeSideOut)
         return (distance > _thresholdForStrike);
     
     return (distance < _thresholdForStrike);
@@ -357,12 +360,12 @@
 {
     if (_applyThresholdsAsFactors)
     {
-        if (_useInverse)
+        if (_strikeSide == OLKOptionStrikeSideOut)
             return (distance > _thresholdForStrike * _radius + _thresholdForPrepRestrike);
         
         return (distance < _thresholdForStrike*_radius - _thresholdForPrepRestrike);
     }
-    if (_useInverse)
+    if (_strikeSide == OLKOptionStrikeSideOut)
         return (distance > _thresholdForStrike + _thresholdForPrepRestrike);
     
     return (distance < _thresholdForStrike - _thresholdForPrepRestrike);
@@ -372,12 +375,12 @@
 {
     if (_applyThresholdsAsFactors)
     {
-        if (_useInverse)
+        if (_strikeSide == OLKOptionStrikeSideOut)
             return (distance > _thresholdForStrictReset * _radius);
         
         return (distance < _thresholdForStrictReset*_radius);
     }
-    if (_useInverse)
+    if (_strikeSide == OLKOptionStrikeSideOut)
         return (distance > _thresholdForStrictReset);
     
     return (distance < _thresholdForStrictReset);

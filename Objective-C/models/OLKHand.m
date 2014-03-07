@@ -823,4 +823,15 @@ static OLKHand *gPrevHand=nil;
     return [_leapHand palmNormal];
 }
 
+- (NSArray *)fingerPositionsTransformedToHand
+{
+    LeapMatrix *handTransform = [OLKHand transformForHandReference:_leapHand];
+    NSMutableArray *transFingers = [[NSMutableArray alloc] initWithCapacity:_leapHand.fingers.count];
+    for (LeapFinger *finger in _leapHand.fingers)
+    {
+        [transFingers addObject:[handTransform transformPoint:finger.tipPosition]];
+    }
+    return [transFingers copy];
+}
+
 @end
