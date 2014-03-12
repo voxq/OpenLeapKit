@@ -12,10 +12,7 @@
 + (float)angleBetweenPoints:(NSPoint)point1 point2:(NSPoint)point2
 {
     float mag = point1.x*point2.y - point1.y*point2.x;
-    float aDotB = point1.x*point2.x+point1.y*point2.y;
-    float magA = sqrtf(point1.x*point1.x+point1.y*point1.y);
-    float magB = sqrtf(point2.x*point2.x+point2.y*point2.y);
-    float angle = acos(aDotB/(magA*magB));
+    float angle = [self absAngleBetweenPoints:point1 point2:point2];
     if (mag < 0)
         angle = 2*M_PI-angle;
     return angle;
@@ -27,7 +24,7 @@
     float magA = sqrtf(point1.x*point1.x+point1.y*point1.y);
     float magB = sqrtf(point2.x*point2.x+point2.y*point2.y);
     float angle = acos(aDotB/(magA*magB));
-
+    
     return angle;
 }
 
