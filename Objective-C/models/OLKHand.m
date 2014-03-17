@@ -38,6 +38,7 @@ static OLKHand *gPrevHand=nil;
 @implementation OLKHand
 {
     NSUInteger _numLeftHandedness, _numRightHandedness;
+    int _prevIndexFingerId;
 }
 
 @synthesize leapHand = _leapHand;
@@ -48,6 +49,11 @@ static OLKHand *gPrevHand=nil;
 @synthesize simHandedness = _simHandedness;
 @synthesize handednessAlgorithm = _handednessAlgorithm;
 @synthesize usesStabilized = _usesStabilized;
+@synthesize directionFactor = _directionFactor;
+@synthesize directionFactorOffsetPalm = _directionFactorOffsetPalm;
+@synthesize offsetYForAim = _offsetYForAim;
+@synthesize pointableFactorOffsetPalm = _pointableFactorOffsetPalm;
+@synthesize pointableFactorPosRelPalm = _pointableFactorPosRelPalm;
 
 + (void)initialize
 {
@@ -67,6 +73,7 @@ static OLKHand *gPrevHand=nil;
 
 + (BOOL)isLeapHandPointing:(LeapHand *)leapHand
 {
+#ifdef __LEAP_RIGGED__
     if ([leapHand.fingers respondsToSelector:@selector(extended)])
     {
         if (leapHand.fingers.extended.count > 3)
@@ -76,13 +83,16 @@ static OLKHand *gPrevHand=nil;
             return TRUE;
         return FALSE;
     }
+#endif
     return FALSE;
 }
 
 + (BOOL)isLeapHandFingersMissingOrPinch:(LeapHand *)leapHand
 {
+#ifdef __LEAP_RIGGED__
     if (!leapHand.fingers.count || ([leapHand respondsToSelector:@selector(pinchStrength)] && leapHand.pinchStrength > 0.8))
         return YES;
+#endif
     return NO;
 }
 
@@ -91,13 +101,14 @@ static OLKHand *gPrevHand=nil;
     if (leapHand.fingers.count > 1)
         return NO;
  
+#ifdef __LEAP_RIGGED__
     if ([leapHand respondsToSelector:@selector(grabStrength)])
     {
         if (leapHand.grabStrength < 0.8)
             return NO;
         return YES;
     }
-    
+#endif
     LeapMatrix *handTransform = [OLKHand transformForHandReference:leapHand];
     LeapVector *transformedPosition = [handTransform transformPoint:leapHand.sphereCenter];
  
@@ -117,12 +128,33 @@ static OLKHand *gPrevHand=nil;
     return [self furthestPointableTip:hand.pointables fromPalm:hand];
 }
 
-+ (LeapPointable *)furthestFingerTipFromPalm:(LeapHand *)hand
++ (LeapFinger *)furthestFingerTipFromPalm:(LeapHand *)hand
 {
-    return [self furthestPointableTip:hand.fingers fromPalm:hand];
+    return (LeapFinger *)[self furthestPointableTip:hand.fingers fromPalm:hand];
 }
 
 + (LeapPointable *)furthestPointableTip:(NSArray *)pointables fromPalm:(LeapHand *)hand
+{
+    if (!pointables.count)
+        return nil;
+    
+    LeapMatrix *handTransform = [self transformForHandReference:hand];
+    float furthestTipDist = 0;
+    LeapPointable *furthestPointable;
+    for (LeapPointable *pointable in pointables)
+    {
+        LeapVector *transformedPosition = [handTransform transformPoint:[pointable tipPosition]];
+        float dist = [transformedPosition distanceTo:hand.palmPosition];
+        if (dist > furthestTipDist)
+        {
+            furthestTipDist = dist;
+            furthestPointable = pointable;
+        }
+    }
+    return furthestPointable;
+}
+
++ (LeapPointable *)deepestPointableTip:(NSArray *)pointables fromPalm:(LeapHand *)hand
 {
     if (!pointables.count)
         return nil;
@@ -140,6 +172,34 @@ static OLKHand *gPrevHand=nil;
         }
     }
     return furthestPointable;
+}
+
++ (NSArray *)fingersLeftToRightOnHand:(LeapHand *)hand
+{
+    NSMutableArray *fingersTransformedPosEntries = [[NSMutableArray alloc] initWithCapacity:hand.fingers.count];
+    LeapMatrix *handTransform = [self transformForHandReference:hand];
+    for (LeapFinger *finger in hand.fingers)
+    {
+        LeapVector *transformedPosition = [handTransform transformPoint:finger.tipPosition];
+        NSArray *fingerEntry = [NSArray arrayWithObjects:finger, transformedPosition, nil];
+        int i = 0;
+        BOOL inserted = NO;
+        NSArray *checkFingerEntry;
+        for (checkFingerEntry in [fingersTransformedPosEntries copy])
+        {
+            LeapVector *otherTransformedPos = [checkFingerEntry objectAtIndex:1];
+            if (transformedPosition.x < otherTransformedPos.x)
+            {
+                [fingersTransformedPosEntries insertObject:fingerEntry atIndex:i];
+                inserted = YES;
+                break;
+            }
+            i ++;
+        }
+        if (!inserted)
+            [fingersTransformedPosEntries addObject:fingerEntry];
+    }
+    return [fingersTransformedPosEntries copy];
 }
 
 + (NSArray *)pointablesFurthestToClosestFromPalm:(LeapHand *)hand pointables:(NSArray *)pointables
@@ -163,6 +223,7 @@ static OLKHand *gPrevHand=nil;
             {
                 [fingersTransformedPosEntries insertObject:fingerEntry atIndex:i];
                 inserted = YES;
+                break;
             }
             i ++;
         }
@@ -549,6 +610,8 @@ static OLKHand *gPrevHand=nil;
 {
     if (self = [super init])
     {
+        _directionFactor = NSMakeSize(300, 300);
+        _prevIndexFingerId = 0;
         _simHandedness = OLKHandednessUnknown;
         _handedness = OLKHandednessUnknown;
         _handednessAlgorithm = OLKHandednessAlgorithmThumbTipAndBase;
@@ -609,16 +672,19 @@ static OLKHand *gPrevHand=nil;
 
 - (BOOL)isLeftHand
 {
+#ifdef __LEAP_RIGGED__
     if ([_leapHand respondsToSelector:@selector(isLeft)])
         return [_leapHand isLeft];
-
+#endif
     return [self updateHandedness] == OLKLeftHand;
 }
 
 - (BOOL)isRightHand
 {
+#ifdef __LEAP_RIGGED__
     if ([_leapHand respondsToSelector:@selector(isRight)])
         return [_leapHand isRight];
+#endif
     
     return [self updateHandedness] == OLKRightHand;
 }
@@ -719,10 +785,17 @@ static OLKHand *gPrevHand=nil;
     if (![finger isValid])
         return nil;
     
-    if (_usesStabilized)
-        return finger.stabilizedTipPosition;
+    return [self tipPosition:finger];
+}
+
+- (LeapVector *)longFingerByTipPos:(LeapFinger **)pFinger
+{
+    LeapFinger *finger = [OLKHand furthestFingerTipFromPalm:_leapHand];
+    if (![finger isValid])
+        return nil;
     
-    return finger.tipPosition;
+    *pFinger = finger;
+    return [self tipPosition:finger];
 }
 
 - (LeapVector *)longFingerTipRelativePos
@@ -737,9 +810,12 @@ static OLKHand *gPrevHand=nil;
 - (NSArray *)extendedFingers
 {
     NSMutableArray *extFingers = [[NSMutableArray alloc] init];
-    for (LeapFinger *finger in _leapHand.fingers)
+    NSArray *fingerDirections = [self fingerDirectionsTransformedToHand:TRUE];
+    for (NSArray *fingerDirEntry in  fingerDirections)
     {
-        if (finger.direction.z > 0.8)
+        LeapVector *dir = [fingerDirEntry objectAtIndex:0];
+        LeapFinger *finger = [fingerDirEntry objectAtIndex:1];
+        if (dir.z < -0.5 && dir.x > -0.5 && dir.x < 0.5)
             [extFingers addObject:finger];
     }
     return [extFingers copy];
@@ -748,10 +824,11 @@ static OLKHand *gPrevHand=nil;
 - (LeapFinger *)pointingFinger
 {
     LeapFinger *pointFinger;
+#ifdef __LEAP_RIGGED__
     if ([_leapHand.fingers respondsToSelector:@selector(extended)])
     {
-//        if (_leapHand.fingers.extended.count > 3)
-//            return nil;
+        //        if (_leapHand.fingers.extended.count > 3)
+        //            return nil;
         
         pointFinger = [_leapHand.fingers objectAtIndex:2];
         LeapFinger *finger3 = [_leapHand.fingers objectAtIndex:3];
@@ -764,12 +841,17 @@ static OLKHand *gPrevHand=nil;
         }
         return pointFinger;
     }
-
+#endif
     if (!_leapHand.fingers.count)
         return nil;
-
+    
+    if (_leapHand.fingers.count == 5)
+    {
+        NSArray *orderedFingers = [OLKHand fingersLeftToRightOnHand:_leapHand];
+        return [[orderedFingers objectAtIndex:1] objectAtIndex:0];
+    }
     NSArray *extFingers = [self extendedFingers];
-    if (!extFingers.count || extFingers.count > 3)
+    if (!extFingers.count || extFingers.count > 1)
         return nil;
     
     NSArray *fingers = [OLKHand pointablesFurthestToClosestFromPalm:_leapHand pointables:extFingers];
@@ -779,20 +861,117 @@ static OLKHand *gPrevHand=nil;
     return pointFinger;
 }
 
+- (LeapFinger *)indexFinger
+{
+#ifdef __LEAP_RIGGED__
+    
+    if ([_leapHand.fingers respondsToSelector:@selector(extended)])
+        return [_leapHand.fingers objectAtIndex:1];
+
+#endif
+
+    if (!_leapHand.fingers.count)
+        return nil;
+
+    LeapFinger *finger;
+    if (_prevIndexFingerId)
+    {
+        finger = [_leapHand finger:_prevIndexFingerId];
+        if (finger && finger.isValid)
+            return finger;
+        _prevIndexFingerId = 0;
+    }
+    
+    if (_leapHand.fingers.count == 5)
+    {
+        NSArray *orderedFingers = [OLKHand fingersLeftToRightOnHand:_leapHand];
+        finger = [[orderedFingers objectAtIndex:1] objectAtIndex:0];
+        _prevIndexFingerId = finger.id;
+        return finger;
+    }
+    
+    NSArray *extFingers = [self extendedFingers];
+    if (!extFingers.count || extFingers.count > 1)
+        return nil;
+    
+    finger = [extFingers objectAtIndex:0];
+    _prevIndexFingerId = finger.id;
+    return finger;
+}
+
+- (LeapVector *)indexFingerTipPosRelativePalm
+{
+    LeapFinger *finger=[self indexFinger];
+    if (!finger || !finger.isValid)
+        return [[LeapVector alloc] initWithX:0 y:_offsetYForAim z:0];
+
+    return [self factorPointablePosRelativePalm:[self tipPosition:finger]];
+}
+
+- (LeapVector *)indexFingerOrPalmPos
+{
+    LeapFinger *finger;
+    return [self indexFingerOrPalm:&finger];
+}
+
+- (LeapVector *)indexFingerOrPalm:(LeapFinger **)pFinger
+{
+    LeapFinger *finger=nil;
+    finger = [self indexFinger];
+    if (finger)
+    {
+        *pFinger = finger;
+        return [self tipPosition:finger];
+    }
+
+    *pFinger = finger;
+    return [self palmPosition];
+}
+
 - (LeapVector *)longFingerTipPalmPosAdapt
 {
     if (!_leapHand.fingers.count)
-        return [_leapHand palmPosition];
+        return self.palmPosition;
 
     LeapFinger *pointingFinger = [self pointingFinger];
     
     if (!pointingFinger)
-        return [_leapHand palmPosition];
+        return self.palmPosition;
+
+    return [self factorPointableOffsetRelativePalm:[self tipPosition:pointingFinger]];
+}
+
+- (LeapVector *)tipPosition:(LeapPointable *)pointable
+{
+    LeapVector *tipPosition;
     
     if (_usesStabilized)
-        return pointingFinger.stabilizedTipPosition;
+        tipPosition = pointable.stabilizedTipPosition;
+    else
+        tipPosition = pointable.tipPosition;
     
-    return pointingFinger.tipPosition;
+    return tipPosition;
+}
+
+- (LeapVector *)factorPointableOffsetRelativePalm:(LeapVector *)position
+{
+    return [[LeapVector alloc] initWithX:[self palmPosition].x + (position.x - [self palmPosition].x)*_pointableFactorOffsetPalm.width y:[self palmPosition].y + (position.y - [self palmPosition].y)*_pointableFactorOffsetPalm.height z:position.z];
+}
+
+- (LeapVector *)factorPointablePosRelativePalm:(LeapVector *)position
+{
+    return [[LeapVector alloc] initWithX:(position.x - [self palmPosition].x)*_pointableFactorPosRelPalm.width y:_offsetYForAim+(position.y - [self palmPosition].y)*_pointableFactorPosRelPalm.height z:position.z];
+}
+
+- (LeapVector *)posFromAim
+{
+    return [[LeapVector alloc] initWithX:_leapHand.direction.x*_directionFactor.width y:_offsetYForAim + _leapHand.direction.y*_directionFactor.height z:0];
+}
+
+- (LeapVector *)palmPosPlusAimOffset
+{
+    LeapVector *palmPosition = [self palmPosition];
+    return [[LeapVector alloc] initWithX:palmPosition.x+_leapHand.direction.x*_directionFactorOffsetPalm.width y:palmPosition.y+_leapHand.direction.y*_directionFactorOffsetPalm.height z:palmPosition.z];
 }
 
 - (BOOL)fingersMissingOrPinch
@@ -823,13 +1002,58 @@ static OLKHand *gPrevHand=nil;
     return [_leapHand palmNormal];
 }
 
-- (NSArray *)fingerPositionsTransformedToHand
+- (NSArray *)fingerPositionsTransformedToHand:(BOOL)returnFingers
 {
-    LeapMatrix *handTransform = [OLKHand transformForHandReference:_leapHand];
     NSMutableArray *transFingers = [[NSMutableArray alloc] initWithCapacity:_leapHand.fingers.count];
-    for (LeapFinger *finger in _leapHand.fingers)
+    NSArray *fingers;
+#ifdef __LEAP_RIGGED__
+    LeapMatrix *handTransform = [OLKHand transformForHandReference:_leapHand];
+    fingers = _leapHand.fingers;
+    for (LeapFinger *finger in fingers)
     {
-        [transFingers addObject:[handTransform transformPoint:finger.tipPosition]];
+        LeapVector *transPos = [handTransform transformPoint:[self tipPosition:finger]];
+#else
+    fingers = [OLKHand fingersLeftToRightOnHand:_leapHand];
+    for (NSArray *fingerEntry in fingers)
+    {
+        LeapVector *transPos = [fingerEntry objectAtIndex:1];
+        LeapFinger *finger = [fingerEntry objectAtIndex:0];
+#endif
+        if (returnFingers)
+        {
+            NSArray *entry = [NSArray arrayWithObjects:transPos, finger, nil];
+            [transFingers addObject:entry];
+        }
+        else
+            [transFingers addObject:transPos];
+    }
+    return [transFingers copy];
+}
+
+- (NSArray *)fingerDirectionsTransformedToHand:(BOOL)returnFingers
+{
+    NSMutableArray *transFingers = [[NSMutableArray alloc] initWithCapacity:_leapHand.fingers.count];
+    NSArray *fingers;
+#ifdef __LEAP_RIGGED__
+    LeapMatrix *handTransform = [OLKHand transformForHandReference:_leapHand];
+    fingers = _leapHand.fingers;
+    for (LeapFinger *finger in fingers)
+    {
+        LeapVector *transDir = [handTransform transformPoint:finger.direction];
+#else
+    fingers = [OLKHand fingersLeftToRightOnHand:_leapHand];
+    for (NSArray *fingerEntry in fingers)
+    {
+        LeapVector *transDir = [fingerEntry objectAtIndex:1];
+        LeapFinger *finger = [fingerEntry objectAtIndex:0];
+#endif
+        if (returnFingers)
+        {
+            NSArray *entry = [NSArray arrayWithObjects:transDir, finger, nil];
+            [transFingers addObject:entry];
+        }
+        else
+            [transFingers addObject:transDir];
     }
     return [transFingers copy];
 }

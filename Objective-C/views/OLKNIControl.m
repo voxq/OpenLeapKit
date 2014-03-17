@@ -104,7 +104,7 @@
 - (void)setActive:(BOOL)active
 {
     _active = active;
-    [_parentView setNeedsDisplayInRect:self.frame];
+    [self requestRedraw];
 }
 
 - (void)setLabelFontSize:(float)labelFontSize
@@ -256,6 +256,12 @@
 {
     self.needsRedraw = YES;
     [self.parentView setNeedsDisplayInRect:[self frame]];
+}
+
+- (void)setVisible:(BOOL)visible
+{
+    _visible = visible;
+    [self requestRedraw];
 }
 
 - (NSRect)frameWithoutLabel

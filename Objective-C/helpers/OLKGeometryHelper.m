@@ -35,7 +35,7 @@
         if (checkPoint.x < linePoint2.x || checkPoint.x > linePoint1.x)
             return NO;
     }
-    else if (checkPoint.x < linePoint1.x && checkPoint.x > linePoint2.x)
+    else if (checkPoint.x < linePoint1.x || checkPoint.x > linePoint2.x)
         return NO;
     
     if (linePoint1.y > linePoint2.y)
@@ -43,7 +43,7 @@
         if (checkPoint.y < linePoint2.y || checkPoint.y > linePoint1.y)
             return NO;
     }
-    else if (checkPoint.y < linePoint1.y && checkPoint.y > linePoint2.y)
+    else if (checkPoint.y < linePoint1.y || checkPoint.y > linePoint2.y)
         return NO;
     return YES;
 }

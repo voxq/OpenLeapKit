@@ -21,6 +21,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     NSImage *_intButtonOffImg;
     NSImage *_intButtonOnImg;
     NSImage *_intButtonActivatedImg;
+    NSBezierPath *_buttonPath;
 }
 
 @synthesize buttonHoverImg = _buttonHoverImg;
@@ -125,76 +126,136 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     }
 }
 
+- (NSRect)frameWithoutLabel
+{
+    NSRect frame = [super frameWithoutLabel];
+    if (frame.size.width < _buttonPath.bounds.size.width)
+        frame.size.width = _buttonPath.bounds.size.width;
+    if (frame.size.height < _buttonPath.bounds.size.height)
+        frame.size.height = _buttonPath.bounds.size.height;
+    return frame;
+}
+
+- (NSRect)frame
+{
+    NSRect frame = [super frame];
+    if (frame.size.width < _buttonPath.bounds.size.width)
+        frame.size.width = _buttonPath.bounds.size.width;
+    if (frame.size.height < _buttonPath.bounds.size.height)
+        frame.size.height = _buttonPath.bounds.size.height;
+    return frame;
+}
+
 - (void)createButtonImages
 {
-    NSSize size = [self size];
+    NSRect buttonRect;
+    buttonRect.origin = NSZeroPoint;
+    buttonRect.size = self.size;
+    NSRect bounds;
+    NSRect destRect;
+
+    if (_showBorder)
+    {
+        _buttonPath = [[NSBezierPath alloc] init];
+        [_buttonPath appendBezierPathWithRect:buttonRect];
+        [_buttonPath setLineWidth:1];
+        bounds = [_buttonPath bounds];
+        destRect.size = bounds.size;
+        destRect.origin.x = -bounds.origin.x;
+        destRect.origin.y = -bounds.origin.y;
+    }
+    else
+        destRect.origin = NSZeroPoint;
+    
+    _intButtonHoverImg = [[NSImage alloc] initWithSize:bounds.size];
+    [_intButtonHoverImg lockFocus];
     if (_buttonHoverImg)
     {
-        _intButtonHoverImg = [[NSImage alloc] initWithSize:size];
-        [_intButtonHoverImg lockFocus];
         NSRect sourceRect;
         sourceRect.origin = NSZeroPoint;
         sourceRect.size = _buttonHoverImg.size;
-        NSRect destRect;
-        destRect.size = size;
-        destRect.origin = NSZeroPoint;
         [_buttonHoverImg drawInRect:destRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
-        [_intButtonHoverImg unlockFocus];
     }
     else
-        _intButtonHoverImg = nil;
+    {
+        [_hoverColor set];
+        NSRectFillUsingOperation(destRect, NSCompositeSourceOver);
+    }
+    if (_showBorder)
+    {
+        [_borderColor set];
+        [_buttonPath stroke];
+    }
+    [_intButtonHoverImg unlockFocus];
 
+    _intButtonActivatedImg = [[NSImage alloc] initWithSize:bounds.size];
+    [_intButtonActivatedImg lockFocus];
     if (_buttonActivatedImg)
     {
-        _intButtonActivatedImg = [[NSImage alloc] initWithSize:size];
-        [_intButtonActivatedImg lockFocus];
         NSRect sourceRect;
         sourceRect.origin = NSZeroPoint;
         sourceRect.size = _buttonActivatedImg.size;
-        NSRect destRect;
-        destRect.size = size;
-        destRect.origin = NSZeroPoint;
         [_buttonActivatedImg drawInRect:destRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
-        [_intButtonActivatedImg unlockFocus];
     }
     else
-        _intButtonActivatedImg = nil;
+    {
+        [_onColor set];
+        NSRectFillUsingOperation(destRect, NSCompositeSourceOver);
+    }
+    if (_showBorder)
+    {
+        [_borderColor set];
+        [_buttonPath stroke];
+    }
+    [_intButtonActivatedImg unlockFocus];
     
+    _intButtonOnImg = [[NSImage alloc] initWithSize:bounds.size];
+    [_intButtonOnImg lockFocus];
     if (_buttonOnImg)
     {
-        _intButtonOnImg = [[NSImage alloc] initWithSize:size];
-        [_intButtonOnImg lockFocus];
         NSRect sourceRect;
         sourceRect.origin = NSZeroPoint;
         sourceRect.size = _buttonOnImg.size;
-        NSRect destRect;
-        destRect.size = size;
-        destRect.origin = NSZeroPoint;
         [_buttonOnImg drawInRect:destRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
-        [_intButtonOnImg unlockFocus];
     }
     else
-        _intButtonOnImg = nil;
+    {
+        [_onColor set];
+        NSRectFillUsingOperation(destRect, NSCompositeSourceOver);
+    }
+    if (_showBorder)
+    {
+        [_borderColor set];
+        [_buttonPath stroke];
+    }
+    [_intButtonOnImg unlockFocus];
     
+    _intButtonOffImg = [[NSImage alloc] initWithSize:bounds.size];
+    [_intButtonOffImg lockFocus];
     if (_buttonOffImg)
     {
-        _intButtonOffImg = [[NSImage alloc] initWithSize:size];
-        [_intButtonOffImg lockFocus];
         NSRect sourceRect;
         sourceRect.origin = NSZeroPoint;
         sourceRect.size = _buttonOffImg.size;
-        NSRect destRect;
-        destRect.size = size;
-        destRect.origin = NSZeroPoint;
         [_buttonOffImg drawInRect:destRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
-        [_intButtonOffImg unlockFocus];
     }
     else
-        _intButtonOffImg = nil;
+    {
+        [_offColor set];
+        NSRectFillUsingOperation(destRect, NSCompositeSourceOver);
+    }
+    if (_showBorder)
+    {
+        [_borderColor set];
+        [_buttonPath stroke];
+    }
+    [_intButtonOffImg unlockFocus];
 }
 
 - (void)setSize:(NSSize)size
 {
+    size.height = ceilf(size.height);
+    size.width = ceilf(size.width);
     if (NSEqualSizes(size, self.size))
         return;
     
@@ -208,7 +269,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 - (void)clear
 {
     [[NSColor clearColor] set];
-    NSRectFill(NSMakeRect(self.drawLocation.x, self.drawLocation.y, self.size.width, self.size.height));
+    NSRectFill(self.frame);
 }
 
 - (void)draw
@@ -241,45 +302,20 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 
     NSRect buttonRect;
     buttonRect.origin = self.drawLocation;
-    buttonRect.size = self.size;
     
-    if (bottomImg)
-    {
-        NSRect sourceRect;
-        sourceRect.origin = NSZeroPoint;
-        sourceRect.size = bottomImg.size;
-        [bottomImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha];
-    }
-    else
-    {
-        if (curColor)
-        {
-            [[curColor colorWithAlphaComponent:currentAlpha] set];
-            NSRectFill(buttonRect);
-        }
-        if (_showBorder && _borderColor)
-        {
-            NSBezierPath *buttonPath = [[NSBezierPath alloc] init];
-            [buttonPath appendBezierPathWithRect:buttonRect];
-            [[_borderColor colorWithAlphaComponent:currentAlpha] set];
-            [buttonPath stroke];
-        }
-    }
+    buttonRect.size = bottomImg.size;
+    NSRect sourceRect;
+    sourceRect.origin = NSZeroPoint;
+    sourceRect.size = bottomImg.size;
+    [bottomImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha];
     
     if (_activated && !_togglesState)
     {
-        if (_intButtonActivatedImg)
-        {
-            NSRect sourceRect;
-            sourceRect.origin = NSZeroPoint;
-            sourceRect.size = _intButtonActivatedImg.size;
-            [_intButtonActivatedImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha];
-        }
-        else
-        {
-            [[_onColor colorWithAlphaComponent:_activateAlpha] set];
-            NSRectFillUsingOperation(buttonRect, NSCompositeSourceOver);
-        }
+        buttonRect.size = _intButtonActivatedImg.size;
+        NSRect sourceRect;
+        sourceRect.origin = NSZeroPoint;
+        sourceRect.size = _intButtonActivatedImg.size;
+        [_intButtonActivatedImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha];
     }
     
     [super draw];

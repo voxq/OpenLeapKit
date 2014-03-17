@@ -44,8 +44,12 @@ typedef enum
 {
     OLKHandCursorPosTypePalm,
     OLKHandCursorPosTypeLongFingerTip,
+    OLKHandCursorPosTypeIndexFingerTip,
+    OLKHandCursorPosTypeIndexFingerTipRelativePalm,
     OLKHandCursorPosTypeLongFingerTipRelative,
-    OLKHandCursorPosTypeLongFingerTipPalmAdapt
+    OLKHandCursorPosTypeLongFingerTipPalmAdapt,
+    OLKHandCursorPosTypePalmHandAimOffset,
+    OLKHandCursorPosTypeHandAim
 }
 OLKHandCursorPosType;
 
@@ -90,6 +94,7 @@ typedef enum {
 + (BOOL)isLeapHandPointing:(LeapHand *)leapHand;
 - (BOOL)isPointing;
 + (LeapMatrix *)transformForHandReference:(LeapHand *)hand;
++ (NSArray *)fingersLeftToRightOnHand:(LeapHand *)hand;
 
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;
 + (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm factory:(NSObject<OLKHandFactory>*)factory;
@@ -117,11 +122,24 @@ typedef enum {
 - (LeapVector *)direction;
 - (LeapVector *)palmNormal;
 
+- (LeapFinger *)indexFinger;
+- (LeapVector *)tipPosition:(LeapFinger *)finger;
+
 - (LeapVector *)longFingerTipPos;
+- (LeapVector *)longFingerByTipPos:(LeapFinger **)pFinger;
 - (LeapVector *)longFingerTipRelativePos;
 - (LeapVector *)longFingerTipPalmPosAdapt;
+- (LeapVector *)palmPosPlusAimOffset;
+- (LeapVector *)posFromAim;
+- (LeapVector *)indexFingerOrPalmPos;
+- (LeapVector *)indexFingerOrPalm:(LeapFinger **)pFinger;
+- (LeapVector *)indexFingerTipPosRelativePalm;
 
-- (NSArray *)fingerPositionsTransformedToHand;
+- (LeapVector *)factorPointableOffsetRelativePalm:(LeapVector *)position;
+- (LeapVector *)factorPointablePosRelativePalm:(LeapVector *)position;
+
+- (NSArray *)fingerPositionsTransformedToHand:(BOOL)returnFingers;
+- (NSArray *)fingerDirectionsTransformedToHand:(BOOL)returnFingers;
 
 @property (nonatomic) LeapHand *leapHand;
 @property (nonatomic) LeapFrame *leapFrame;
@@ -131,5 +149,10 @@ typedef enum {
 @property (nonatomic) OLKHandedness simHandedness;
 @property (nonatomic) OLKHandednessAlgorithm handednessAlgorithm;
 @property (nonatomic) BOOL usesStabilized;
+@property (nonatomic) NSSize directionFactor;
+@property (nonatomic) NSSize directionFactorOffsetPalm;
+@property (nonatomic) float offsetYForAim;
+@property (nonatomic) NSSize pointableFactorOffsetPalm;
+@property (nonatomic) NSSize pointableFactorPosRelPalm;
 
 @end

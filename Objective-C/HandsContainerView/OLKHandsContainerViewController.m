@@ -49,6 +49,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     LeapDevice *_leapDevice;
     LeapHand *_prevHand;
     float _longestTimeHandVis;
+    int _prevLongestFingerTipId;
 }
 
 @synthesize leapFrame = _leapFrame;
@@ -101,6 +102,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         _proximityOffset = 0;
         _percentRangeOfMaxWidth = 0.6;
         _handednessAlgorithm = OLKHandednessAlgorithmThumbTipAndBase;
+        _prevLongestFingerTipId = 0;
     }
     return self;
 }
@@ -512,10 +514,35 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     NSRect oldRect = [handView frame];
 
     LeapVector *position;
+    LeapFinger *finger=nil;
     switch (handView.cursorType)
     {
+        case OLKHandCursorPosTypeIndexFingerTip:
+            position = [hand factorPointableOffsetRelativePalm:[hand indexFingerOrPalmPos]];
+            break;
+            
         case OLKHandCursorPosTypeLongFingerTip:
-            position = [hand longFingerTipPos];
+            finger = [hand.leapHand finger:_prevLongestFingerTipId];
+            if (finger && finger.isValid)
+                position = [hand tipPosition:finger];
+            else
+            {
+                position = [hand factorPointableOffsetRelativePalm:[hand longFingerByTipPos:&finger]];
+                if (finger)
+                    _prevLongestFingerTipId = finger.id;
+            }
+            break;
+
+        case OLKHandCursorPosTypeIndexFingerTipRelativePalm:
+            position = [hand indexFingerTipPosRelativePalm];
+            break;
+            
+        case OLKHandCursorPosTypePalmHandAimOffset:
+            position = [hand palmPosPlusAimOffset];
+            break;
+            
+        case OLKHandCursorPosTypeHandAim:
+            position = [hand posFromAim];
             break;
             
         case OLKHandCursorPosTypeLongFingerTipRelative:
