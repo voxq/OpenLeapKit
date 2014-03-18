@@ -39,6 +39,7 @@ static OLKHand *gPrevHand=nil;
 {
     NSUInteger _numLeftHandedness, _numRightHandedness;
     int _prevIndexFingerId;
+    int _prevMainTool;
 }
 
 @synthesize leapHand = _leapHand;
@@ -612,6 +613,7 @@ static OLKHand *gPrevHand=nil;
     {
         _directionFactor = NSMakeSize(300, 300);
         _prevIndexFingerId = 0;
+        _prevMainTool = 0;
         _simHandedness = OLKHandednessUnknown;
         _handedness = OLKHandednessUnknown;
         _handednessAlgorithm = OLKHandednessAlgorithmThumbTipAndBase;
@@ -925,6 +927,55 @@ static OLKHand *gPrevHand=nil;
     }
 
     *pFinger = finger;
+    return [self palmPosition];
+}
+
+- (LeapPointable *)mainTool
+{
+    if (!_leapHand.tools.count)
+    {
+        _prevMainTool = 0;
+        return nil;
+    }
+    
+    LeapPointable *pointable;
+    if (_prevMainTool)
+    {
+        pointable = [_leapHand tool:_prevMainTool];
+        if (pointable.isValid)
+            return pointable;
+    }
+    pointable = [_leapHand.tools objectAtIndex:0];
+    _prevMainTool = pointable.id;
+    return pointable;
+}
+
+- (LeapVector *)mainToolTipPosRelativePalm
+{
+    LeapPointable *pointable=[self mainTool];
+    
+    if (!pointable)
+        return [[LeapVector alloc] initWithX:0 y:_offsetYForAim z:0];
+    
+    return [self factorPointablePosRelativePalm:[self tipPosition:pointable]];
+}
+
+- (LeapVector *)mainToolOrPalmPos
+{
+    LeapFinger *pointable;
+    return [self mainToolOrPalm:&pointable];
+}
+
+- (LeapVector *)mainToolOrPalm:(LeapPointable **)pPointable
+{
+    LeapPointable *pointable = [self mainTool];
+    if (pointable)
+    {
+        *pPointable = pointable;
+        return [self tipPosition:pointable];
+    }
+    
+    *pPointable = pointable;
     return [self palmPosition];
 }
 

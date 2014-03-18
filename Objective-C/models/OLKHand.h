@@ -49,7 +49,9 @@ typedef enum
     OLKHandCursorPosTypeLongFingerTipRelative,
     OLKHandCursorPosTypeLongFingerTipPalmAdapt,
     OLKHandCursorPosTypePalmHandAimOffset,
-    OLKHandCursorPosTypeHandAim
+    OLKHandCursorPosTypeHandAim,
+    OLKHandCursorPosTypeMainToolTip,
+    OLKHandCursorPosTypeMainToolTipRelativePalm
 }
 OLKHandCursorPosType;
 
@@ -123,7 +125,7 @@ typedef enum {
 - (LeapVector *)palmNormal;
 
 - (LeapFinger *)indexFinger;
-- (LeapVector *)tipPosition:(LeapFinger *)finger;
+- (LeapVector *)tipPosition:(LeapPointable *)pointable;
 
 - (LeapVector *)longFingerTipPos;
 - (LeapVector *)longFingerByTipPos:(LeapFinger **)pFinger;
@@ -134,6 +136,9 @@ typedef enum {
 - (LeapVector *)indexFingerOrPalmPos;
 - (LeapVector *)indexFingerOrPalm:(LeapFinger **)pFinger;
 - (LeapVector *)indexFingerTipPosRelativePalm;
+- (LeapVector *)mainToolTipPosRelativePalm;
+- (LeapVector *)mainToolOrPalmPos;
+- (LeapVector *)mainToolOrPalm:(LeapPointable **)pPointable;
 
 - (LeapVector *)factorPointableOffsetRelativePalm:(LeapVector *)position;
 - (LeapVector *)factorPointablePosRelativePalm:(LeapVector *)position;

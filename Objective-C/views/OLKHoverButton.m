@@ -465,11 +465,12 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         }
         return TRUE;
     }
-    _hovering = [self detectHoverInitiate:position];
     
     if (_hovering)
         return [self handleHovering:position];
     
+    _hovering = [self detectHoverInitiate:position];
+
     return _hovering;
 }
 
