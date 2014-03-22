@@ -121,7 +121,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         NSRect redrawRect;
         redrawRect.size = self.size;
         redrawRect.origin = self.drawLocation;
-        
+        self.needsRedraw = YES;
         [self.parentView setNeedsDisplayInRect:redrawRect];
     }
 }
@@ -277,6 +277,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     if (!self.visible)
         return;
     
+    self.needsRedraw=NO;
     float currentAlpha = _alpha;
     NSColor *curColor;
     
@@ -315,11 +316,10 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         NSRect sourceRect;
         sourceRect.origin = NSZeroPoint;
         sourceRect.size = _intButtonActivatedImg.size;
-        [_intButtonActivatedImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha];
+        [_intButtonActivatedImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha*_activateAlpha];
     }
     
     [super draw];
-    self.needsRedraw=NO;
 }
 
 - (void)reset
@@ -476,7 +476,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView
 {
-    if (_controllingHandView && _controllingHandView != handView)
+    if (!self.enable || (_controllingHandView && _controllingHandView != handView))
         return;
     
     cursorPos = [self convertCusorPos:cursorPos fromHandView:handView];

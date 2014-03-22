@@ -78,7 +78,7 @@
         _enableStable = YES;
         _enabled = YES;
         _enableSphere = YES;
-        _cursorType = OLKHandCursorPosTypeLongFingerTipPalmAdapt;
+        _cursorType = OLKHandCursorPosTypePalm;
     }
     
     return self;

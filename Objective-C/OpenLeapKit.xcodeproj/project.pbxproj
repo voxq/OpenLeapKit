@@ -590,6 +590,11 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OpenLeapKit/OpenLeapKit-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					__LEAP_RIGGED__,
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = ../../../../code/libraries/LeapSDK/include;
 				INFOPLIST_FILE = "OpenLeapKit/OpenLeapKit-Info.plist";
 				INSTALL_PATH = "@rpath";
@@ -597,6 +602,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../code/libraries/LeapSDK/lib\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = framework;
@@ -624,6 +630,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../code/libraries/LeapSDK/lib\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = framework;

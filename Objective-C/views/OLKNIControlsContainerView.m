@@ -275,7 +275,7 @@
     
     for (OLKNIControl *control in _subHandCursorResponders)
     {
-        if ([control needsRedraw] || [self needsToDrawRect:[control frame]])
+        if (control.enable && ([control needsRedraw] || [self needsToDrawRect:[control frame]]))
             [control draw]; 
     }
 }

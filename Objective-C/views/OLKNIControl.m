@@ -158,7 +158,7 @@
     if (NSEqualSizes(NSZeroSize, _size) || !self.label || ![self.label length])
         return;
     
-    if (_size.width > _size.height)
+    if (_size.width >= _size.height)
     {
         NSDictionary *attrs;
         if (_outlineLabel)

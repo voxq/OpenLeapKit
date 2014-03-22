@@ -43,14 +43,19 @@
 typedef enum
 {
     OLKHandCursorPosTypePalm,
+    OLKHandCursorPosTypePointingFingerTip,
+    OLKHandCursorPosTypePointingFingerTipOrPalm,
+    OLKHandCursorPosTypePointingFingerTipRelativePalm,
     OLKHandCursorPosTypeLongFingerTip,
+    OLKHandCursorPosTypeLongFingerTipOrPalm,
+    OLKHandCursorPosTypeLongFingerTipRelativePalm,
     OLKHandCursorPosTypeIndexFingerTip,
+    OLKHandCursorPosTypeIndexFingerTipOrPalm,
     OLKHandCursorPosTypeIndexFingerTipRelativePalm,
-    OLKHandCursorPosTypeLongFingerTipRelative,
-    OLKHandCursorPosTypeLongFingerTipPalmAdapt,
     OLKHandCursorPosTypePalmHandAimOffset,
     OLKHandCursorPosTypeHandAim,
     OLKHandCursorPosTypeMainToolTip,
+    OLKHandCursorPosTypeMainToolTipOrPalm,
     OLKHandCursorPosTypeMainToolTipRelativePalm
 }
 OLKHandCursorPosType;
@@ -95,8 +100,11 @@ typedef enum {
 + (BOOL)isLeapHandFist:(LeapHand *)leapHand;
 + (BOOL)isLeapHandPointing:(LeapHand *)leapHand;
 - (BOOL)isPointing;
++ (LeapMatrix *)transformForNormalizedHandReference:(LeapHand *)hand;
 + (LeapMatrix *)transformForHandReference:(LeapHand *)hand;
-+ (NSArray *)fingersLeftToRightOnHand:(LeapHand *)hand;
++ (NSArray *)transFingerTipPositionsSortedForHand:(LeapHand *)hand;
++ (NSArray *)transFingerTipDirectionsSortedForHand:(LeapHand *)hand;
++ (NSArray *)transFingerTipDirectionsAndPositionsSortedForHand:(LeapHand *)hand;
 
 + (LeapPointable *)furthestFingerOrPointableTipFromPalm:(LeapHand *)hand;
 + (NSDictionary *)leftRightHandSearch:(NSArray *)hands ignoreHands:(NSSet *)ignoreHands handednessAlgorithm:(OLKHandednessAlgorithm)handednesAlgorithm factory:(NSObject<OLKHandFactory>*)factory;
@@ -124,27 +132,36 @@ typedef enum {
 - (LeapVector *)direction;
 - (LeapVector *)palmNormal;
 
+- (NSArray *)extendedFingers;
+
 - (LeapFinger *)indexFinger;
 - (LeapVector *)tipPosition:(LeapPointable *)pointable;
 
 - (LeapVector *)longFingerTipPos;
-- (LeapVector *)longFingerByTipPos:(LeapFinger **)pFinger;
+- (LeapVector *)longFingerTipPos:(LeapFinger **)pFinger;
 - (LeapVector *)longFingerTipRelativePos;
-- (LeapVector *)longFingerTipPalmPosAdapt;
+- (LeapVector *)longFingerTipOrPalmPos;
+- (LeapVector *)indexFingerTipPos;
+- (LeapVector *)indexFingerTipPos:(LeapFinger **)pFinger;
+- (LeapVector *)indexFingerTipOrPalmPos;
+- (LeapVector *)indexFingerTipPosRelativePalm;
+- (LeapVector *)mainToolTipPos;
+- (LeapVector *)mainToolTipPos:(LeapPointable **)pTool;
+- (LeapVector *)mainToolTipOrPalmPos;
+- (LeapVector *)mainToolTipPosRelativePalm;
+- (LeapFinger *)pointingFinger;
+- (LeapVector *)pointingFingerTipOrPalmPos;
+- (LeapVector *)pointingFingerTipPos;
+- (LeapVector *)pointingFingerTipPosRelativePalm;
 - (LeapVector *)palmPosPlusAimOffset;
 - (LeapVector *)posFromAim;
-- (LeapVector *)indexFingerOrPalmPos;
-- (LeapVector *)indexFingerOrPalm:(LeapFinger **)pFinger;
-- (LeapVector *)indexFingerTipPosRelativePalm;
-- (LeapVector *)mainToolTipPosRelativePalm;
-- (LeapVector *)mainToolOrPalmPos;
-- (LeapVector *)mainToolOrPalm:(LeapPointable **)pPointable;
 
-- (LeapVector *)factorPointableOffsetRelativePalm:(LeapVector *)position;
-- (LeapVector *)factorPointablePosRelativePalm:(LeapVector *)position;
+- (LeapVector *)factorPointableOffsetRelativePalm:(LeapVector *)position factor:(NSSize)factor;
+- (LeapVector *)factorPointablePosRelativePalm:(LeapVector *)position factor:(NSSize)factor;
 
-- (NSArray *)fingerPositionsTransformedToHand:(BOOL)returnFingers;
-- (NSArray *)fingerDirectionsTransformedToHand:(BOOL)returnFingers;
+- (NSArray *)fingersTransformedToHand;
+- (NSArray *)fingerPositionsTransformedToHand;
+- (NSArray *)fingerDirectionsTransformedToHand;
 
 @property (nonatomic) LeapHand *leapHand;
 @property (nonatomic) LeapFrame *leapFrame;
@@ -158,6 +175,10 @@ typedef enum {
 @property (nonatomic) NSSize directionFactorOffsetPalm;
 @property (nonatomic) float offsetYForAim;
 @property (nonatomic) NSSize pointableFactorOffsetPalm;
+@property (nonatomic) NSSize toolFactorOffsetPalm;
+@property (nonatomic) NSSize fingerFactorOffsetPalm;
 @property (nonatomic) NSSize pointableFactorPosRelPalm;
+@property (nonatomic) NSSize toolFactorPosRelPalm;
+@property (nonatomic) NSSize fingerFactorPosRelPalm;
 
 @end
