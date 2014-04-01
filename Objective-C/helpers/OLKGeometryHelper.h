@@ -16,6 +16,7 @@
 + (BOOL)pointOnSegment:(NSPoint)linePoint1 linePoint2:(NSPoint)linePoint2 checkPoint:(NSPoint)checkPoint;
 + (bool)isLeftOfLine:(NSPoint)linePoint1 linePoint2:(NSPoint)linePoint2 checkPoint:(NSPoint)checkPoint;
 + (float)distFromPoint:(NSPoint)position toPoint:(NSPoint)toPoint;
++ (BOOL)pointBetweenPointsOnLine:(NSPoint)point endPoint1:(NSPoint)endPoint1 endPoint2:(NSPoint)endPoint2;
 + (NSArray *)equidistantBezierPositions:(NSBezierPath *)bezierPath count:(int)count distBetween:(float *)distBetween;
 + (NSArray *)retrievePointsAndDistsForCurveToPoints:(NSPoint)beginPoint endPoint:(NSPoint)endPoint ctlPoint1:(NSPoint)ctlPoint1 ctlPoint2:(NSPoint)ctlPoint2 totalDist:(float *)pTotalDist;
 + (CGFloat)bezierInterpolation:(CGFloat)t a:(CGFloat)a b:(CGFloat)b c:(CGFloat)c d:(CGFloat)d;

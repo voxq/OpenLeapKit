@@ -88,9 +88,18 @@
     return sqrtf((position.x - toPoint.x)*(position.x - toPoint.x) + (position.y - toPoint.y)*(position.y - toPoint.y));
 }
 
++ (BOOL)pointBetweenPointsOnLine:(NSPoint)point endPoint1:(NSPoint)endPoint1 endPoint2:(NSPoint)endPoint2
+{
+    if ((endPoint1.x < point.x && endPoint2.x < point.x) || (endPoint1.x > point.x && endPoint2.x > point.x)
+        || (endPoint1.y < point.y && endPoint2.y < point.y) || (endPoint1.y > point.y && endPoint2.y > point.y))
+        return NO;
+    return YES;
+}
+
 + (NSArray *)equidistantBezierPositions:(NSBezierPath *)bezierPath count:(int)count distBetween:(float *)distBetween
 {
-    
+    if (!bezierPath.elementCount)
+        return nil;
     
     NSPoint points[3];
     NSBezierPathElement element;
@@ -103,7 +112,7 @@
         if (element == NSLineToBezierPathElement)
         {
             [polyPointsAndDists addObjectsFromArray:[self retrievePointsAndDistsForCurveToPoints:curPoint endPoint:points[0] ctlPoint1:curPoint ctlPoint2:points[0] totalDist:&totalDist]];
-            curPoint  = points[2];
+            curPoint  = points[0];
         }
         else if (element == NSClosePathBezierPathElement)
             break;
