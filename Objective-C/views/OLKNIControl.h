@@ -23,7 +23,7 @@
 - (void)recalculateFontSize;
 
 // converts the cursorPos to a point relative to the controls origin (drawLocation).
-- (NSPoint)convertCusorPos:(NSPoint)cursorPos fromHandView:(NSView <OLKHandContainer> *)handView;
+- (NSPoint)convertCursorPos:(NSPoint)cursorPos fromHandView:(NSView <OLKHandContainer> *)handView;
 
 - (void)autoCalculateLabelRectBounds;
 
@@ -41,6 +41,7 @@
 @property (nonatomic) NSString *label;
 @property (nonatomic) NSRect labelRectBounds;
 @property (nonatomic) float labelFontSize;
+@property (nonatomic) BOOL labelFontBold;
 @property (nonatomic) BOOL autoFontSize;
 @property (nonatomic) BOOL autoCalcLabelRect;
 @property (nonatomic) BOOL needsRedraw;

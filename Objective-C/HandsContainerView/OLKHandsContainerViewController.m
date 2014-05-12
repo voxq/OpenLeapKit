@@ -45,10 +45,14 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
 @implementation OLKHandsContainerViewController
 {
+    LeapController *_leapController;
     LeapInteractionBox *_interactionBox;
     LeapDevice *_leapDevice;
     LeapHand *_prevHand;
     float _longestTimeHandVis;
+    NSArray *_leapHandsThisFrame;
+    NSArray *_leapHandsToUpdate;
+    long _leapHandsThisFrameId;
 }
 
 @synthesize leapFrame = _leapFrame;
@@ -156,7 +160,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
 - (NSArray *)newLeapHands
 {
-    NSArray *leapHands = [_leapFrame hands];
+    NSArray *leapHands = self.leapHands;
     NSMutableArray *newHands = [[NSMutableArray alloc] initWithCapacity:leapHands.count];
     for (LeapHand *leapHand in leapHands)
     {
@@ -220,7 +224,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     if (_dataSource && [_dataSource  respondsToSelector:@selector(handFactory)])
         factory = [_dataSource handFactory];
     
-    NSDictionary *handsHandednessDict = [OLKHand leftRightHandSearch:[_leapFrame hands] ignoreHands:ignoreLeapHands handednessAlgorithm:_handednessAlgorithm factory:factory];
+    NSDictionary *handsHandednessDict = [OLKHand leftRightHandSearch:self.leapHands ignoreHands:ignoreLeapHands handednessAlgorithm:_handednessAlgorithm factory:factory];
     
     OLKHand *bestGuessHand = [handsHandednessDict objectForKey:OLKHandBestLeftGuessKey];
     if (!_leftHand)
@@ -269,9 +273,64 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     return handsViews;
 }
 
+- (LeapHand *)leapHandWithId:(long)identifier
+{
+    for (LeapHand *leapHand in self.leapHands)
+    {
+        if (leapHand.id == identifier)
+            return leapHand;
+    }
+    return nil;
+}
+
+- (NSArray *)leapHands
+{
+    if (_leapFrame.hands.count)
+        return _leapFrame.hands;
+
+    if (!_leapFrame.fingers.count)
+        return _leapFrame.hands;
+
+    if (_leapHandsThisFrameId == _leapFrame.id)
+        return _leapHandsThisFrame;
+    
+    NSMutableArray *leapHands = [[NSMutableArray alloc] init];
+    LeapFingerAsLeapHand *leapHand=nil;
+    LeapFingerAsLeapHand *leapHandNeedingCtl=nil;
+    BOOL prevLeapHandNeedsCtl=FALSE;
+    BOOL newHandNeedingCtl;
+    for (LeapFinger *finger in _leapFrame.fingers)
+    {
+        newHandNeedingCtl = FALSE;
+        if (finger.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
+        {
+            if (prevLeapHandNeedsCtl)
+            {
+                prevLeapHandNeedsCtl = FALSE;
+                leapHandNeedingCtl.isTouching = TRUE;
+                leapHandNeedingCtl = nil;
+            }
+            else
+            {
+                prevLeapHandNeedsCtl = TRUE;
+                newHandNeedingCtl = TRUE;
+            }
+        }
+        leapHand = [[LeapFingerAsLeapHand alloc] init];
+        leapHand.fingerToMapToHand = finger;
+        leapHand.isTouching = FALSE;
+        if (newHandNeedingCtl)
+            leapHandNeedingCtl = leapHand;
+        [leapHands addObject:leapHand];
+    }
+    _leapHandsThisFrame = [leapHands copy];
+    _leapHandsThisFrameId = _leapFrame.id;
+    return _leapHandsThisFrame;
+}
+
 - (void)assignHands
 {
-    if ([_hands count] == [[_leapFrame hands] count])
+    if ([_hands count] == [self.leapHands count])
         return;
     
     NSMutableArray *handsViews;
@@ -314,6 +373,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
 - (BOOL)invalidHandPosition:(LeapHand *)leapHand
 {
+    if ([leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
+        return NO;
     LeapVector *palmPosition;
     if (_useStabilized)
         palmPosition = [leapHand stabilizedPalmPosition];
@@ -333,7 +394,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     if (_dataSource && [_dataSource  respondsToSelector:@selector(handFactory)])
         factory = [_dataSource handFactory];
     
-    NSArray *leapHands = [_leapFrame hands];
+    NSArray *leapHands = self.leapHands;
     NSMutableArray *newHands = [[NSMutableArray alloc] initWithCapacity:leapHands.count];
     NSMutableArray *newHandsViews = [[NSMutableArray alloc] initWithCapacity:leapHands.count];
     for (LeapHand *leapHand in leapHands)
@@ -343,7 +404,14 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         
         NSView <OLKHandContainer>*handView = [self viewForLeapHandId:[leapHand id]];
         if (handView)
+        {
+            if ([handView.hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
+            {
+                LeapFingerAsLeapHand *existLeapFingerAsHand = (LeapFingerAsLeapHand *)handView.hand.leapHand;
+                existLeapFingerAsHand.isTouching = ((LeapFingerAsLeapHand *)leapHand).isTouching;
+            }
             continue;
+        }
         
         OLKHand *hand = [self newHandFromLeapHand:leapHand withFactory:factory];
         [hand setUsesStabilized:_useStabilized];
@@ -361,11 +429,10 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         return;
     NSMutableSet *foundHandsViews = [[NSMutableSet alloc] init];
     NSMutableSet *foundHands = [[NSMutableSet alloc] init];
-    
     for (NSView <OLKHandContainer> *handView in _handsViews)
     {
         OLKHand *hand = [handView hand];
-        LeapHand *leapHand = [_leapFrame hand:[[hand leapHand] id]];
+        LeapHand *leapHand = [self leapHandWithId:[[hand leapHand] id]];
         if ([leapHand isValid])
         {
             if ([self invalidHandPosition:leapHand])
@@ -512,7 +579,11 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     NSRect oldRect = [handView frame];
 
     LeapVector *position;
-    LeapFinger *finger=nil;
+
+    if ([hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
+    {
+        handView.cursorType = OLKHandCursorPosTypePalm;
+    }
     switch (handView.cursorType)
     {
         case OLKHandCursorPosTypePointingFingerTip:
@@ -595,7 +666,11 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         if (!spaceView)
             spaceView = _handsSpaceView;
     }
-    if (_calibrator)
+    if ([hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
+    {
+        oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedView:spaceView bottom:30 top:140 width:200];
+    }
+    else if (_calibrator)
     {
         NSRect convertRect;
         convertRect.origin = [_calibrator screenPosFromLeapPos:position];
@@ -640,6 +715,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
 - (void)onFrame:(LeapFrame *)leapFrame controller:(LeapController *)leapController
 {
+    _leapController = leapController;
     NSArray *devices = [leapController devices];
     if (devices && [devices count] > 0)
         _leapDevice = [devices objectAtIndex:0];
@@ -659,7 +735,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     
     [self removeMissingHands];
     
-    if ([[_leapFrame hands] count])
+    if ([self.leapHands count])
     {
         if (_findRightLeft)
             [self updateHandedness];

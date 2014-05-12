@@ -65,6 +65,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         _activated = NO;
         _useResetEscape = NO;
         _showBorder = YES;
+        _borderWidth = 1;
     }
     return self;
 }
@@ -146,6 +147,13 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     return frame;
 }
 
+- (void)setBorderWidth:(float)borderWidth
+{
+    _borderWidth = borderWidth;
+    [self createButtonImages];
+    [self requestRedraw];
+}
+
 - (void)createButtonImages
 {
     NSRect buttonRect;
@@ -158,7 +166,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     {
         _buttonPath = [[NSBezierPath alloc] init];
         [_buttonPath appendBezierPathWithRect:buttonRect];
-        [_buttonPath setLineWidth:1];
+        [_buttonPath setLineWidth:_borderWidth];
         bounds = [_buttonPath bounds];
         destRect.size = bounds.size;
         destRect.origin.x = -bounds.origin.x;
@@ -479,7 +487,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     if (!self.enable || (_controllingHandView && _controllingHandView != handView))
         return;
     
-    cursorPos = [self convertCusorPos:cursorPos fromHandView:handView];
+    cursorPos = [self convertCursorPos:cursorPos fromHandView:handView];
 
     // Check whether the button was just added and a cursor is already in it, so we do not want to trigger
     OLKCursorTracking *cursorTracking = [self.cursorTrackings objectForKey:handView];

@@ -383,7 +383,10 @@
     for (id object in _optionObjects)
     {
         NSRect optionRect = [self optionRectForIndex:count];
-        [coordinateObjects setObject:[NSValue valueWithPoint:optionRect.origin] forKey:object];
+        NSPoint objectPos = optionRect.origin;
+        objectPos.x += optionRect.size.width/2;
+        objectPos.y += optionRect.size.height/2;
+        [coordinateObjects setObject:[NSValue valueWithPoint:objectPos] forKey:object];
         count ++;
     }
     

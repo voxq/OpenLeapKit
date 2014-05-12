@@ -19,6 +19,8 @@ typedef enum {
 }OLKOptionStrikeSide;
 
 static int const OLKOptionMultiInputInvalidSelection = -1;
+static int const OLKOptionMultiInputSpace = -2;
+static int const OLKOptionMultiInputBackspace = -3;
 
 @protocol OLKOptionMultiCursorInputDatasource <NSObject>
 

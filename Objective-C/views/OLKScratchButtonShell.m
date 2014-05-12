@@ -551,7 +551,7 @@ static float const OLKScratchButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     if (_controllingHandView && _controllingHandView != handView)
         return;
     
-    cursorPos = [self convertCusorPos:cursorPos fromHandView:handView];
+    cursorPos = [self convertCursorPos:cursorPos fromHandView:handView];
     
     if (![self cursorMovedTo:cursorPos])
     {

@@ -21,8 +21,18 @@
 @synthesize superHandCursorResponder = _superHandCursorResponder;
 @synthesize cursorTrackings = _cursorTrackings;
 
+- (id)init
+{
+    if (self = [super init])
+    {
+        _cursorTrackings = [[NSDictionary alloc] init];
+    }
+    return self;
+}
+
 - (void)removeFromSuperHandCursorResponder
 {
+    _cursorTrackings = [[NSDictionary alloc] init];
     if (_superHandCursorResponder)
         [_superHandCursorResponder removeHandCursorResponder:self];
 }
@@ -37,7 +47,7 @@
 
 - (void)removeAllCursorTracking
 {
-    _cursorTrackings = nil;
+    _cursorTrackings = [[NSDictionary alloc] init];
 }
 
 - (void)setCursorTracking:(NSPoint)cursorPos withHandView:(NSView <OLKHandContainer>*)handView

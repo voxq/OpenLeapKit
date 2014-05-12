@@ -725,8 +725,13 @@ static OLKHand *gPrevHand=nil;
 - (void)updateLeapHand:(LeapHand *)leapHand
 {
     _numFramesExist ++;
-    _leapHand = leapHand;
     _leapFrame = [leapHand frame];
+    if ([leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
+    {
+        ((LeapFingerAsLeapHand *)_leapHand).fingerToMapToHand = ((LeapFingerAsLeapHand *)leapHand).fingerToMapToHand;
+        return;
+    }
+    _leapHand = leapHand;
 }
 
 - (BOOL)isFist
@@ -846,10 +851,10 @@ static OLKHand *gPrevHand=nil;
 - (LeapVector *)longFingerTipPos
 {
     LeapPointable *finger;
-    return [self longFingerByTipPos:&finger];
+    return [self longFingerTipPos:&finger];
 }
 
-- (LeapVector *)longFingerByTipPos:(LeapFinger **)pFinger
+- (LeapVector *)longFingerTipPos:(LeapFinger **)pFinger
 {
     LeapFinger *finger = [OLKHand furthestFingerTipFromPalm:_leapHand];
     if (![finger isValid])
@@ -1238,3 +1243,194 @@ static OLKHand *gPrevHand=nil;
 
 
 @end
+
+//////////////////////////////////////////////////////////////////////////
+//HAND
+@implementation LeapFingerAsLeapHand
+{
+    NSMutableArray *_prevTipPositions;
+}
+
+@synthesize frame = _frame;
+
+- (id)init
+{
+    if (self = [super init])
+    {
+        _prevTipPositions = [[NSMutableArray alloc] initWithCapacity:10];
+    }
+    return self;
+}
+    
+- (NSString *)description
+{
+    if (![self isValid]) {
+        return @"Invalid Hand";
+    }
+    return [NSString stringWithFormat:@"Hand Id:%d", [self id]];
+}
+
+- (int32_t)id
+{
+    return _fingerToMapToHand.id + 1000000;
+}
+    
+- (void)setFingerToMapToHand:(LeapFinger *)fingerToMapToHand
+{
+    _fingerToMapToHand = fingerToMapToHand;
+    _frame = _fingerToMapToHand.frame;
+}
+
+- (NSArray *)pointables
+{
+    return nil;
+}
+
+- (NSArray *)fingers
+{
+    return nil;
+}
+
+- (NSArray *)tools
+{
+    return nil;
+}
+
+- (LeapPointable *)pointable:(int32_t)pointableId
+{
+    return nil;
+}
+
+- (LeapFinger *)finger:(int32_t)fingerId
+{
+    return nil;
+}
+
+- (LeapTool *)tool:(int32_t)toolId
+{
+    return nil;
+}
+
+- (LeapVector *)palmPosition
+{
+//    NSLog(@"Finger Id: %d; tip pos: %@", self.id, _fingerToMapToHand.tipPosition);
+    if (_fingerToMapToHand.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
+        return _fingerToMapToHand.tipPosition;
+    LeapVector *prevTipPosition = _prevTipPositions.lastObject;
+    LeapVector *distance = [prevTipPosition minus:_fingerToMapToHand.tipPosition];
+//    NSLog(@"Finger Id: %d; filtered count: %d; magnitude: %f", self.id, _prevTipPositions.count, distance.magnitude);
+    if (distance.magnitude > 5)
+    {
+        [_prevTipPositions removeAllObjects];
+        [_prevTipPositions addObject:_fingerToMapToHand.tipPosition];
+        return _fingerToMapToHand.tipPosition;
+    }
+    if (_prevTipPositions.count > 10)
+        [_prevTipPositions removeObjectAtIndex:0];
+    [_prevTipPositions addObject:_fingerToMapToHand.tipPosition];
+    LeapVector *averagePos = [[LeapVector alloc] initWithX:0 y:0 z:0];
+    for (LeapVector *tipPosition in _prevTipPositions)
+    {
+        averagePos = [averagePos plus:tipPosition];
+    }
+    averagePos = [averagePos divide:_prevTipPositions.count];
+//    NSLog(@"Finger Id: %d; filtered count: %d; average pos: %@", self.id, _prevTipPositions.count, averagePos);
+    return averagePos;
+}
+
+- (LeapVector *)stabilizedPalmPosition
+{
+    return _fingerToMapToHand.stabilizedTipPosition;
+}
+
+- (LeapVector *)palmVelocity
+{
+    return _fingerToMapToHand.tipVelocity;
+}
+
+- (LeapVector *)palmNormal
+{
+    return [[LeapVector alloc] initWithX:0 y:-1 z:0];
+}
+
+- (LeapVector *)direction
+{
+    return _fingerToMapToHand.direction;
+}
+
+- (LeapVector *)sphereCenter
+{
+    return _fingerToMapToHand.tipPosition;
+}
+
+- (float)sphereRadius
+{
+    return 1;
+}
+
+- (BOOL)isValid
+{
+    return [_fingerToMapToHand isValid];
+}
+
+- (LeapFrame *)frame
+{
+    NSAssert(_frame != nil, @"Hand's frame has been deallocated due to weak ARC reference. Retain a strong pointer to this frame if you wish to access it later.");
+    return _frame;
+}
+
+- (void)dealloc
+{
+}
+
+- (LeapVector *)translation:(const LeapFrame *)sinceFrame
+{
+    return [[LeapVector alloc] initWithX:0 y:0 z:0];
+}
+
+- (float)translationProbability:(const LeapFrame *)sinceFrame
+{
+    return 1;
+}
+
+- (LeapVector *)rotationAxis:(const LeapFrame *)sinceFrame
+{
+    return [[LeapVector alloc] initWithX:0 y:0 z:0];
+}
+
+- (float)rotationAngle:(const LeapFrame *)sinceFrame
+{
+    return 0;
+}
+
+- (float)rotationAngle:(const LeapFrame *)sinceFrame axis:(const LeapVector *)axis
+{
+    return 0;
+}
+
+- (LeapMatrix *)rotationMatrix:(const LeapFrame *)sinceFrame
+{
+    return [LeapMatrix identity];
+}
+
+- (float)rotationProbability:(const LeapFrame *)sinceFrame
+{
+    return 1;
+}
+
+- (float)scaleFactor:(const LeapFrame *)sinceFrame
+{
+    return 1;
+}
+
+- (float)scaleProbability:(const LeapFrame *)sinceFrame
+{
+    return 1;
+}
+
+- (float)timeVisible
+{
+    return _fingerToMapToHand.timeVisible;
+}
+
+@end;

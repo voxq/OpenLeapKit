@@ -52,7 +52,13 @@
     NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [style setAlignment:NSCenterTextAlignment];
     
-    _labelAttributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Helvetica Neue" size:_labelFontSize], NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, nil];
+    NSFont *labelFont = [NSFont fontWithName:@"Helvetica Neue" size:_labelFontSize];
+    if (_labelFontBold)
+    {
+        NSFontManager *fontManager = [NSFontManager sharedFontManager];
+        labelFont = [fontManager fontWithFamily:labelFont.familyName traits:NSBoldFontMask weight:0 size:_labelFontSize];
+    }
+    _labelAttributes = [NSDictionary dictionaryWithObjectsAndKeys:labelFont, NSFontAttributeName, style, NSParagraphStyleAttributeName, [NSColor blackColor], NSForegroundColorAttributeName, nil];
     
     if (!_outlineLabel)
         return;
@@ -105,6 +111,16 @@
 {
     _active = active;
     [self requestRedraw];
+}
+
+- (void)setLabelFontBold:(BOOL)labelFontBold
+{
+    _labelFontBold = labelFontBold;
+    
+    [self setLabelFontSize:_labelFontSize];
+    [self autoCalculateLabelRectBounds];
+    [self prepareLabelImage];
+    [self.parentView setNeedsDisplayInRect:self.frame];
 }
 
 - (void)setLabelFontSize:(float)labelFontSize
@@ -305,7 +321,7 @@
     return [_parentView convertPoint:cursorPos fromView:[handView superview]];
 }
 
-- (NSPoint)convertCusorPos:(NSPoint)cursorPos fromHandView:(NSView <OLKHandContainer> *)handView
+- (NSPoint)convertCursorPos:(NSPoint)cursorPos fromHandView:(NSView <OLKHandContainer> *)handView
 {
     NSPoint convertedPos = [self convertToParentViewCusorPos:cursorPos fromHandView:handView];
     convertedPos.x -= _drawLocation.x;

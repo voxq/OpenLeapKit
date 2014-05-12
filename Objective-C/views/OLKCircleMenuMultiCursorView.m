@@ -60,6 +60,19 @@
     return self;
 }
 
+- (NSPoint)originAsOptionInputCoordinates
+{
+    NSPoint originOffset = _center;
+    originOffset.x = -originOffset.x;
+    originOffset.y = -originOffset.y;
+    return originOffset;
+}
+
+- (NSPoint)offsetToOptionInputZeroPoint
+{
+    return _center;
+}
+
 - (NSPoint)convertToInputCursorPos:(NSPoint)cursorPos fromView:(NSView <OLKHandContainer>*)handView
 {
     return [self positionRelativeToCenter:cursorPos convertFromView:[handView superview]];

@@ -92,6 +92,10 @@ typedef enum {
     OLKRightHand=2
 }OLKHandedness;
 
+@interface LeapFingerAsLeapHand : LeapHand
+@property (nonatomic) LeapFinger *fingerToMapToHand;
+@property (nonatomic) BOOL isTouching;
+@end
 
 @interface OLKHand : NSObject <NSCopying>
 

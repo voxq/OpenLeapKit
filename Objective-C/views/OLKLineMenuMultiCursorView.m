@@ -47,6 +47,16 @@
     return self;
 }
 
+- (NSPoint)originAsOptionInputCoordinates
+{
+    return NSZeroPoint;
+}
+
+- (NSPoint)offsetToOptionInputZeroPoint
+{
+    return NSZeroPoint;
+}
+
 - (NSPoint)convertToInputCursorPos:(NSPoint)cursorPos fromView:(NSView <OLKHandContainer>*)handView
 {
     if (handView)

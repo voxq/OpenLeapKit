@@ -46,5 +46,7 @@
 @property (nonatomic) BOOL togglesState;
 @property (nonatomic) BOOL on;
 @property (nonatomic) BOOL showBorder;
+@property (nonatomic) float borderWidth;
+
 
 @end

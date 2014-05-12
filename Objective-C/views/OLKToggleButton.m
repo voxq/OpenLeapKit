@@ -307,7 +307,7 @@
     if (_controllingHandView && _controllingHandView != handView)
         return;
     
-    cursorPos = [self convertCusorPos:cursorPos fromHandView:handView];
+    cursorPos = [self convertCursorPos:cursorPos fromHandView:handView];
     
     if (![self handMovedTo:cursorPos])
     {

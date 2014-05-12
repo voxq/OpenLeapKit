@@ -13,6 +13,8 @@
 @protocol OLKMenuMultiCursorView <OLKHandCursorResponder>
 
 - (void)redraw;
+- (NSPoint)originAsOptionInputCoordinates;
+- (NSPoint)offsetToOptionInputZeroPoint;
 
 @property (nonatomic) NSObject <OLKOptionMultiCursorInput> *optionInput;
 @property (nonatomic) BOOL active;

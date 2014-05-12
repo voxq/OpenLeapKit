@@ -10,9 +10,6 @@
 
 
 @implementation CursorsView
-{
-    NSImage *_cursorImg;
-}
 
 @synthesize cursorTrackingController = _cursorTrackingController;
 @synthesize superHandCursorResponder = _superHandCursorResponder;

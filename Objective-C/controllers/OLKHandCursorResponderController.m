@@ -135,8 +135,9 @@
         }
     }
     _globalControlled = NO;
+    if (_reset)
+        _reset = NO;
     [self walkHandCursorResponders:[NSArray arrayWithArray:_subHandCursorResponders] settingCursorPos:cursorPos forHandView:handView];
-    return;
 }
 
 - (void)addHandCursorResponder:(NSObject <OLKHandCursorResponder> *)handCursorResponder
