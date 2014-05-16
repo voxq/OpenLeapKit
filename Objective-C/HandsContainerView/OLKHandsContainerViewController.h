@@ -36,6 +36,20 @@
 #import "OLKHand.h"
 #import "OLKRangeCalibrator.h"
 
+typedef enum
+{
+    OLKHandsDetectTouchEmulation,
+    OLKHandsDetectTouchDoubleTap,
+    OLKHandsDetectTouchSecondTouch
+}OLKHandsDetectTouch;
+
+typedef enum
+{
+    OLKHandsDetectTouchReleaseHover,
+    OLKHandsDetectTouchReleaseRemoved,
+    OLKHandsDetectTouchReleaseThreshold
+}OLKHandsDetectTouchRelease;
+
 @protocol OLKHandsContainerView <NSObject>
 
 - (void)addHandView:(NSView <OLKHandContainer> *)handView;
@@ -104,5 +118,7 @@
 @property (nonatomic) float percentRangeOfMaxWidth;
 @property (nonatomic) NSSize fitHandFact;
 @property (nonatomic) OLKRangeCalibrator *calibrator;
+@property (nonatomic) BOOL confineLeapFingerAsHand;
+@property (nonatomic) OLKHandsDetectTouch detectTouchMethod;
 
 @end

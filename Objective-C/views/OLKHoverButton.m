@@ -493,7 +493,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     OLKCursorTracking *cursorTracking = [self.cursorTrackings objectForKey:handView];
     if (!cursorTracking)
     {
-        if ([self inHotZone:cursorPos])
+        if (![handView.hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]] && [self inHotZone:cursorPos])
             return;
         [super setCursorTracking:cursorPos withHandView:handView];
     }

@@ -134,7 +134,7 @@
     
     if (!_autoFontSize || !labelFontSize)
     {
-        [_parentView setNeedsDisplayInRect:self.labelRectBounds];
+        [_parentView setNeedsDisplayInRect:self.labelRectBoundsFrame];
         return;
     }
     _autoFontSize = NO;
@@ -202,6 +202,18 @@
     return _labelRectBounds;
 }
 
+- (NSRect)labelRectBoundsFrame
+{
+    NSRect frameRect;
+    
+    frameRect = self.labelRectBounds;
+    
+    frameRect.origin.x += _drawLocation.x;
+    frameRect.origin.y += _drawLocation.y;
+    
+    return frameRect;
+}
+
 - (void)setAutoCalcLabelRect:(BOOL)autoCalcLabelRect
 {
     _autoCalcLabelRect = autoCalcLabelRect;
@@ -248,14 +260,12 @@
 {
     _label = label;
     [self prepareLabelImage];
-    [_parentView setNeedsDisplayInRect:self.labelRectBounds];
+    [_parentView setNeedsDisplayInRect:self.labelRectBoundsFrame];
 }
 
 - (void)drawLabel
 {
-    NSPoint drawLocation = self.drawLocation;
-    drawLocation.x += self.labelRectBounds.origin.x;
-    drawLocation.y += self.labelRectBounds.origin.y;
+    NSPoint drawLocation = self.labelRectBoundsFrame.origin;
     [_labelImage drawAtPoint:drawLocation fromRect:NSMakeRect(0, 0, _labelImage.size.width, _labelImage.size.height) operation:NSCompositeSourceOver fraction:1];
     self.needsRedraw = FALSE;
 }

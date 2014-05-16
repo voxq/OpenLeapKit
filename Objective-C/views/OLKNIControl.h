@@ -19,6 +19,7 @@
 - (void)requestRedraw;
 - (NSRect)frame; // includes label overflow from original size specification
 - (NSRect)frameWithoutLabel;
+- (NSRect)labelRectBoundsFrame;
 - (NSPoint)convertToParentViewCusorPos:(NSPoint)cursorPos fromHandView:(NSView <OLKHandContainer> *)handView;
 - (void)recalculateFontSize;
 

@@ -536,7 +536,7 @@
     
     if (!cursorTracking)
     {
-        if (![self inPreparedToStrikeZone:cursorPos])
+        if (![cursorContext .hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]] && ![self inPreparedToStrikeZone:cursorPos])
             return;
 
         cursorTracking = [self createTracking:cursorPos withContext:cursorContext];

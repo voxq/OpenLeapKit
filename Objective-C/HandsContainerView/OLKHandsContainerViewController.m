@@ -38,8 +38,23 @@
 //#import "OLKGestureRecognizer.h"
 //#import "OLKGestureRecognizerDispatcher.h"
 
-static const float gHandViewDimX=250;
-static const float gHandViewDimY=250;
+typedef enum
+{
+    OLKFingerTapStateHovering,
+    OLKFingerTapStateOrienting,
+    OLKFingerTapStateLifting,
+    OLKFingerTapStatePeaking,
+    OLKFingerTapStateDropping,
+    OLKFingerTapStateTapping,
+    OLKFingerTapStateRedHerring
+} OLKFingerTapState;
+
+static NSString * const OLKKeyFingerTapStateStart = @"Finger State Start";
+static NSString * const OLKKeyFingerTapState = @"Finger State";
+static NSString * const OLKKeyFingerTapPosHistory = @"Finger Position History";
+static NSString * const OLKKeyFingerTapCount = @"Finger Tap Count";
+static NSString * const OLKKeyFingerTapPosOriginal = @"Finger Tap Original Position";
+
 static const NSSize gTrimInteractionBox={0.05,0.05};
 static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
@@ -51,8 +66,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     LeapHand *_prevHand;
     float _longestTimeHandVis;
     NSArray *_leapHandsThisFrame;
-    NSArray *_leapHandsToUpdate;
     long _leapHandsThisFrameId;
+    NSMutableDictionary *_tapDetects;
 }
 
 @synthesize leapFrame = _leapFrame;
@@ -104,7 +119,9 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         _rangeOffset = -80;
         _proximityOffset = 0;
         _percentRangeOfMaxWidth = 0.6;
+        _confineLeapFingerAsHand = YES;
         _handednessAlgorithm = OLKHandednessAlgorithmThumbTipAndBase;
+        _detectTouchMethod = OLKHandsDetectTouchDoubleTap;
     }
     return self;
 }
@@ -283,6 +300,148 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     return nil;
 }
 
+- (void)addTapInit:(LeapFinger *)finger toArray:(NSMutableArray *)array
+{
+    NSMutableDictionary *tapDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSArray arrayWithObject:finger], OLKKeyFingerTapPosHistory,
+                             OLKFingerTapStateOrienting, OLKKeyFingerTapState, [NSDate date], OLKKeyFingerTapStateStart,
+                             [NSNumber numberWithInteger:0], OLKKeyFingerTapCount, finger.tipPosition, OLKKeyFingerTapPosOriginal, nil];
+    if (!_tapDetects)
+        _tapDetects = [[NSMutableDictionary alloc] initWithCapacity:1];
+    
+    if (array)
+        [array addObject:tapDict];
+    else
+    {
+        array = [NSMutableArray arrayWithObject:tapDict];
+        [_tapDetects setObject:array forKey:[NSNumber numberWithInteger:finger.id]];
+    }
+}
+
+- (OLKFingerTapState)handleTapOrienting:(NSMutableDictionary *)tapDetectDict finger:(LeapFinger *)finger
+{
+    NSLog(@"Finger touch dist: %f", finger.touchDistance);
+
+    if (finger.touchZone == LEAP_POINTABLE_ZONE_HOVERING && finger.touchDistance > 0.01)
+    {
+//        if (finger.touchDistance < 0.03)
+//        {
+//    //        NSLog(@"Finger lifting");
+//            return OLKFingerTapStateLifting;
+//        }
+//        NSLog(@"Finger peaking");
+//        return OLKFingerTapStatePeaking;
+        return OLKFingerTapStateDropping;
+    }
+
+    NSInteger tapCount = [[tapDetectDict objectForKey:OLKKeyFingerTapCount] integerValue];
+    if (tapCount != 0)
+    {
+        NSDate *stateStart = [tapDetectDict objectForKey:OLKKeyFingerTapStateStart];
+        if ([stateStart timeIntervalSinceNow] < -0.5)
+            return OLKFingerTapStateRedHerring;
+    }
+    [tapDetectDict setObject:finger.tipPosition forKey:OLKKeyFingerTapPosOriginal];
+    
+    return OLKFingerTapStateOrienting;
+}
+
+- (OLKFingerTapState)handleTapLifting:(NSMutableDictionary *)tapDetectDict finger:(LeapFinger *)finger
+{
+    NSDate *stateStart = [tapDetectDict objectForKey:OLKKeyFingerTapStateStart];
+    if (finger.touchDistance >= 0.03)
+        return OLKFingerTapStatePeaking;
+    
+    if ([stateStart timeIntervalSinceNow] < -0.5)
+        return OLKFingerTapStateRedHerring;
+    
+    return OLKFingerTapStateLifting;
+}
+
+- (OLKFingerTapState)handleTapPeaking:(NSMutableDictionary *)tapDetectDict finger:(LeapFinger *)finger
+{
+    NSDate *stateStart = [tapDetectDict objectForKey:OLKKeyFingerTapStateStart];
+    
+    if (finger.touchDistance <= 0.04)
+        return OLKFingerTapStateDropping;
+
+    if ([stateStart timeIntervalSinceNow] < -0.5)
+        return OLKFingerTapStateRedHerring;
+    
+    return OLKFingerTapStatePeaking;
+}
+
+- (OLKFingerTapState)handleTapDropping:(NSMutableDictionary *)tapDetectDict finger:(LeapFinger *)finger tapCountDetected:(NSInteger *)tapCountDetected
+{
+    NSDate *stateStart = [tapDetectDict objectForKey:OLKKeyFingerTapStateStart];
+    
+    if (finger.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
+    {
+        NSInteger tapCount = [[tapDetectDict objectForKey:OLKKeyFingerTapCount] integerValue];
+        tapCount ++;
+        *tapCountDetected = tapCount;
+        [tapDetectDict setObject:[NSNumber numberWithInteger:tapCount] forKey:OLKKeyFingerTapCount];
+        NSLog(@"Tap detected!");
+        return OLKFingerTapStateOrienting;
+    }
+
+//    if (finger.touchDistance >= 0.05)
+//        return OLKFingerTapStateRedHerring;
+
+    if ([stateStart timeIntervalSinceNow] < -0.5)
+        return OLKFingerTapStateRedHerring;
+
+    return OLKFingerTapStateDropping;
+}
+
+- (BOOL)updateTapFinger:(LeapFinger *)finger tapCountDetected:(NSInteger *)tapCountDetected
+{
+    NSMutableArray *fingerTapDetects = [_tapDetects objectForKey:[NSNumber numberWithInteger:finger.id]];
+    BOOL noneOrienting = TRUE;
+    BOOL tapDetected = FALSE;
+    NSUInteger i = 0;
+    NSMutableIndexSet *removeDetects = [[NSMutableIndexSet alloc] init];
+    for (NSMutableDictionary *tapDetectDict in fingerTapDetects)
+    {
+        NSInteger state = [[tapDetectDict objectForKey:OLKKeyFingerTapState] integerValue];
+        NSInteger newState;
+        switch (state)
+        {
+            case OLKFingerTapStateOrienting:
+                newState = [self handleTapOrienting:tapDetectDict finger:finger];
+                noneOrienting = FALSE;
+                break;
+            case OLKFingerTapStateLifting:
+                newState = [self handleTapLifting:tapDetectDict finger:finger];
+                break;
+            case OLKFingerTapStatePeaking:
+                newState = [self handleTapPeaking:tapDetectDict finger:finger];
+                break;
+            case OLKFingerTapStateDropping:
+                newState = [self handleTapDropping:tapDetectDict finger:finger tapCountDetected:tapCountDetected];
+                break;
+        }
+        if (newState == OLKFingerTapStateRedHerring)
+            [removeDetects addIndex:i];
+        else if (newState != state)
+        {
+            if (newState == OLKFingerTapStateOrienting)
+            {
+                noneOrienting = FALSE;
+                if (state == OLKFingerTapStateDropping)
+                    tapDetected = TRUE;
+            }
+            [tapDetectDict setObject:[NSDate date] forKey:OLKKeyFingerTapStateStart];
+            [tapDetectDict setObject:[NSNumber numberWithInteger:newState] forKey:OLKKeyFingerTapState];
+        }
+        i ++;
+    }
+
+    [fingerTapDetects removeObjectsAtIndexes:removeDetects];
+    if (noneOrienting && finger.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
+        [self addTapInit:finger toArray:fingerTapDetects];
+    return tapDetected;
+}
+
 - (NSArray *)leapHands
 {
     if (_leapFrame.hands.count)
@@ -301,26 +460,51 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     BOOL newHandNeedingCtl;
     for (LeapFinger *finger in _leapFrame.fingers)
     {
-        newHandNeedingCtl = FALSE;
-        if (finger.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
+        if (_detectTouchMethod == OLKHandsDetectTouchSecondTouch)
         {
-            if (prevLeapHandNeedsCtl)
+            newHandNeedingCtl = FALSE;
+            if (finger.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
             {
-                prevLeapHandNeedsCtl = FALSE;
-                leapHandNeedingCtl.isTouching = TRUE;
-                leapHandNeedingCtl = nil;
-            }
-            else
-            {
-                prevLeapHandNeedsCtl = TRUE;
-                newHandNeedingCtl = TRUE;
+                if (prevLeapHandNeedsCtl)
+                {
+                    prevLeapHandNeedsCtl = FALSE;
+                    leapHandNeedingCtl.isTouching = TRUE;
+                    leapHandNeedingCtl = nil;
+                }
+                else
+                {
+                    prevLeapHandNeedsCtl = TRUE;
+                    newHandNeedingCtl = TRUE;
+                }
             }
         }
         leapHand = [[LeapFingerAsLeapHand alloc] init];
         leapHand.fingerToMapToHand = finger;
-        leapHand.isTouching = FALSE;
-        if (newHandNeedingCtl)
-            leapHandNeedingCtl = leapHand;
+        if (_detectTouchMethod == OLKHandsDetectTouchSecondTouch)
+        {
+            leapHand.isTouching = FALSE;
+            if (newHandNeedingCtl)
+                leapHandNeedingCtl = leapHand;
+        }
+        else if (_detectTouchMethod == OLKHandsDetectTouchEmulation)
+        {
+            if (finger.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
+                leapHand.isTouching = TRUE;
+            else
+                leapHand.isTouching = FALSE;
+        }
+        else if (_detectTouchMethod == OLKHandsDetectTouchDoubleTap)
+        {
+            NSInteger tapCountDetected;
+            if ([self updateTapFinger:leapHand.fingerToMapToHand tapCountDetected:&tapCountDetected])
+            {
+                if (tapCountDetected > 1)
+                {
+                    leapHand.isTouching = TRUE;
+                    [_tapDetects removeObjectForKey:[NSNumber numberWithInteger:finger.id]];
+                }
+            }
+        }
         [leapHands addObject:leapHand];
     }
     _leapHandsThisFrame = [leapHands copy];
@@ -351,6 +535,11 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
 - (void)removeMissingHandView:(NSView <OLKHandContainer> *)handView
 {
+    if (!handView)
+        return;
+
+    if ([handView.hand isKindOfClass:[LeapFingerAsLeapHand class]])
+        [_tapDetects removeObjectForKey:[NSNumber numberWithInteger:((LeapFingerAsLeapHand *)handView.hand).fingerToMapToHand.id]];
     OLKHand *hand = [handView hand];
     if ([hand isEqual:_leftHand])
         _leftHand = nil;
@@ -359,16 +548,13 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     if ([_delegate respondsToSelector:@selector(willRemoveHand:withHandView:)])
         [_delegate willRemoveHand:hand withHandView:handView];
     
-    if (handView)
-    {
-        NSLog(@"Removing Hand View!");
-        
-        [handView removeFromSuperview];
-        if (handView == _leftHandView)
-            _leftHandView = nil;
-        if (handView == _rightHandView)
-            _rightHandView = nil;
-    }
+//        NSLog(@"Removing Hand View!");
+    
+    [handView removeFromSuperview];
+    if (handView == _leftHandView)
+        _leftHandView = nil;
+    if (handView == _rightHandView)
+        _rightHandView = nil;
 }
 
 - (BOOL)invalidHandPosition:(LeapHand *)leapHand
@@ -440,6 +626,14 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
                 [self removeMissingHandView:handView];
                 continue;
             }
+            if (_detectTouchMethod == OLKHandsDetectTouchDoubleTap && [leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
+            {
+                LeapFingerAsLeapHand *updateHand = (LeapFingerAsLeapHand *)leapHand;
+                LeapFingerAsLeapHand *existHand = (LeapFingerAsLeapHand *)hand.leapHand;
+                if (existHand.isTouching && existHand.fingerToMapToHand.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
+                    updateHand.isTouching = YES;
+            }
+                
             [hand updateLeapHand:leapHand];
             [foundHandsViews addObject:handView];
             [foundHands addObject:hand];
@@ -668,7 +862,20 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     }
     if ([hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
     {
-        oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedView:spaceView bottom:30 top:140 width:200];
+        if (!_confineLeapFingerAsHand)
+            oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedView:spaceView bottom:30 top:140 width:200];
+        else
+        {
+            NSRect boundsRect = spaceView.bounds;
+            boundsRect.origin.x += boundsRect.size.width/4;
+            boundsRect.origin.y += boundsRect.size.height/3;
+            boundsRect.size.width -= boundsRect.size.width/2;
+            boundsRect.size.height -= boundsRect.size.height/3*2;
+            
+            oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedBounds:boundsRect bottom:30 top:140 width:200];
+            oldRect.origin.x += boundsRect.origin.x;
+            oldRect.origin.y += boundsRect.origin.y;
+        }
     }
     else if (_calibrator)
     {

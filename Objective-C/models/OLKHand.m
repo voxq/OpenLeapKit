@@ -729,6 +729,7 @@ static OLKHand *gPrevHand=nil;
     if ([leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
     {
         ((LeapFingerAsLeapHand *)_leapHand).fingerToMapToHand = ((LeapFingerAsLeapHand *)leapHand).fingerToMapToHand;
+        ((LeapFingerAsLeapHand *)_leapHand).isTouching = ((LeapFingerAsLeapHand *)leapHand).isTouching;
         return;
     }
     _leapHand = leapHand;
