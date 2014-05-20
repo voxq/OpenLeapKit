@@ -94,7 +94,10 @@ typedef enum {
 
 @interface LeapFingerAsLeapHand : LeapHand
 @property (nonatomic) LeapFinger *fingerToMapToHand;
-@property (nonatomic) BOOL isTouching;
+@property BOOL isTouching;
+@property NSInteger tapCount;
+@property NSDate *lastTapTime;
+
 @end
 
 @interface OLKHand : NSObject <NSCopying>

@@ -728,8 +728,13 @@ static OLKHand *gPrevHand=nil;
     _leapFrame = [leapHand frame];
     if ([leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
     {
-        ((LeapFingerAsLeapHand *)_leapHand).fingerToMapToHand = ((LeapFingerAsLeapHand *)leapHand).fingerToMapToHand;
-        ((LeapFingerAsLeapHand *)_leapHand).isTouching = ((LeapFingerAsLeapHand *)leapHand).isTouching;
+        LeapFingerAsLeapHand *prevFingerAsHand = (LeapFingerAsLeapHand *)_leapHand;
+        LeapFingerAsLeapHand *fingerAsHand = (LeapFingerAsLeapHand *)leapHand;
+        prevFingerAsHand.fingerToMapToHand = fingerAsHand.fingerToMapToHand;
+        prevFingerAsHand.isTouching = fingerAsHand.isTouching;
+        prevFingerAsHand.tapCount = fingerAsHand.tapCount;
+        if (fingerAsHand.lastTapTime)
+            prevFingerAsHand.lastTapTime = fingerAsHand.lastTapTime;
         return;
     }
     _leapHand = leapHand;
@@ -1258,6 +1263,8 @@ static OLKHand *gPrevHand=nil;
 {
     if (self = [super init])
     {
+        _tapCount = 0;
+        _lastTapTime = nil;
         _prevTipPositions = [[NSMutableArray alloc] initWithCapacity:10];
     }
     return self;

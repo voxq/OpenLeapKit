@@ -23,10 +23,10 @@
 - (BOOL)detectCompletion:(NSPoint)position;
 - (void)createButtonImages;
 
-@property (nonatomic) NSImage *buttonHoverImg;
-@property (nonatomic) NSImage *buttonOffImg;
-@property (nonatomic) NSImage *buttonOnImg;
-@property (nonatomic) NSImage *buttonActivatedImg;
+@property NSImage *buttonHoverImg;
+@property NSImage *buttonOffImg;
+@property NSImage *buttonOnImg;
+@property NSImage *buttonActivatedImg;
 @property (nonatomic) BOOL requiresReset;
 
 @property (nonatomic) NSView <OLKHandContainer> *controllingHandView;

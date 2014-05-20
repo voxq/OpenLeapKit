@@ -319,7 +319,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
 - (OLKFingerTapState)handleTapOrienting:(NSMutableDictionary *)tapDetectDict finger:(LeapFinger *)finger
 {
-    NSLog(@"Finger touch dist: %f", finger.touchDistance);
+//    NSLog(@"Finger touch dist: %f", finger.touchDistance);
 
     if (finger.touchZone == LEAP_POINTABLE_ZONE_HOVERING && finger.touchDistance > 0.01)
     {
@@ -340,7 +340,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         if ([stateStart timeIntervalSinceNow] < -0.5)
             return OLKFingerTapStateRedHerring;
     }
-    [tapDetectDict setObject:finger.tipPosition forKey:OLKKeyFingerTapPosOriginal];
+    else
+        [tapDetectDict setObject:finger.tipPosition forKey:OLKKeyFingerTapPosOriginal];
     
     return OLKFingerTapStateOrienting;
 }
@@ -395,12 +396,18 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
 
 - (BOOL)updateTapFinger:(LeapFinger *)finger tapCountDetected:(NSInteger *)tapCountDetected
 {
+//    if (finger.touchZone == LEAP_POINTABLE_ZONE_HOVERING && finger.touchDistance > 0.01)
+//        NSLog(@"Finger id(%d) Hovering", finger.id);
+//    else
+//        NSLog(@"Finger id(%d) Not Hovering", finger.id);
+
     NSMutableArray *fingerTapDetects = [_tapDetects objectForKey:[NSNumber numberWithInteger:finger.id]];
     BOOL noneOrienting = TRUE;
     BOOL tapDetected = FALSE;
     NSUInteger i = 0;
     NSMutableIndexSet *removeDetects = [[NSMutableIndexSet alloc] init];
-    for (NSMutableDictionary *tapDetectDict in fingerTapDetects)
+    NSMutableDictionary *tapDetectDict;
+    for (tapDetectDict in fingerTapDetects)
     {
         NSInteger state = [[tapDetectDict objectForKey:OLKKeyFingerTapState] integerValue];
         NSInteger newState;
@@ -421,9 +428,13 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
                 break;
         }
         if (newState == OLKFingerTapStateRedHerring)
+        {
+//            NSLog(@"Finger Id(%d) Red Herring!", finger.id);
             [removeDetects addIndex:i];
+        }
         else if (newState != state)
         {
+//            NSLog(@"Finger id(%d) State changed from %d to %d!", finger.id, state, newState);
             if (newState == OLKFingerTapStateOrienting)
             {
                 noneOrienting = FALSE;
@@ -432,13 +443,24 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             }
             [tapDetectDict setObject:[NSDate date] forKey:OLKKeyFingerTapStateStart];
             [tapDetectDict setObject:[NSNumber numberWithInteger:newState] forKey:OLKKeyFingerTapState];
+            if (tapDetected)
+                break;
         }
         i ++;
     }
 
-    [fingerTapDetects removeObjectsAtIndexes:removeDetects];
+    if (tapDetected)
+    {
+        [fingerTapDetects removeAllObjects];
+        [fingerTapDetects addObject:tapDetectDict];
+    }
+    else
+        [fingerTapDetects removeObjectsAtIndexes:removeDetects];
     if (noneOrienting && finger.touchZone == LEAP_POINTABLE_ZONE_TOUCHING)
+    {
         [self addTapInit:finger toArray:fingerTapDetects];
+//        NSLog(@"Finger id(%d) Added tap Init!", finger.id);
+    }
     return tapDetected;
 }
 
@@ -498,10 +520,12 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             NSInteger tapCountDetected;
             if ([self updateTapFinger:leapHand.fingerToMapToHand tapCountDetected:&tapCountDetected])
             {
-                if (tapCountDetected > 1)
+                leapHand.tapCount = tapCountDetected;
+                leapHand.lastTapTime = [NSDate date];
+                if (tapCountDetected > 1 && !leapHand.isTouching)
                 {
                     leapHand.isTouching = TRUE;
-                    [_tapDetects removeObjectForKey:[NSNumber numberWithInteger:finger.id]];
+//                    [_tapDetects removeObjectForKey:[NSNumber numberWithInteger:finger.id]];
                 }
             }
         }
@@ -867,10 +891,10 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         else
         {
             NSRect boundsRect = spaceView.bounds;
-            boundsRect.origin.x += boundsRect.size.width/4;
-            boundsRect.origin.y += boundsRect.size.height/3;
-            boundsRect.size.width -= boundsRect.size.width/2;
-            boundsRect.size.height -= boundsRect.size.height/3*2;
+            boundsRect.origin.x += boundsRect.size.width/6;
+            boundsRect.origin.y += boundsRect.size.height/4;
+            boundsRect.size.width -= boundsRect.size.width/3;
+            boundsRect.size.height -= boundsRect.size.height/2;
             
             oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedBounds:boundsRect bottom:30 top:140 width:200];
             oldRect.origin.x += boundsRect.origin.x;

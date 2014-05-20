@@ -28,25 +28,25 @@
 
 - (void)autoCalculateLabelRectBounds;
 
-@property (nonatomic) id <NSObject> context;
-@property (nonatomic) NSImage *labelImage;
-@property (nonatomic) NSDictionary *labelAttributes;
-@property (nonatomic) NSDictionary *labelBackAttributes;
-@property (nonatomic) NSSize size;
-@property (nonatomic) NSPoint drawLocation;
-@property (nonatomic) BOOL enable;
-@property (nonatomic) BOOL active;
-@property (nonatomic) BOOL visible;
+@property id <NSObject> context;
+@property NSImage *labelImage;
+@property NSDictionary *labelAttributes;
+@property NSDictionary *labelBackAttributes;
+@property NSSize size;
+@property NSPoint drawLocation;
+@property BOOL enable;
+@property BOOL active;
+@property BOOL visible;
 @property (weak) id target;
-@property (nonatomic) SEL action;
-@property (nonatomic) NSString *label;
-@property (nonatomic) NSRect labelRectBounds;
-@property (nonatomic) float labelFontSize;
-@property (nonatomic) BOOL labelFontBold;
-@property (nonatomic) BOOL autoFontSize;
-@property (nonatomic) BOOL autoCalcLabelRect;
-@property (nonatomic) BOOL needsRedraw;
-@property (nonatomic) BOOL outlineLabel;
-@property (nonatomic, weak) NSView *parentView;
+@property SEL action;
+@property NSString *label;
+@property NSRect labelRectBounds;
+@property float labelFontSize;
+@property BOOL labelFontBold;
+@property BOOL autoFontSize;
+@property BOOL autoCalcLabelRect;
+@property BOOL needsRedraw;
+@property BOOL outlineLabel;
+@property (weak) NSView *parentView;
 
 @end

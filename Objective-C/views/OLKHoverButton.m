@@ -22,6 +22,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     NSImage *_intButtonOnImg;
     NSImage *_intButtonActivatedImg;
     NSBezierPath *_buttonPath;
+    NSLock *_createButtonsLock;
 }
 
 @synthesize buttonHoverImg = _buttonHoverImg;
@@ -51,6 +52,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 {
     if (self = [super init])
     {
+        _createButtonsLock = [[NSLock alloc] init];
         _offColor = [NSColor colorWithCalibratedRed:0.8 green:0.4 blue:0.4 alpha:1];
         _onColor = [NSColor colorWithCalibratedRed:0.4 green:0.8 blue:0.4 alpha:1];
         _hoverColor = [NSColor colorWithCalibratedRed:0.4 green:0.8 blue:0.8 alpha:1];
@@ -156,6 +158,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 
 - (void)createButtonImages
 {
+    [_createButtonsLock lock];
     NSRect buttonRect;
     buttonRect.origin = NSZeroPoint;
     buttonRect.size = self.size;
@@ -258,6 +261,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         [_buttonPath stroke];
     }
     [_intButtonOffImg unlockFocus];
+    [_createButtonsLock unlock];
 }
 
 - (void)setSize:(NSSize)size
@@ -270,6 +274,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
     [super setSize:size];
     
     [self createButtonImages];
+
     [self softReset];
     [self prepareLabelImage];
 }
@@ -283,6 +288,9 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
 - (void)draw
 {
     if (!self.visible)
+        return;
+ 
+    if (![_createButtonsLock tryLock])
         return;
     
     self.needsRedraw=NO;
@@ -326,6 +334,7 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         sourceRect.size = _intButtonActivatedImg.size;
         [_intButtonActivatedImg drawInRect:buttonRect fromRect:sourceRect operation:NSCompositeSourceOver fraction:currentAlpha*_activateAlpha];
     }
+    [_createButtonsLock unlock];
     
     [super draw];
 }
