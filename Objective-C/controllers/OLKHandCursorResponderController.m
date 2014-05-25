@@ -7,6 +7,7 @@
 //
 
 #import "OLKHandCursorResponderController.h"
+#import "OLKMenuMultiCursorView.h"
 
 @implementation OLKHandCursorResponderController
 {
@@ -57,6 +58,13 @@
 {
     for (id subResponder in handCursorResponders)
     {
+        if ([handView.hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]] && [subResponder conformsToProtocol:@protocol(OLKMenuMultiCursorView)])
+        {
+            LeapFingerAsLeapHand *leapFingerHand = (LeapFingerAsLeapHand *)handView.hand.leapHand;
+            if (!leapFingerHand.isControlling)
+                continue;
+        }
+
         if ([subResponder conformsToProtocol:@protocol(OLKHandCursorResponderParent)])
         {
             NSPoint convertedCusorPos;

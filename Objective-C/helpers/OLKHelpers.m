@@ -62,52 +62,39 @@
     return viewPos;
 }
 
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view proximityOffset:(float)proximityOffset rangeOffset:(float)rangeOffset percentRangeOfMaxWidth:(float)percentRangeOfMaxWidth forLeapDevice:(LeapDevice *)leapDevice
++ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedBounds:(NSRect)boundsRect proximityOffset:(float)proximityOffset rangeOffset:(float)rangeOffset percentRangeOfMaxWidth:(float)percentRangeOfMaxWidth forLeapDevice:(LeapDevice *)leapDevice
 {
     float rangeOfMaxWidth = [leapDevice range]*percentRangeOfMaxWidth;
     float xAngle = [leapDevice horizontalViewAngle];
     
     float widthToMap = rangeOfMaxWidth * xAngle;
     
-    NSRect boundsRect = [view bounds];
     NSSize viewSize = boundsRect.size;
-
+    
     float ratioLeapToViewWidth = viewSize.width / widthToMap;
     float ratioLeapToViewHeight = viewSize.height / (([leapDevice range] + rangeOffset) - proximityOffset);
-
+    
     NSPoint viewPos;
     viewPos.x = leapPos.x * ratioLeapToViewWidth + viewSize.width/2;
     viewPos.y = (leapPos.y - proximityOffset) * ratioLeapToViewHeight;
+    viewPos.x += boundsRect.origin.x;
+    viewPos.y += boundsRect.origin.y;
     
     return viewPos;
 }
 
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedBounds:(NSRect)boundsRect bottom:(float)bottom top:(float)top width:(float)width
++ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedBounds:(NSRect)toBounds fromConfinedBounds:(NSRect)fromBounds
 {
-    NSSize viewSize = boundsRect.size;
+    NSSize viewSize = toBounds.size;
     
-    float ratioLeapToViewWidth = viewSize.width / width;
-    float ratioLeapToViewHeight = viewSize.height / (top - bottom);
+    float ratioLeapToViewWidth = viewSize.width / fromBounds.size.width;
+    float ratioLeapToViewHeight = viewSize.height / fromBounds.size.height;
     
     NSPoint viewPos;
-    viewPos.x = leapPos.x * ratioLeapToViewWidth + viewSize.width/2;
-    viewPos.y = (leapPos.y - bottom) * ratioLeapToViewHeight;
-    
-    return viewPos;
-}
-
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view bottom:(float)bottom top:(float)top width:(float)width
-{
-    NSRect boundsRect = [view bounds];
-    NSSize viewSize = boundsRect.size;
-    
-    float ratioLeapToViewWidth = viewSize.width / width;
-    float ratioLeapToViewHeight = viewSize.height / (top - bottom);
-    
-    NSPoint viewPos;
-    viewPos.x = leapPos.x * ratioLeapToViewWidth + viewSize.width/2;
-    viewPos.y = (leapPos.y - bottom) * ratioLeapToViewHeight;
-    
+    viewPos.x = (leapPos.x - fromBounds.origin.x) * ratioLeapToViewWidth;// + viewSize.width/2;
+    viewPos.y = (leapPos.y - fromBounds.origin.y) * ratioLeapToViewHeight;
+    viewPos.x += toBounds.origin.x;
+    viewPos.y += toBounds.origin.y;
     return viewPos;
 }
 

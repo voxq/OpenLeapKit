@@ -119,9 +119,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         _rangeOffset = -80;
         _proximityOffset = 0;
         _percentRangeOfMaxWidth = 0.6;
-        _confineLeapFingerAsHand = YES;
         _handednessAlgorithm = OLKHandednessAlgorithmThumbTipAndBase;
-        _detectTouchMethod = OLKHandsDetectTouchDoubleTap;
+        _detectTouchMethod = OLKHandsDetectTouchEmulation;
     }
     return self;
 }
@@ -502,6 +501,13 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         }
         leapHand = [[LeapFingerAsLeapHand alloc] init];
         leapHand.fingerToMapToHand = finger;
+        NSInteger tapCountDetected = 0;
+        [self updateTapFinger:leapHand.fingerToMapToHand tapCountDetected:&tapCountDetected];
+        if (tapCountDetected)
+        {
+            leapHand.tapCount = tapCountDetected;
+            leapHand.lastTapTime = [NSDate date];
+        }
         if (_detectTouchMethod == OLKHandsDetectTouchSecondTouch)
         {
             leapHand.isTouching = FALSE;
@@ -515,18 +521,12 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             else
                 leapHand.isTouching = FALSE;
         }
-        else if (_detectTouchMethod == OLKHandsDetectTouchDoubleTap)
+        else if (_detectTouchMethod == OLKHandsDetectTouchDoubleTap || _detectTouchMethod == OLKHandsDetectTouchSingleTap)
         {
-            NSInteger tapCountDetected;
-            if ([self updateTapFinger:leapHand.fingerToMapToHand tapCountDetected:&tapCountDetected])
+            if (((tapCountDetected == 1 && _detectTouchMethod == OLKHandsDetectTouchSingleTap) || (tapCountDetected > 1 && _detectTouchMethod == OLKHandsDetectTouchDoubleTap)) && !leapHand.isTouching)
             {
-                leapHand.tapCount = tapCountDetected;
-                leapHand.lastTapTime = [NSDate date];
-                if (tapCountDetected > 1 && !leapHand.isTouching)
-                {
-                    leapHand.isTouching = TRUE;
+                leapHand.isTouching = TRUE;
 //                    [_tapDetects removeObjectForKey:[NSNumber numberWithInteger:finger.id]];
-                }
             }
         }
         [leapHands addObject:leapHand];
@@ -650,7 +650,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
                 [self removeMissingHandView:handView];
                 continue;
             }
-            if (_detectTouchMethod == OLKHandsDetectTouchDoubleTap && [leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
+            if ((_detectTouchMethod == OLKHandsDetectTouchDoubleTap || _detectTouchMethod == OLKHandsDetectTouchSingleTap) && [leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
             {
                 LeapFingerAsLeapHand *updateHand = (LeapFingerAsLeapHand *)leapHand;
                 LeapFingerAsLeapHand *existHand = (LeapFingerAsLeapHand *)hand.leapHand;
@@ -663,7 +663,10 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
             [foundHands addObject:hand];
         }
         else
+        {
             [self removeMissingHandView:handView];
+//            NSLog(@"Removing Missing Hand");
+        }
     }
     
     _handsViews = [foundHandsViews allObjects];
@@ -884,23 +887,8 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
         if (!spaceView)
             spaceView = _handsSpaceView;
     }
-    if ([hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
-    {
-        if (!_confineLeapFingerAsHand)
-            oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedView:spaceView bottom:30 top:140 width:200];
-        else
-        {
-            NSRect boundsRect = spaceView.bounds;
-            boundsRect.origin.x += boundsRect.size.width/6;
-            boundsRect.origin.y += boundsRect.size.height/4;
-            boundsRect.size.width -= boundsRect.size.width/3;
-            boundsRect.size.height -= boundsRect.size.height/2;
-            
-            oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedBounds:boundsRect bottom:30 top:140 width:200];
-            oldRect.origin.x += boundsRect.origin.x;
-            oldRect.origin.y += boundsRect.origin.y;
-        }
-    }
+    if (_confineCursor)
+        oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedBounds:_confineCursorRect fromConfinedBounds:_confineCursorFromRect];
     else if (_calibrator)
     {
         NSRect convertRect;
@@ -911,7 +899,7 @@ static const NSUInteger gConfirmHandednessFrameThreshold=1500;
     else if (_useInteractionBox)
         oldRect.origin = [OLKHelpers convertInteractionBoxLeapPos:position toConfinedView:spaceView forFrame:[[hand leapHand] frame] trim:_trimInteraction];
     else
-        oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedView:spaceView proximityOffset:_proximityOffset rangeOffset:_rangeOffset percentRangeOfMaxWidth:_percentRangeOfMaxWidth forLeapDevice:_leapDevice];
+        oldRect.origin = [OLKHelpers convertLeapPos:position toConfinedBounds:spaceView.bounds proximityOffset:_proximityOffset rangeOffset:_rangeOffset percentRangeOfMaxWidth:_percentRangeOfMaxWidth forLeapDevice:_leapDevice];
 
     oldRect.origin.x -= [handView frame].size.width/2;
     oldRect.origin.y -= [handView frame].size.height/2;

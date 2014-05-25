@@ -40,6 +40,7 @@ typedef enum
 {
     OLKHandsDetectTouchEmulation,
     OLKHandsDetectTouchDoubleTap,
+    OLKHandsDetectTouchSingleTap,
     OLKHandsDetectTouchSecondTouch
 }OLKHandsDetectTouch;
 
@@ -118,7 +119,9 @@ typedef enum
 @property (nonatomic) float percentRangeOfMaxWidth;
 @property (nonatomic) NSSize fitHandFact;
 @property (nonatomic) OLKRangeCalibrator *calibrator;
-@property (nonatomic) BOOL confineLeapFingerAsHand;
+@property (nonatomic) BOOL confineCursor;
+@property (nonatomic) NSRect confineCursorRect;
+@property (nonatomic) NSRect confineCursorFromRect;
 @property (nonatomic) OLKHandsDetectTouch detectTouchMethod;
 
 @end

@@ -41,10 +41,9 @@
 + (NSPoint)convertInteractionBoxLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view forFrame:(LeapFrame *)frame trim:(NSSize)trimAmount;
 
 // Maps leap positions to a view, using the device range with supplied offset, and horizontal angle to calculate .
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view proximityOffset:(float)proximityOffset rangeOffset:(float)rangeOffset percentRangeOfMaxWidth:(float)percentRangeOfMaxWidth forLeapDevice:(LeapDevice *)leapDevice;
++ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedBounds:(NSRect)bounds proximityOffset:(float)proximityOffset rangeOffset:(float)rangeOffset percentRangeOfMaxWidth:(float)percentRangeOfMaxWidth forLeapDevice:(LeapDevice *)leapDevice;
 // Maps leap positions to a view, using a supplied range, width, and offset.
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedView:(NSView *)view bottom:(float)bottom top:(float)top width:(float)width;
-+ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedBounds:(NSRect)bounds bottom:(float)bottom top:(float)top width:(float)width;
++ (NSPoint)convertLeapPos:(LeapVector*)leapPos toConfinedBounds:(NSRect)toBounds fromConfinedBounds:(NSRect)fromBounds;
 + (float)distanceToDepthBoundary:(LeapVector *)position leapDevice:(LeapDevice *)leapDevice;
 + (float)distanceToWidthBoundary:(LeapVector *)position leapDevice:(LeapDevice *)leapDevice;
 

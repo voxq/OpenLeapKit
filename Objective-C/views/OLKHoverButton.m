@@ -176,7 +176,11 @@ static float const OLKHoverButtonDefaultAlphaFadeOutAmtPerCycle = 0.1;
         destRect.origin.y = -bounds.origin.y;
     }
     else
+    {
+        bounds = buttonRect;
         destRect.origin = NSZeroPoint;
+        destRect.size = bounds.size;
+    }
     
     _intButtonHoverImg = [[NSImage alloc] initWithSize:bounds.size];
     [_intButtonHoverImg lockFocus];
