@@ -192,6 +192,8 @@
 
 - (void)removeCursorTracking:(id)cursorContext
 {
+    if (!_cursorTrackings)
+        return;
     [self resetCurrentCursorTracking:cursorContext];
     NSMutableDictionary *newDict = [NSMutableDictionary dictionaryWithDictionary:_cursorTrackings];
     [newDict removeObjectForKey:cursorContext];
@@ -201,6 +203,8 @@
 
 - (void)resetCurrentCursorTracking:(id)cursorContext
 {
+    if (!_cursorTrackings)
+        return;
     OLKLineOptionCursorTracking *cursorTracking = [_cursorTrackings objectForKey:cursorContext];
     [cursorTracking setPrevHoverIndex:cursorTracking.hoverIndex];
     if ([cursorTracking hoverIndex] != OLKOptionMultiInputInvalidSelection)
@@ -238,6 +242,9 @@
 
 - (void)resetCurrentCursorTracking
 {
+    if (!_cursorTrackings)
+        return;
+    
     for (id key in [_cursorTrackings keyEnumerator])
         [self resetCurrentCursorTracking:key];
 }
@@ -536,8 +543,23 @@
     
     if (!cursorTracking)
     {
-        if (![cursorContext .hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]] && ![self inPreparedToStrikeZone:cursorPos])
+        if (![self inPreparedToStrikeZone:cursorPos])
+        {
+            if ([cursorContext.hand.leapHand isKindOfClass:[LeapFingerAsLeapHand class]])
+            {
+                int index = [self indexAtPosition:cursorPos];
+                cursorTracking = [self createTracking:cursorPos withContext:cursorContext];
+                cursorTracking.prevSelectedIndex = OLKOptionMultiInputInvalidSelection;
+                cursorTracking.selectedIndex = index;
+                
+                if ([_delegate respondsToSelector:@selector(selectedIndexChanged:sender:cursorContext:)])
+                    [_delegate selectedIndexChanged:index sender:self cursorContext:cursorContext];
+                
+                if (cursorTracking.repeatTracker)
+                    [cursorTracking.repeatTracker initRepeatWithObject:[NSNumber numberWithInt:index]];
+            }
             return;
+        }
 
         cursorTracking = [self createTracking:cursorPos withContext:cursorContext];
         return;
